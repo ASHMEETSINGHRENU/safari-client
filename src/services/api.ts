@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Destination, Safari, Booking, User, GalleryItem, JournalArticle, FAQItem, ReviewItem, SiteSettings } from '../types';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') : '') + '/api/v1';
+const RENDER_PROD_URL = 'https://safari-server-v3ih.onrender.com';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? RENDER_PROD_URL : '')).replace(/\/$/, '') + '/api/v1';
 
 export const api = axios.create({
   baseURL: API_BASE,
