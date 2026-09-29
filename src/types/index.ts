@@ -1,0 +1,170 @@
+export interface Zone {
+  name: string;
+  type: 'core' | 'buffer';
+  gates: string[];
+  vehicleQuotaPerDay?: number;
+  description?: string;
+  highlight?: string;
+}
+
+export interface Destination {
+  _id: string;
+  name: string;
+  slug: string;
+  state: 'Madhya Pradesh' | 'Maharashtra';
+  tagline: string;
+  shortDesc: string;
+  editorialQuote?: string;
+  fullDesc: string;
+  heroImage: string;
+  galleryImages: string[];
+  areaSqKm: number;
+  tigerCount: string;
+  bestTimeToVisit: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  mapPosition: {
+    x: number;
+    y: number;
+  };
+  startingPrice: number;
+  availability: 'AVAILABLE' | 'FEW PERMITS' | 'LIMITED' | 'SOLD OUT';
+  zones: Zone[];
+  wildlifeHighlights: string[];
+  howToReach: {
+    air: string;
+    rail: string;
+    road: string;
+  };
+  rulesAndGuidelines: string[];
+  faqs: Array<{ question: string; answer: string }>;
+  isPublished: boolean;
+}
+
+export interface Safari {
+  _id: string;
+  destination: string | Destination;
+  destinationSlug: string;
+  destinationName: string;
+  state: string;
+  name: string;
+  slug: string;
+  safariType: 'Jeep Safari' | 'Canter Safari' | 'Private Photography Safari' | 'Full-Day Safari' | 'Night Buffer Safari' | 'Walking Safari';
+  slot: 'Morning' | 'Afternoon' | 'Full Day' | 'Night';
+  duration: string;
+  vehicle: string;
+  capacity: number;
+  zones: string[];
+  basePrice: number;
+  permitFee: number;
+  guideFee: number;
+  description: string;
+  inclusions: string[];
+  exclusions: string[];
+  highlights: string[];
+  availableDays: string[];
+  availabilityStatus: 'AVAILABLE' | 'FAST FILLING' | 'SOLD OUT';
+  isPublished: boolean;
+}
+
+export interface CustomerInfo {
+  fullName: string;
+  email: string;
+  phone: string;
+  country: string;
+  idType: string;
+  idNumber: string;
+}
+
+export interface Booking {
+  _id: string;
+  bookingRef: string;
+  user?: string;
+  customerInfo: CustomerInfo;
+  destination?: string | Destination;
+  destinationName: string;
+  safari?: string | Safari;
+  safariName: string;
+  safariDate: string;
+  slot: string;
+  zone: string;
+  vehicleType: string;
+  guests: {
+    adults: number;
+    children: number;
+  };
+  naturalistRequested: boolean;
+  specialRequests?: string;
+  totalAmount: number;
+  bookingStatus: 'pending' | 'confirmed' | 'payment_pending' | 'paid' | 'cancelled' | 'completed' | 'rejected';
+  paymentStatus: 'pending' | 'paid' | 'refunded';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface User {
+  id: string;
+  _id?: string;
+  name: string;
+  email: string;
+  role: 'super_admin' | 'admin' | 'booking_manager' | 'customer';
+  phone?: string;
+  country?: string;
+  savedDestinations?: string[];
+}
+
+export interface GalleryItem {
+  _id: string;
+  title: string;
+  imageUrl: string;
+  animal: 'Tiger' | 'Leopard' | 'Elephant' | 'Birds' | 'Safari Life' | 'Forest Landscape';
+  destinationName?: string;
+  state?: string;
+  photographer?: string;
+  cameraGear?: string;
+  isFeatured: boolean;
+}
+
+export interface JournalArticle {
+  _id: string;
+  title: string;
+  slug: string;
+  category: 'Wildlife' | 'Photography' | 'Safari Guide' | 'Destinations' | 'Responsible Tourism';
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  author: string;
+  readTime: string;
+  destinationTag?: string;
+  publishedAt: string;
+}
+
+export interface FAQItem {
+  _id: string;
+  category: string;
+  question: string;
+  answer: string;
+}
+
+export interface ReviewItem {
+  _id: string;
+  destinationName: string;
+  author: string;
+  authorLocation: string;
+  rating: number;
+  title: string;
+  comment: string;
+  safariType?: string;
+  date: string;
+}
+
+export interface SiteSettings {
+  siteName: string;
+  tagline: string;
+  contactEmail: string;
+  contactPhone: string;
+  officeAddress: string;
+  emergencySupport: string;
+}

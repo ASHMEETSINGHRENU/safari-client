@@ -1,0 +1,641 @@
+import React, { useEffect, useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+  Compass, ArrowRight, MapPin, ShieldCheck, Camera, BookOpen, 
+  Search, Calendar, Users, Award, HeartHandshake, Eye, Sparkles,
+  Play, Pause, Volume2, VolumeX
+} from 'lucide-react';
+import { Destination, Safari, GalleryItem, JournalArticle } from '../types';
+import { destinationService, safariService, cmsService } from '../services/api';
+import { ReserveMap } from '../components/map/ReserveMap';
+
+export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [journals, setJournals] = useState<JournalArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Hero Video State
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  // Floating search state
+  const [searchState, setSearchState] = useState('');
+  const [searchDestination, setSearchDestination] = useState('');
+  const [searchDate, setSearchDate] = useState('');
+  const [searchGuests, setSearchGuests] = useState('2');
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  useEffect(() => {
+    Promise.all([
+      destinationService.getAll(),
+      cmsService.getGallery({ isFeatured: true }),
+      cmsService.getJournals()
+    ]).then(([dests, gal, jrn]) => {
+      setDestinations(dests);
+      setGallery(gal.slice(0, 6));
+      setJournals(jrn.slice(0, 3));
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchDestination) {
+      navigate(`/booking?destination=${searchDestination}`);
+    } else if (searchState) {
+      navigate(`/destinations?state=${searchState}`);
+    } else {
+      navigate('/safaris');
+    }
+  };
+
+  const featuredDestinations = destinations.slice(0, 4);
+
+  return (
+    <div className="bg-sand text-forest min-h-screen">
+      
+      {/* 01. CINEMATIC VIDEO HERO */}
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden pt-20">
+        {/* Full-bleed background video with crystal-clear visibility and subtle localized scrim */}
+        <div className="absolute inset-0 z-0">
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted={isMuted}
+            playsInline
+            poster="/assets/img/bengal-tiger-portrait.jpg"
+            className="w-full h-full object-cover scale-100 brightness-[1.02] contrast-[1.03] transition-transform duration-1000"
+          >
+            <source src="/assets/video/hero-vid.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          {/* Left-side subtle scrim for text legibility, leaving the rest of the frame completely clear and vibrant */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent w-full lg:w-3/5 pointer-events-none" />
+          
+          {/* Subtle top header shade */}
+          <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-black/50 via-black/15 to-transparent pointer-events-none" />
+
+          {/* Seamless bottom fade into page body */}
+          <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-sand via-sand/25 to-transparent pointer-events-none" />
+        </div>
+
+        {/* Floating Video Controls Pill (Bottom Right) */}
+        <div className="absolute bottom-16 right-6 sm:right-10 z-20 hidden sm:flex items-center space-x-2 bg-black/50 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-sand/30 text-sand text-xs shadow-xl">
+          <button
+            type="button"
+            onClick={togglePlay}
+            className="p-1 hover:text-gold transition-colors focus:outline-none"
+            title={isPlaying ? 'Pause Background Video' : 'Play Background Video'}
+            aria-label="Toggle Video Playback"
+          >
+            {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+          </button>
+          <span className="w-px h-3.5 bg-sand/30" />
+          <button
+            type="button"
+            onClick={toggleMute}
+            className="p-1 hover:text-gold transition-colors focus:outline-none"
+            title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+            aria-label="Toggle Video Audio"
+          >
+            {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+          </button>
+          <span className="text-[10px] text-gold font-mono pl-1 uppercase tracking-wider font-semibold">
+            Live View
+          </span>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-sand w-full">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-gold/50 text-gold text-xs font-bold tracking-widest-safari uppercase shadow-lg">
+              <Compass className="w-3.5 h-3.5" />
+              <span>Madhya Pradesh & Maharashtra</span>
+            </div>
+
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
+              CHASE THE <br />
+              <span className="italic font-normal text-gold drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">WILD.</span>
+            </h1>
+
+            <p className="text-sm sm:text-base text-sand font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+              Immerse yourself in India’s premier tiger sanctuaries. Tailored wildlife safaris, generational field naturalists, and mindful conservation storytelling.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <Link 
+                to="/safaris" 
+                className="px-6 py-3.5 bg-gold text-forest font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gold-light transition-all shadow-xl flex items-center gap-2"
+              >
+                <span>Explore Safaris</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link 
+                to="/map" 
+                className="px-6 py-3.5 bg-black/40 backdrop-blur-md border border-sand/40 text-sand font-semibold text-xs uppercase tracking-widest rounded-xl hover:bg-black/60 transition-colors flex items-center gap-2 shadow-lg"
+              >
+                <MapPin className="w-4 h-4 text-gold" />
+                <span>Explore the Map</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 02. FLOATING SAFARI SEARCH */}
+      <section className="relative z-20 -mt-12 max-w-6xl mx-auto px-4 sm:px-6">
+        <form 
+          onSubmit={handleSearchSubmit}
+          className="bg-forest text-sand p-4 sm:p-6 rounded-2xl shadow-2xl border border-gold/30 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end"
+        >
+          {/* State */}
+          <div>
+            <label className="block text-[10px] uppercase font-bold tracking-widest-safari text-gold mb-1.5">
+              State Territory
+            </label>
+            <select
+              value={searchState}
+              onChange={(e) => setSearchState(e.target.value)}
+              className="w-full bg-forest-deep border border-sand/20 rounded-lg p-2.5 text-xs text-sand focus:outline-none focus:border-gold"
+            >
+              <option value="">Both States</option>
+              <option value="madhya-pradesh">Madhya Pradesh (7)</option>
+              <option value="maharashtra">Maharashtra (7)</option>
+            </select>
+          </div>
+
+          {/* Destination */}
+          <div>
+            <label className="block text-[10px] uppercase font-bold tracking-widest-safari text-gold mb-1.5">
+              Tiger Reserve
+            </label>
+            <select
+              value={searchDestination}
+              onChange={(e) => setSearchDestination(e.target.value)}
+              className="w-full bg-forest-deep border border-sand/20 rounded-lg p-2.5 text-xs text-sand focus:outline-none focus:border-gold"
+            >
+              <option value="">Any Reserve</option>
+              {destinations.map(d => (
+                <option key={d.slug} value={d.slug}>
+                  {d.name} ({d.state === 'Madhya Pradesh' ? 'MP' : 'MH'})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="block text-[10px] uppercase font-bold tracking-widest-safari text-gold mb-1.5">
+              Expedition Date
+            </label>
+            <input
+              type="date"
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
+              className="w-full bg-forest-deep border border-sand/20 rounded-lg p-2.5 text-xs text-sand focus:outline-none focus:border-gold"
+            />
+          </div>
+
+          {/* Guests */}
+          <div>
+            <label className="block text-[10px] uppercase font-bold tracking-widest-safari text-gold mb-1.5">
+              Guests
+            </label>
+            <select
+              value={searchGuests}
+              onChange={(e) => setSearchGuests(e.target.value)}
+              className="w-full bg-forest-deep border border-sand/20 rounded-lg p-2.5 text-xs text-sand focus:outline-none focus:border-gold"
+            >
+              <option value="1">1 Guest</option>
+              <option value="2">2 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="6">Private Safari Jeep (6 Guests)</option>
+            </select>
+          </div>
+
+          {/* Submit CTA */}
+          <div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-gold text-forest font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-gold-light transition-all flex items-center justify-center gap-1.5 shadow-md"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Check Safaris</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      {/* 03. EXPLORE BY STATE */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-xl mx-auto mb-12 space-y-2">
+          <span className="text-[11px] tracking-widest-safari uppercase text-earth font-bold block">
+            Territories of the Royal Bengal
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
+            Explore by State
+          </h2>
+          <p className="text-xs text-forest/70">
+            Choose between the open sal maidans of Madhya Pradesh and the rugged teak ridges of Maharashtra.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* MP Card */}
+          <div className="relative rounded-2xl overflow-hidden border border-forest/15 shadow-xl group min-h-[440px] flex flex-col justify-end p-8 text-sand">
+            <img 
+              src="/assets/img/royal-bengal-prowl.jpg" 
+              alt="Madhya Pradesh Tiger Reserves" 
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div className="relative z-10 space-y-3">
+              <span className="text-xs text-gold uppercase tracking-widest font-bold block drop-shadow">
+                7 World-Renowned Sanctuaries
+              </span>
+              <h3 className="font-serif text-3xl font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">Madhya Pradesh</h3>
+              <p className="text-xs text-sand/90 max-w-md leading-relaxed drop-shadow">
+                The tiger heartland of India. Home to Bandhavgarh, Kanha, Pench MP, Satpura, Panna, Sanjay-Dubri, and Kuno National Park.
+              </p>
+              <div className="pt-2">
+                <Link 
+                  to="/destinations/madhya-pradesh" 
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-sand text-forest font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-gold transition-colors shadow-lg"
+                >
+                  <span>Explore Madhya Pradesh</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Maharashtra Card */}
+          <div className="relative rounded-2xl overflow-hidden border border-forest/15 shadow-xl group min-h-[440px] flex flex-col justify-end p-8 text-sand">
+            <img 
+              src="/assets/img/tadoba-str-guide.jpg" 
+              alt="Maharashtra Tiger Reserves" 
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div className="relative z-10 space-y-3">
+              <span className="text-xs text-gold uppercase tracking-widest font-bold block drop-shadow">
+                7 Iconic Feline Bastions
+              </span>
+              <h3 className="font-serif text-3xl font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">Maharashtra</h3>
+              <p className="text-xs text-sand/90 max-w-md leading-relaxed drop-shadow">
+                The colosseum of bamboo thickets and red-soil roads. Explore Tadoba-Andhari, Pench MH, Umred-Karhandla, Navegaon-Nagzira, Melghat, Bor, and Sahyadri.
+              </p>
+              <div className="pt-2">
+                <Link 
+                  to="/destinations/maharashtra" 
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-sand text-forest font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-gold transition-colors shadow-lg"
+                >
+                  <span>Explore Maharashtra</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 04. FEATURED DESTINATIONS */}
+      <section className="py-16 bg-sand-warm border-y border-forest/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+            <div>
+              <span className="text-[11px] tracking-widest-safari uppercase text-earth font-bold block">
+                Sanctuary Spotlights
+              </span>
+              <h2 className="font-serif text-3xl font-bold text-forest mt-1">
+                Premier Tiger Reserves
+              </h2>
+            </div>
+            <Link 
+              to="/destinations" 
+              className="text-xs font-bold uppercase tracking-wider text-earth hover:text-forest flex items-center gap-1.5"
+            >
+              <span>View All 14 Destinations</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredDestinations.map(d => (
+              <div 
+                key={d.slug}
+                className="bg-sand rounded-xl overflow-hidden border border-forest/20 shadow-md group flex flex-col justify-between hover:shadow-xl transition-all"
+              >
+                <div>
+                  <div className="relative h-56 overflow-hidden">
+                    <img 
+                      src={d.heroImage} 
+                      alt={d.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
+                    <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-sand text-[10px] font-bold px-2.5 py-1 rounded-md border border-white/20 shadow">
+                      {d.state}
+                    </div>
+                    <div className="absolute bottom-3 right-3 bg-sand/95 backdrop-blur-sm text-forest text-[10px] font-bold px-2.5 py-1 rounded-md shadow">
+                      {d.availability}
+                    </div>
+                  </div>
+                  <div className="p-5 space-y-2">
+                    <span className="text-[10px] text-earth uppercase font-semibold tracking-wider block">
+                      {d.tagline}
+                    </span>
+                    <h3 className="font-serif text-lg font-bold text-forest leading-snug line-clamp-1">
+                      {d.name}
+                    </h3>
+                    <p className="text-xs text-forest/70 line-clamp-2 leading-relaxed">
+                      {d.shortDesc}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-5 pt-0 border-t border-forest/10 mt-3 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-forest/60 block">From</span>
+                    <span className="font-serif text-base font-bold text-forest">₹{d.startingPrice.toLocaleString('en-IN')}</span>
+                  </div>
+                  <Link 
+                    to={`/destinations/${d.slug}`}
+                    className="p-2 bg-forest text-sand rounded hover:bg-gold hover:text-forest transition-colors"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 05. FIND YOUR WILD INTERACTIVE MAP */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
+          <span className="text-[11px] tracking-widest-safari uppercase text-earth font-bold block">
+            Interactive Reserve Network
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
+            FIND YOUR WILD
+          </h2>
+          <p className="text-xs text-forest/70 leading-relaxed">
+            Central India’s 14 tiger sanctuaries form one of the world's most critical interconnected wildlife networks. Explore geographic positions, buffer corridors, and instant permits.
+          </p>
+        </div>
+
+        <ReserveMap destinations={destinations} />
+      </section>
+
+      {/* 06. HOW IT WORKS */}
+      <section className="py-20 bg-forest text-sand border-y border-gold/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-xl mx-auto mb-16 space-y-2">
+            <span className="text-[11px] tracking-widest-safari uppercase text-gold font-bold block">
+              The Journey to the Forest
+            </span>
+            <h2 className="font-serif text-3xl font-bold text-sand">
+              How It Works
+            </h2>
+            <p className="text-xs text-sand/70">
+              A seamless, transparent pathway from discovery to the morning gate briefing.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {[
+              { num: '01', title: 'DISCOVER', desc: 'Explore reserves across MP and Maharashtra, examining seasonal tiger activity and zone terrain.' },
+              { num: '02', title: 'CHOOSE', desc: 'Compare morning vs. afternoon slots, private photography setups, and experienced local naturalists.' },
+              { num: '03', title: 'PLAN', desc: 'Select preferred dates, verify core vs. buffer quota, and configure your vehicle and guest count.' },
+              { num: '04', title: 'BOOK', desc: 'Submit traveler government ID proof for official Forest Department permit allocation.' },
+              { num: '05', title: 'EXPERIENCE', desc: 'Arrive at the reserve gate for your dawn briefing as the first rays break through the sal trees.' }
+            ].map((step, idx) => (
+              <div key={step.num} className="bg-forest-deep p-6 rounded-xl border border-sand/15 relative space-y-3">
+                <span className="font-serif text-3xl font-bold text-gold/40 block">
+                  {step.num}
+                </span>
+                <h3 className="font-serif text-base font-bold text-sand">{step.title}</h3>
+                <p className="text-xs text-sand/75 leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 07. OUR STORY HOMEPAGE PREVIEW */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-sand-warm rounded-2xl border border-forest/20 overflow-hidden grid grid-cols-1 lg:grid-cols-12 shadow-xl">
+          <div className="lg:col-span-6 relative min-h-[420px]">
+            <img 
+              src="/assets/img/tadoba-guide-briefing.jpg" 
+              alt="Naturalist in Tadoba with bird field guide"
+              className="w-full h-full object-cover brightness-[1.02]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"></div>
+            <div className="absolute bottom-4 left-4 right-4 bg-forest/90 backdrop-blur-md p-3.5 rounded-xl text-xs text-sand border border-sand/20 shadow-lg">
+              <span className="text-gold font-bold block text-[10px] uppercase">Field Guiding Master</span>
+              Generations of indigenous forest instincts passed down on the trails of Vidarbha.
+            </div>
+          </div>
+
+          <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest-safari text-earth">
+                <HeartHandshake className="w-4 h-4" />
+                <span>The Story of Shutter and Stripes</span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest leading-tight">
+                Where Photography Meets Forest Wisdom
+              </h2>
+              <p className="text-xs sm:text-sm text-forest/80 leading-relaxed">
+                Shutter and Stripes was founded on a simple truth: that genuine wildlife encounters require stillness, respect, and deep ecological familiarity.
+              </p>
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="p-3.5 bg-sand rounded-xl border border-forest/10 shadow-sm">
+                  <strong className="text-xs font-serif text-forest block">SHUTTER</strong>
+                  <span className="text-[11px] text-forest/70">Observing without disturbing; patient framing of wildlife behavior.</span>
+                </div>
+                <div className="p-3.5 bg-sand rounded-xl border border-forest/10 shadow-sm">
+                  <strong className="text-xs font-serif text-forest block">STRIPES</strong>
+                  <span className="text-[11px] text-forest/70">The living pulse of the Royal Bengal Tiger and Central India's forests.</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Link 
+                to="/our-story"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-forest text-sand text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-forest-light transition-all shadow-md"
+              >
+                <span>Discover Our Story</span>
+                <ArrowRight className="w-3.5 h-3.5 text-gold" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 08. WILDLIFE PHOTOGRAPHY GALLERY PREVIEW */}
+      <section className="py-20 bg-forest-deep text-sand border-y border-sand/15">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+            <div>
+              <span className="text-[11px] tracking-widest-safari uppercase text-gold font-bold block">
+                Visual Chronicles
+              </span>
+              <h2 className="font-serif text-3xl font-bold text-sand mt-1">
+                The Master Gallery
+              </h2>
+            </div>
+            <Link 
+              to="/gallery" 
+              className="text-xs font-bold uppercase tracking-wider text-gold hover:underline flex items-center gap-1.5"
+            >
+              <span>Explore Complete Gallery</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {gallery.map(item => (
+              <div key={item._id} className="relative rounded-2xl overflow-hidden group border border-sand/15 aspect-[4/3] shadow-lg">
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 text-sand space-y-0.5">
+                  <span className="text-[10px] text-gold uppercase tracking-wider font-bold block drop-shadow">
+                    {item.animal} • {item.destinationName}
+                  </span>
+                  <h4 className="font-serif text-sm font-bold truncate text-white drop-shadow">{item.title}</h4>
+                  <span className="text-[10px] text-sand/80 block drop-shadow">{item.photographer}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 09. JOURNAL PREVIEW */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+          <div>
+            <span className="text-[11px] tracking-widest-safari uppercase text-earth font-bold block">
+              Field Notes & Natural History
+            </span>
+            <h2 className="font-serif text-3xl font-bold text-forest mt-1">
+              The Wildlife Journal
+            </h2>
+          </div>
+          <Link 
+            to="/journal" 
+            className="text-xs font-bold uppercase tracking-wider text-earth hover:text-forest flex items-center gap-1.5"
+          >
+            <span>Read All Articles</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {journals.map(art => (
+            <div key={art.slug} className="bg-sand-warm rounded-2xl overflow-hidden border border-forest/15 shadow-sm group flex flex-col justify-between hover:shadow-xl transition-all">
+              <div>
+                <div className="h-52 overflow-hidden relative">
+                  <img src={art.coverImage} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02]" />
+                  <span className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-sand text-[10px] font-bold px-2.5 py-1 rounded-md border border-white/20 shadow">
+                    {art.category}
+                  </span>
+                </div>
+                <div className="p-5 space-y-2">
+                  <span className="text-[10px] text-forest/60 block">{art.readTime}</span>
+                  <h3 className="font-serif text-base font-bold text-forest leading-snug group-hover:text-earth transition-colors">
+                    {art.title}
+                  </h3>
+                  <p className="text-xs text-forest/70 line-clamp-3 leading-relaxed">
+                    {art.excerpt}
+                  </p>
+                </div>
+              </div>
+              <div className="p-5 pt-0">
+                <Link 
+                  to={`/journal/${art.slug}`}
+                  className="text-xs font-bold text-earth hover:text-forest flex items-center gap-1"
+                >
+                  <span>Read Article</span>
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 10. FINAL BOOKING CTA */}
+      <section className="py-24 bg-forest text-sand relative overflow-hidden border-t-2 border-gold/40">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/assets/img/forest-canopy-sunbeams.jpg" 
+            alt="Forest Canopy Wilderness" 
+            className="w-full h-full object-cover brightness-[0.25] contrast-[1.05]" 
+          />
+        </div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6 relative z-10">
+          <span className="text-xs uppercase tracking-widest-safari text-gold font-bold block drop-shadow">
+            Begin Your Wilderness Chapter
+          </span>
+          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+            The Forests of Central India Await.
+          </h2>
+          <p className="text-xs sm:text-sm text-sand/90 max-w-xl mx-auto leading-relaxed drop-shadow">
+            Reserve official Forest Department permits across Bandhavgarh, Kanha, Tadoba, Pench, and beyond with transparent pricing and specialist naturalists.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <Link 
+              to="/safaris" 
+              className="px-8 py-3.5 bg-gold text-forest font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gold-light transition-all shadow-xl"
+            >
+              Book Your Expedition
+            </Link>
+            <Link 
+              to="/compare" 
+              className="px-6 py-3.5 bg-black/40 backdrop-blur-md border border-sand/30 text-sand text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-black/60 transition-colors shadow-lg"
+            >
+              Compare Sanctuaries
+            </Link>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
+};
+
+export default HomePage;
