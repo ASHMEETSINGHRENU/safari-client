@@ -8,6 +8,7 @@ import {
 import { Destination, Safari, Booking } from '../../types';
 import { destinationService, safariService, bookingService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { inr, tierPrice, packageFromOf } from '../../lib/site';
 
 export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initialSafariSlug }) => {
   const [searchParams] = useSearchParams();
@@ -37,6 +38,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
   const [adults, setAdults] = useState<number>(2);
   const [children, setChildren] = useState<number>(0);
   const [naturalistRequested, setNaturalistRequested] = useState<boolean>(true);
+  const [selectedPackageLabel, setSelectedPackageLabel] = useState<string>('');
   const [customerInfo, setCustomerInfo] = useState({
     fullName: user?.name || '',
     email: user?.email || '',
@@ -85,11 +87,13 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
     ? safaris.filter(s => s.destinationSlug === selectedDestination.slug)
     : safaris;
 
-  // Price calculations
-  const basePrice = selectedSafari ? selectedSafari.basePrice : (selectedDestination ? selectedDestination.startingPrice : 7500);
-  const permitFee = 1500;
-  const guideFee = naturalistRequested ? 1000 : 0;
-  const totalAmount = basePrice + permitFee + guideFee;
+  // Package pricing. Permits, vehicle, guide and forest dues are bundled inside the
+  // package tiers \u2014 never itemised. The server recomputes this total authoritatively.
+  const packages = selectedDestination?.packages ?? [];
+  const selectedPackage =
+    packages.find(t => t.label === selectedPackageLabel) ?? packages[0];
+  const perPerson = selectedPackage?.min ?? (selectedDestination?.startingPrice ?? 0);
+  const totalAmount = perPerson * Math.max(adults, 1) + Math.round(perPerson * 0.5) * children;
 
   const handleNext = () => {
     setError(null);
@@ -144,6 +148,8 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
         guests: { adults, children },
         naturalistRequested,
         customerInfo,
+        packageLabel: selectedPackage?.label,
+        // Indicative only — the server recomputes totalAmount from seeded package data.
         totalAmount,
         specialRequests: customerInfo.specialRequests
       };
@@ -231,7 +237,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
         {step === 1 && (
           <div className="space-y-4 animate-fadeIn">
             <h3 className="font-serif text-lg font-bold text-forest">1. Select Target Wildlife Reserve</h3>
-            <p className="text-xs text-forest/70">Select from our 14 official reserves across Madhya Pradesh and Maharashtra.</p>
+            <p className="text-xs text-forest/70">Select from our {destinations.length} official reserves across {[...new Set(destinations.map(d => d.state))].join(' and ')}.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
               {destinations.map(d => {
                 const isSelected = selectedDestination?.slug === d.slug;
@@ -254,7 +260,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
                         {d.state}
                       </span>
                       <h4 className="font-serif text-sm font-bold truncate">{d.name}</h4>
-                      <span className="text-[11px] block text-sand/80">From ₹{d.startingPrice.toLocaleString('en-IN')}</span>
+                      <span className="text-[11px] block text-sand/80">Packages from {inr(packageFromOf(d))}</span>
                     </div>
                   </div>
                 );
@@ -293,13 +299,50 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
                       <h4 className="font-serif text-base font-bold mt-1">{s.name}</h4>
                       <p className={`text-xs mt-1 max-w-lg ${isSelected ? 'text-sand/80' : 'text-forest/70'}`}>{s.description}</p>
                     </div>
-                    <div className="sm:text-right">
-                      <span className="text-xs opacity-75 block">Vehicle Fee</span>
-                      <span className="font-serif text-xl font-bold text-gold">₹{s.basePrice.toLocaleString('en-IN')}</span>
+                    <div className="sm:text-right sm:self-center">
+                      <span className="text-xs opacity-75 block">{s.duration}</span>
+                      <span className="text-[11px] opacity-70 block mt-0.5">Priced by package below</span>
                     </div>
                   </div>
                 );
               })}
+            </div>
+
+            {/* Whole-package tier: accommodation, safaris, vehicle, guide and permits bundled */}
+            <div className="pt-4 border-t border-forest/15 space-y-3">
+              <h4 className="font-serif font-bold text-forest text-sm">3. Choose Your All-Inclusive Package</h4>
+              {selectedDestination?.packages?.length ? (
+                <div className="space-y-2">
+                  {selectedDestination.packages.map(t => {
+                    const isTier = selectedPackageLabel === t.label;
+                    return (
+                      <div
+                        key={t.label}
+                        onClick={() => setSelectedPackageLabel(t.label)}
+                        className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                          isTier ? 'border-gold bg-gold/10 ring-1 ring-gold' : 'border-forest/20 bg-sand hover:border-gold/60'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-bold text-forest text-sm">{t.label}</span>
+                        <span className="font-serif font-bold text-forest text-sm">
+                          {tierPrice(t)}
+                          <span className="text-[10px] font-sans text-forest/60 ml-1">per person</span>
+                        </span>
+                        </div>
+                        {t.includes?.length ? (
+                          <p className="text-[11px] text-forest/70 mt-1">{t.includes.join(' \u00b7 ')}</p>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-forest/70 bg-sand border border-forest/15 rounded-xl p-3">
+                  Package tiers for this reserve are on request. Submit the booking and our team will
+                  confirm the all-inclusive quote before any payment.
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -429,7 +472,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
         {/* STEP 7: GUESTS BREAKDOWN */}
         {step === 7 && (
           <div className="space-y-4 animate-fadeIn">
-            <h3 className="font-serif text-lg font-bold text-forest">7. Number of Guests & Naturalist</h3>
+            <h3 className="font-serif text-lg font-bold text-forest">7. Number of Guests and Naturalist</h3>
             <div className="bg-sand p-6 rounded-xl border border-forest/20 space-y-6 max-w-lg">
               <div className="flex items-center justify-between">
                 <div>
@@ -470,7 +513,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
               <div className="flex items-center justify-between border-t border-forest/15 pt-4">
                 <div>
                   <span className="font-bold text-sm block">Senior Forest Naturalist</span>
-                  <span className="text-xs text-forest/70">Certified local tribal guide & pugmark tracker (+₹1,000)</span>
+                  <span className="text-xs text-forest/70">Certified local tribal guide and pugmark tracker (+₹1,000)</span>
                 </div>
                 <input
                   type="checkbox"
@@ -483,10 +526,10 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
           </div>
         )}
 
-        {/* STEP 8: CUSTOMER & ID DETAILS */}
+        {/* STEP 8: CUSTOMER and ID DETAILS */}
         {step === 8 && (
           <div className="space-y-4 animate-fadeIn">
-            <h3 className="font-serif text-lg font-bold text-forest">8. Lead Traveler & Government ID Details</h3>
+            <h3 className="font-serif text-lg font-bold text-forest">8. Lead Traveler and Government ID Details</h3>
             <p className="text-xs text-forest/70">State Forest Department rules mandate original photo IDs at the entry gate.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-sand p-6 rounded-xl border border-forest/20">
               <div>
@@ -585,12 +628,12 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
                   <strong className="text-sm font-serif text-forest">{selectedDestination?.name} ({selectedDestination?.state})</strong>
                 </div>
                 <div>
-                  <span className="text-forest/60 block">PACKAGE & VEHICLE</span>
+                  <span className="text-forest/60 block">PACKAGE and VEHICLE</span>
                   <strong className="text-forest">{selectedSafari?.name || 'Exclusive Wilderness Safari'}</strong>
                   <span className="block text-forest/70">{selectedVehicle}</span>
                 </div>
                 <div>
-                  <span className="text-forest/60 block">DATE & TIME</span>
+                  <span className="text-forest/60 block">DATE and TIME</span>
                   <strong className="text-forest">{safariDate} • {selectedSlot} Slot</strong>
                 </div>
                 <div>
@@ -604,24 +647,35 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
               </div>
 
               <div className="border-t md:border-t-0 md:border-l border-forest/15 md:pl-6 space-y-3 text-xs">
-                <h4 className="font-serif font-bold text-forest text-sm">Transparent Cost Breakdown</h4>
-                <div className="flex justify-between py-1 border-b border-forest/10">
-                  <span>Vehicle & Reserve Permit Base</span>
-                  <span className="font-semibold">₹{basePrice.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-forest/10">
-                  <span>Forest Dept Statutory Entry Tax</span>
-                  <span className="font-semibold">₹{permitFee.toLocaleString('en-IN')}</span>
-                </div>
-                {naturalistRequested && (
+                <h4 className="font-serif font-bold text-forest text-sm">All-Inclusive Package Quote</h4>
+                {selectedPackage ? (
+                  <>
+                    <div className="flex justify-between py-1 border-b border-forest/10">
+                      <span>{selectedPackage.label} Package (per person)</span>
+                      <span className="font-semibold">{inr(selectedPackage.min)}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-forest/10">
+                      <span>Travelers</span>
+                      <span className="font-semibold">
+                        {Math.max(adults, 1)} adult{Math.max(adults, 1) === 1 ? '' : 's'}
+                        {children > 0 ? `, ${children} child${children === 1 ? '' : 'ren'}` : ''}
+                      </span>
+                    </div>
+                  </>
+                ) : (
                   <div className="flex justify-between py-1 border-b border-forest/10">
-                    <span>Certified Local Naturalist Guide</span>
-                    <span className="font-semibold">₹1,000</span>
+                    <span>Package rate</span>
+                    <span className="font-semibold">On request</span>
                   </div>
                 )}
+                <p className="text-[11px] text-forest/70 leading-snug">
+                  Every package includes accommodation, all safari drives, reserve permits, the
+                  vehicle, and a certified local naturalist guide. There are no separate permit or
+                  guide charges.
+                </p>
                 <div className="flex justify-between pt-2 text-sm font-bold text-forest">
                   <span>Total Payable:</span>
-                  <span className="text-gold font-serif text-lg">₹{totalAmount.toLocaleString('en-IN')}</span>
+                  <span className="text-gold font-serif text-lg">{inr(selectedPackage ? totalAmount : null)}</span>
                 </div>
                 <div className="bg-forest-deep text-sand p-3 rounded text-[11px] space-y-1">
                   <div className="flex items-center gap-1.5 text-gold font-bold">
@@ -662,7 +716,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
               </div>
               <div className="text-xs space-y-1">
                 <div><strong>Reserve:</strong> {confirmedBooking.destinationName}</div>
-                <div><strong>Date & Slot:</strong> {confirmedBooking.safariDate} ({confirmedBooking.slot})</div>
+                <div><strong>Date and Slot:</strong> {confirmedBooking.safariDate} ({confirmedBooking.slot})</div>
                 <div><strong>Assigned Zone:</strong> {confirmedBooking.zone}</div>
                 <div><strong>Lead Traveler:</strong> {confirmedBooking.customerInfo.fullName}</div>
                 <div><strong>Amount Paid:</strong> ₹{confirmedBooking.totalAmount.toLocaleString('en-IN')}</div>
@@ -720,7 +774,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
               className="px-8 py-3 bg-gold text-forest text-sm font-bold rounded hover:bg-gold-light transition-all flex items-center gap-2 shadow-lg"
             >
               <Sparkles className="w-4 h-4" />
-              <span>{loading ? 'Confirming with Reserve Gate...' : 'Confirm & Issue Permit'}</span>
+              <span>{loading ? 'Confirming with Reserve Gate...' : 'Confirm and Issue Permit'}</span>
             </button>
           )}
         </div>

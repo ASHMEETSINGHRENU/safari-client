@@ -59,7 +59,7 @@ export const JournalPage: React.FC = () => {
         <div className="max-w-3xl mb-12">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-semibold uppercase tracking-widest mb-4">
             <BookOpen className="w-3.5 h-3.5 text-gold" />
-            <span>Field Dispatches & Ecology</span>
+            <span>Field Dispatches and Ecology</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl text-forest font-bold tracking-tight mb-4">
             The Shutter And Stripes Wildlife Journal
@@ -69,7 +69,7 @@ export const JournalPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Filter & Search Bar */}
+        {/* Filter and Search Bar */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10 pb-4 border-b border-forest/10">
           <div className="flex items-center space-x-2 overflow-x-auto">
             {categories.map(cat => (

@@ -159,7 +159,7 @@ export const CustomerAccountPage: React.FC = () => {
                 : 'text-forest/60 hover:text-forest'
             }`}
           >
-            Personal & ID Profile
+            Personal and ID Profile
           </button>
         </div>
 
@@ -176,7 +176,7 @@ export const CustomerAccountPage: React.FC = () => {
                 <Compass className="w-12 h-12 text-forest/30 mx-auto" />
                 <h3 className="font-serif text-xl font-bold text-forest">No Safari Permits on Record</h3>
                 <p className="text-forest/70 text-xs max-w-md mx-auto">
-                  You have not submitted any safari permit requests yet. Explore the 14 tiger sanctuaries in MP and MH to schedule your first expedition.
+                  You have not submitted any safari permit requests yet. Explore our reserves to schedule your first expedition.
                 </p>
                 <div className="pt-2">
                   <Link
@@ -277,7 +277,7 @@ export const CustomerAccountPage: React.FC = () => {
         {activeTab === 'profile' && (
           <div className="max-w-xl bg-white p-8 rounded-3xl border border-forest/15 shadow-sm">
             <h3 className="font-serif text-2xl font-bold text-forest mb-2">
-              Identity & Contact Details
+              Identity and Contact Details
             </h3>
             <p className="text-forest/60 text-xs mb-6">
               Ensure your name matches your government identification exactly for smooth gate verification.
@@ -405,7 +405,7 @@ export const CustomerAccountPage: React.FC = () => {
                     <span className="font-bold text-forest">{new Date(selectedBookingForVoucher.safariDate).toDateString()}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-forest/50 block">Time Slot & Zone</span>
+                    <span className="text-[10px] uppercase font-bold text-forest/50 block">Time Slot and Zone</span>
                     <span className="font-bold text-forest">{selectedBookingForVoucher.slot} • {selectedBookingForVoucher.zone} Zone</span>
                   </div>
                 </div>

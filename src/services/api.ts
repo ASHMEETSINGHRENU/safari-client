@@ -132,7 +132,7 @@ export const bookingService = {
   }
 };
 
-// CMS & Content Services
+// CMS and Content Services
 export const cmsService = {
   getContent: async (key: string) => {
     const res = await api.get(`/cms/content/${key}`);

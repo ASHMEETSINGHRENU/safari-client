@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { stateCode, stateBadgeClass, inr, packageFromOf } from '../lib/site';
 import { 
   Scale, 
   Plus, 
@@ -117,7 +118,7 @@ export const ComparePage: React.FC = () => {
               >
                 <option value="" disabled>-- Select a reserve to compare --</option>
                 {availableToAdd.map(d => (
-                  <option key={d._id} value={d.slug}>{d.name} ({d.state === 'Madhya Pradesh' ? 'MP' : 'MH'})</option>
+                  <option key={d._id} value={d.slug}>{d.name} ({stateCode(d.state)})</option>
                 ))}
               </select>
             </div>
@@ -161,9 +162,7 @@ export const ComparePage: React.FC = () => {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-white ${
-                          d.state === 'Madhya Pradesh' ? 'bg-forest' : 'bg-earth'
-                        }`}>
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-white ${stateBadgeClass(d.state)}`}>
                           {d.state}
                         </span>
                         <h3 className="font-serif text-xl font-bold text-forest mt-1.5">{d.name}</h3>
@@ -209,9 +208,9 @@ export const ComparePage: React.FC = () => {
                   ))}
                 </tr>
 
-                {/* Zones Count & Gates */}
+                {/* Zones Count and Gates */}
                 <tr>
-                  <td className="p-5 font-bold text-forest bg-sand/10">Zones & Gates</td>
+                  <td className="p-5 font-bold text-forest bg-sand/10">Zones and Gates</td>
                   {comparedDestinations.map(d => (
                     <td key={d._id} className="p-5 space-y-2">
                       <div className="font-semibold text-forest">
@@ -255,15 +254,17 @@ export const ComparePage: React.FC = () => {
                   ))}
                 </tr>
 
-                {/* Starting Tariff */}
+                {/* Package Tariff */}
                 <tr>
-                  <td className="p-5 font-bold text-forest bg-sand/10">Permit Starting Rate</td>
+                  <td className="p-5 font-bold text-forest bg-sand/10">Packages From</td>
                   {comparedDestinations.map(d => (
                     <td key={d._id} className="p-5">
                       <span className="font-serif font-bold text-xl text-forest block">
-                        ₹{d.startingPrice.toLocaleString('en-IN')}
+                        {inr(packageFromOf(d))}
                       </span>
-                      <span className="text-[10px] text-forest/50">per safari jeep permit</span>
+                      <span className="text-[10px] text-forest/50">
+                        per person, all-inclusive. Permits, vehicle and guide included.
+                      </span>
                     </td>
                   ))}
                 </tr>

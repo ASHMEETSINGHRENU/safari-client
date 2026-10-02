@@ -75,7 +75,7 @@ export const AdminDashboardPage: React.FC = () => {
               <IndianRupee className="w-6 h-6 text-gold" />
             </div>
             <span className="text-[11px] text-forest/50 block pt-1">
-              Calculated across confirmed & paid permits
+              Calculated across confirmed and paid permits
             </span>
           </div>
 
@@ -118,7 +118,7 @@ export const AdminDashboardPage: React.FC = () => {
           >
             <div>
               <h3 className="font-serif text-lg font-bold text-forest group-hover:text-gold transition">
-                Manage Permits & Bookings
+                Manage Permits and Bookings
               </h3>
               <p className="text-xs text-forest/60 mt-1">Review traveler IDs, confirm payments, update statuses</p>
             </div>
@@ -131,7 +131,7 @@ export const AdminDashboardPage: React.FC = () => {
           >
             <div>
               <h3 className="font-serif text-lg font-bold text-forest group-hover:text-gold transition">
-                Reserve Capacities & Zones
+                Reserve Capacities and Zones
               </h3>
               <p className="text-xs text-forest/60 mt-1">Adjust starting prices, permits availability, and guidelines</p>
             </div>
@@ -144,7 +144,7 @@ export const AdminDashboardPage: React.FC = () => {
           >
             <div>
               <h3 className="font-serif text-lg font-bold text-forest group-hover:text-gold transition">
-                CMS & Brand Story
+                CMS and Brand Story
               </h3>
               <p className="text-xs text-forest/60 mt-1">Update editorial statements, ethics charter, and site settings</p>
             </div>

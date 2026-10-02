@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Destination } from '../../types';
-import { MapPin, Compass, ArrowRight, ShieldCheck, Check, Sparkles } from 'lucide-react';
+import { Compass, ArrowRight, Star } from 'lucide-react';
+import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, packageFromOf, inr, CONTACT_EMAIL } from '../../lib/site';
 
 interface ReserveMapProps {
   destinations: Destination[];
@@ -15,7 +18,108 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
   onSelectDestination 
 }) => {
   const [activeDest, setActiveDest] = useState<Destination | null>(null);
-  const [activeFilter, setActiveFilter] = useState<'All' | 'Madhya Pradesh' | 'Maharashtra'>('All');
+  const [activeFilter, setActiveFilter] = useState<string>('All');
+  const mapRef = useRef<L.Map | null>(null);
+  const layerRef = useRef<L.LayerGroup | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // ponytail: states derived from data, not a hardcoded list. New states appear with zero code change.
+  const states = useMemo(
+    () => [...new Set(destinations.map(d => d.state))].sort(
+      (a, b) => Number(isCoreState(b)) - Number(isCoreState(a)) || a.localeCompare(b)
+    ),
+    [destinations]
+  );
+
+  const filtered = useMemo(
+    () => destinations.filter(d => activeFilter === 'All' || d.state === activeFilter),
+    [destinations, activeFilter]
+  );
+
+  useEffect(() => {
+    if (activeFilter !== 'All' && !states.includes(activeFilter)) {
+      setActiveFilter('All');
+    }
+  }, [states, activeFilter]);
+
+  // Create the map once. OpenStreetMap tiles, no API key.
+  useEffect(() => {
+    if (!containerRef.current || mapRef.current) return;
+
+    const map = L.map(containerRef.current, {
+      center: [21.5, 79.0],
+      zoom: 6,
+      scrollWheelZoom: false,
+      zoomControl: true,
+    });
+    mapRef.current = map;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 12,
+      attribution: 'and OpenStreetMap contributors',
+    }).addTo(map);
+
+    layerRef.current = L.layerGroup().addTo(map);
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+      layerRef.current = null;
+    };
+  }, []);
+
+  // Container is hidden until layout settles; Leaflet needs a nudge.
+  useEffect(() => {
+    const t = setTimeout(() => mapRef.current?.invalidateSize(), 120);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Draw markers for whatever is currently visible.
+  useEffect(() => {
+    const map = mapRef.current;
+    const layer = layerRef.current;
+    if (!map || !layer) return;
+
+    layer.clearLayers();
+
+    for (const dest of filtered) {
+      const { lat, lng } = dest.coordinates;
+      const isSelected = activeDest?.slug === dest.slug;
+      const core = isCoreState(dest.state);
+
+      const marker = L.circleMarker([lat, lng], {
+        radius: isSelected ? 12 : 8,
+        color: '#202918',
+        weight: 2,
+        fillColor: isSelected ? '#D4A35B' : core ? '#8B5A2B' : '#6B7A5A',
+        fillOpacity: 0.95,
+      }).addTo(layer);
+
+      marker.bindTooltip(
+        `<strong>${dest.name}</strong><br/><span style="font-size:11px;opacity:.75">${dest.state}</span>`,
+        { direction: 'top', offset: [0, -6] }
+      );
+
+      marker.bindPopup(
+        `<div class="text-sand text-xs leading-relaxed">
+          <strong class="font-serif text-sm">${dest.name}</strong><br/>
+          ${dest.tagline}<br/>
+          <span style="opacity:.7">Packages from ${inr(packageFromOf(dest))} pp</span>
+        </div>`,
+        { className: 'custom-map-popup' }
+      );
+
+      marker.on('click', () => {
+        setActiveDest(dest);
+        if (onSelectDestination) onSelectDestination(dest);
+      });
+    }
+
+    if (filtered.length > 1) {
+      const bounds = L.latLngBounds(filtered.map(d => [d.coordinates.lat, d.coordinates.lng]));
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 8 });
+    }
+  }, [filtered, activeDest, onSelectDestination]);
 
   useEffect(() => {
     if (selectedSlug && destinations.length > 0) {
@@ -26,41 +130,56 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
     }
   }, [selectedSlug, destinations]);
 
-  const filtered = destinations.filter(d => {
-    if (activeFilter === 'All') return true;
-    return d.state === activeFilter;
-  });
+  // Pan to whatever got selected from outside the map (sidebar / list click).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !activeDest) return;
+    map.flyTo([activeDest.coordinates.lat, activeDest.coordinates.lng], Math.max(map.getZoom(), 7), { duration: 0.6 });
+  }, [activeDest?.slug]);
+
+  const primeZones = activeDest ? activeDest.zones.filter(isPrimeZone) : [];
 
   return (
-    <div className="bg-forest-deep text-sand rounded-2xl overflow-hidden border-2 border-forest/40 shadow-2xl">
+    <div className="bg-forest-deep text-sand rounded-2xl overflow-hidden border-2 border-forest/40 shadow-2xl isolate">
       {/* Map Control Bar */}
       <div className="p-4 sm:p-6 bg-forest border-b border-sand/15 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest-safari text-gold font-bold">
             <Compass className="w-4 h-4 animate-spin-slow" />
-            <span>Topographic Corridor Map</span>
+            <span>Topographic Survey Sheet</span>
           </div>
           <h3 className="font-serif text-xl sm:text-2xl font-bold text-sand mt-0.5">
-            Central India Wildlife Network
+            {MAP_LABEL}
           </h3>
           <p className="text-xs text-sand/70">
-            Click any reserve marker to view territory details, permit quotas, and immediate safari booking.
+            Click any reserve marker to view territory details, prime zones, gates, and rates.
           </p>
         </div>
 
-        {/* State Filter Pills */}
-        <div className="flex items-center bg-forest-deep/80 p-1 rounded-lg border border-sand/15 text-xs">
-          {(['All', 'Madhya Pradesh', 'Maharashtra'] as const).map(state => (
+        {/* State Filter Pills — derived from data */}
+        <div className="flex flex-wrap items-center bg-forest-deep/80 p-1 rounded-lg border border-sand/15 text-xs">
+          <button
+            onClick={() => setActiveFilter('All')}
+            className={`px-3 py-1.5 rounded-md font-medium transition-all ${
+              activeFilter === 'All'
+                ? 'bg-gold text-forest font-bold shadow-sm'
+                : 'text-sand/80 hover:text-sand hover:bg-forest/50'
+            }`}
+          >
+            All ({destinations.length})
+          </button>
+          {states.map(state => (
             <button
               key={state}
               onClick={() => setActiveFilter(state)}
-              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
-                activeFilter === state 
-                  ? 'bg-gold text-forest font-bold shadow-sm' 
+              className={`px-3 py-1.5 rounded-md font-medium transition-all flex items-center gap-1.5 ${
+                activeFilter === state
+                  ? 'bg-gold text-forest font-bold shadow-sm'
                   : 'text-sand/80 hover:text-sand hover:bg-forest/50'
               }`}
             >
-              {state === 'All' ? 'All 14 Reserves' : state}
+              {isCoreState(state) && <Star className="w-3 h-3 text-gold" />}
+              {state}
             </button>
           ))}
         </div>
@@ -69,92 +188,18 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
       {/* Main Grid: Interactive Visual Map + Active Detail Drawer */}
       <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[560px]">
         
-        {/* Interactive Topographic Canvas */}
-        <div className="lg:col-span-8 relative bg-[#202918] p-6 flex items-center justify-center overflow-hidden border-r border-sand/10 select-none">
-          {/* Subtle Topographic Elevation Contour SVG lines in background */}
-          <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="contourPattern" width="120" height="120" patternUnits="userSpaceOnUse">
-                <circle cx="60" cy="60" r="50" fill="none" stroke="#D4A35B" strokeWidth="0.8" strokeDasharray="3 3"/>
-                <circle cx="60" cy="60" r="35" fill="none" stroke="#EADCC6" strokeWidth="0.6"/>
-                <circle cx="60" cy="60" r="20" fill="none" stroke="#D4A35B" strokeWidth="0.6"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#contourPattern)" />
-          </svg>
+        {/* Real Leaflet Map */}
+        <div className="lg:col-span-8 relative border-r border-sand/10">
+          <div ref={containerRef} className="w-full h-full min-h-[560px]" />
 
-          {/* Stylized State Territory Boundary Representations */}
-          <div className="absolute inset-8 border border-dashed border-sand/15 rounded-xl pointer-events-none">
-            <span className="absolute top-4 left-6 text-[10px] tracking-widest uppercase font-serif text-sand/40">
-              Madhya Pradesh Corridor (North)
-            </span>
-            <span className="absolute bottom-4 right-6 text-[10px] tracking-widest uppercase font-serif text-sand/40">
-              Maharashtra Tiger Arc (South)
-            </span>
-            {/* Corridor connecting line */}
-            <div className="absolute top-1/2 left-10 right-10 h-0.5 border-t border-dashed border-gold/30"></div>
-          </div>
-
-          {/* Interactive Destination Nodes */}
-          <div className="relative w-full max-w-2xl h-[460px] my-auto">
-            {filtered.map((dest) => {
-              const isSelected = activeDest?.slug === dest.slug;
-              const isMP = dest.state === 'Madhya Pradesh';
-
-              return (
-                <div
-                  key={dest.slug}
-                  onClick={() => {
-                    setActiveDest(dest);
-                    if (onSelectDestination) onSelectDestination(dest);
-                  }}
-                  style={{
-                    position: 'absolute',
-                    left: `${dest.mapPosition.x}%`,
-                    top: `${dest.mapPosition.y}%`,
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                  className="group cursor-pointer z-20"
-                >
-                  {/* Pin Pulse effect */}
-                  {isSelected && (
-                    <div className="absolute -inset-3 bg-gold/25 rounded-full animate-ping pointer-events-none" />
-                  )}
-
-                  {/* Marker Node */}
-                  <div className={`relative px-2.5 py-1.5 rounded-full flex items-center gap-1.5 transition-all duration-300 shadow-lg border ${
-                    isSelected 
-                      ? 'bg-gold text-forest font-bold border-sand scale-110 shadow-gold/30' 
-                      : 'bg-forest/90 text-sand/90 hover:bg-forest hover:text-gold border-sand/30 hover:scale-105'
-                  }`}>
-                    <div className={`w-2 h-2 rounded-full ${isMP ? 'bg-amber-400' : 'bg-emerald-400'}`} />
-                    <span className="text-xs font-serif font-semibold whitespace-nowrap hidden sm:inline">
-                      {dest.name.replace(' Tiger Reserve', '').replace(' Wildlife Sanctuary', '').replace(' National Park', '')}
-                    </span>
-                    <MapPin className={`w-3.5 h-3.5 ${isSelected ? 'text-forest' : 'text-gold'}`} />
-                  </div>
-
-                  {/* Hover Tag on Mobile or Desktop */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-30 pointer-events-none">
-                    <div className="bg-sand text-forest text-[11px] font-bold px-2 py-0.5 rounded shadow whitespace-nowrap border border-forest/20">
-                      {dest.name} ({dest.state === 'Madhya Pradesh' ? 'MP' : 'MH'})
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Map Legend */}
-          <div className="absolute bottom-3 left-3 bg-forest-deep/90 backdrop-blur-md px-3 py-2 rounded-md border border-sand/15 text-[11px] flex items-center gap-4 text-sand/80">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
-              <span>Madhya Pradesh (7)</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span>
-              <span>Maharashtra (7)</span>
-            </div>
+          {/* Map Legend — generated from the states actually present */}
+          <div className="absolute bottom-6 left-3 z-[500] bg-forest-deep/90 backdrop-blur-md px-3 py-2 rounded-md border border-sand/15 text-[11px] flex items-center gap-4 text-sand/80 max-w-[calc(100%-1.5rem)] flex-wrap pointer-events-none">
+            {states.map(state => (
+              <div key={state} className="flex items-center gap-1.5">
+                <span className={`w-2.5 h-2.5 rounded-full inline-block ${isCoreState(state) ? 'bg-[#8B5A2B]' : 'bg-[#6B7A5A]'}`} />
+                <span>{state} ({destinations.filter(d => d.state === state).length})</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -171,10 +216,8 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-transparent to-transparent"></div>
                 <div className="absolute top-3 left-3">
-                  <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase ${
-                    activeDest.state === 'Madhya Pradesh' ? 'bg-amber-600 text-sand' : 'bg-emerald-700 text-sand'
-                  }`}>
-                    {activeDest.state}
+                  <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-forest-deep/85 text-sand">
+                    {activeDest.state} ({stateCode(activeDest.state)})
                   </span>
                 </div>
                 <div className="absolute bottom-3 left-3 right-3">
@@ -188,10 +231,14 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
               </div>
 
               {/* Reserve Quick Metrics */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                 <div className="bg-forest-deep/60 p-2.5 rounded border border-sand/10">
-                  <span className="text-sand/60 block text-[10px]">TIGER METRIC</span>
-                  <strong className="text-gold font-serif">{activeDest.tigerCount}</strong>
+                  <span className="text-sand/60 block text-[10px]">HEADLINE SPECIES</span>
+                  <strong className="text-gold font-serif">{activeDest.headlineSpecies || activeDest.tigerCount}</strong>
+                </div>
+                <div className="bg-forest-deep/60 p-2.5 rounded border border-sand/10">
+                  <span className="text-sand/60 block text-[10px]">TERRITORY</span>
+                  <strong className="text-gold font-serif">{activeDest.areaSqKm} km²</strong>
                 </div>
                 <div className="bg-forest-deep/60 p-2.5 rounded border border-sand/10">
                   <span className="text-sand/60 block text-[10px]">PERMIT STATUS</span>
@@ -204,27 +251,38 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                 {activeDest.shortDesc}
               </p>
 
-              {/* Core Zones */}
-              <div className="space-y-1 text-xs">
-                <span className="text-[10px] text-sand/60 uppercase font-bold tracking-wider">
-                  Configured Zones ({activeDest.zones.length}):
-                </span>
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {activeDest.zones.map(z => (
-                    <span key={z.name} className="px-2 py-0.5 bg-sand/10 text-sand rounded text-[10px] border border-sand/15">
-                      {z.name}
-                    </span>
-                  ))}
+              {/* Prime Zones and Gates */}
+              {primeZones.length > 0 && (
+                <div className="space-y-1.5 text-xs">
+                  <span className="text-[10px] text-gold uppercase font-bold tracking-wider flex items-center gap-1">
+                    <Star className="w-3 h-3" /> Prime Zones ({primeZones.length})
+                  </span>
+                  <div className="space-y-1">
+                    {primeZones.slice(0, 4).map(z => (
+                      <div key={z.name} className="bg-forest-deep/50 px-2.5 py-1.5 rounded border border-sand/10">
+                        <span className="text-sand font-medium">{z.name}</span>
+                        <span className="text-sand/60 text-[10px] block">
+                          Gates: {z.gates.join(', ') || 'On request'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Starting Price */}
-              <div className="pt-2 border-t border-sand/10 flex items-baseline justify-between">
-                <div>
-                  <span className="text-[10px] text-sand/60 block">Permits from</span>
-                  <span className="font-serif text-lg text-gold font-bold">₹{activeDest.startingPrice.toLocaleString('en-IN')}</span>
-                  <span className="text-[10px] text-sand/60"> / vehicle</span>
-                </div>
+              {/* Whole packages only — permits/vehicle/guide are bundled in. */}
+              <div className="pt-3 border-t border-sand/10">
+                <span className="text-[10px] text-sand/60 block">Packages From</span>
+                <span className="font-serif text-base text-gold font-bold">
+                  {inr(packageFromOf(activeDest))}
+                </span>
+                <span className="text-[10px] text-sand/50 block">Per person, all-inclusive</span>
+                <Link
+                  to={`/destinations/${activeDest.slug}`}
+                  className="text-[11px] text-sand/70 hover:text-gold underline underline-offset-2 mt-1 inline-block"
+                >
+                  View full inclusions
+                </Link>
               </div>
 
               {/* Action Buttons */}
@@ -244,6 +302,13 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                   <span>Book Safari</span>
                 </Link>
               </div>
+
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Package Enquiry — ${activeDest.name}`)}&body=${encodeURIComponent(`Reserve: ${activeDest.name} (${activeDest.state})\n\nI'd like to discuss:\n`)}`}
+                className="pt-3 border-t border-sand/10 text-center text-[11px] text-sand/70 hover:text-gold transition"
+              >
+                Prefer email? Enquire about this reserve →
+              </a>
             </div>
           ) : (
             <div className="h-full flex items-center justify-center text-center text-sand/60 text-xs">

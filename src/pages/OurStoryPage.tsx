@@ -12,6 +12,7 @@ import {
   Eye,
   Quote
 } from 'lucide-react';
+import { FOUNDER_NAME, YEARS_OF_EXPERIENCE } from '../lib/site';
 
 export const OurStoryPage: React.FC = () => {
   return (
@@ -25,10 +26,12 @@ export const OurStoryPage: React.FC = () => {
             <span>The Shutter And Stripes Ethos</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-6xl text-forest font-bold tracking-tight mb-6 leading-tight">
-            Born in the Dust & Sal Valleys of Central India
+            Born in the Dust and Sal Valleys of Central India
           </h1>
           <p className="text-forest/80 text-lg sm:text-xl leading-relaxed font-sans max-w-2xl mx-auto">
-            We are not a booking aggregator. We are wildlife chroniclers, naturalists, and photographers dedicated to the living legacy of the Royal Bengal Tiger across Madhya Pradesh and Maharashtra.
+            We are not a booking aggregator. Led by {FOUNDER_NAME}, we are wildlife chroniclers, naturalists, and photographers
+            dedicated to the resident wildlife of Central India&mdash;every tiger, leopard, sloth bear, dhole, and stork
+            that lives here year-round, not just the species on a checklist.
           </p>
         </div>
 
@@ -51,13 +54,59 @@ export const OurStoryPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. THE PHILOSOPHY OF THE STRIPED MONARCH */}
+{/* 2. THE FOUNDER */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest">
+              <Users className="w-4 h-4 text-gold" />
+              <span>Section II - Who Leads</span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl text-forest font-bold leading-tight">
+              {FOUNDER_NAME}, Founder and Principal Naturalist
+            </h2>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              {YEARS_OF_EXPERIENCE}+ years in the field, {YEARS_OF_EXPERIENCE}+ years of reading forests&mdash;first as a
+              photographer chasing good light, then as a naturalist who understood the light was only the excuse.
+            </p>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              The reserves on this site are the ones {FOUNDER_NAME} has personally walked: the waterholes where old pugmarks
+              overlap, the ridges where leopards move at dusk, the grasslands where sloth bear cubs are born in the heat of May.
+              That fieldwork is what this platform is built on.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
+                <span className="block font-serif text-2xl font-bold text-forest">{YEARS_OF_EXPERIENCE}+</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Years in the Field</span>
+              </div>
+              <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
+                <span className="block font-serif text-2xl font-bold text-forest">2</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Core States</span>
+              </div>
+              <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
+                <span className="block font-serif text-2xl font-bold text-forest">1</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Direct Enquiry Line</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 h-[420px]">
+            <img
+              src="/assets/img/tadoba-str-guide.jpg"
+              alt={`${FOUNDER_NAME} in the field`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 3. THE PHILOSOPHY OF THE STRIPED MONARCH */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest">
               <TreePine className="w-4 h-4 text-gold" />
-              <span>Section II — The Sovereign of the Canopy</span>
+              <span>Section III - The Sovereign of the Canopy</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl text-forest font-bold leading-tight">
               Honoring the Apex of the Forest Ecosystem
@@ -92,7 +141,7 @@ export const OurStoryPage: React.FC = () => {
           <div className="max-w-3xl mb-16">
             <div className="inline-flex items-center space-x-2 text-gold text-xs font-bold uppercase tracking-widest mb-3">
               <Camera className="w-4 h-4" />
-              <span>Section III — Photography Philosophy</span>
+              <span>Section IV — Photography Philosophy</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold leading-tight mb-4">
               The Camera as an Instrument of Empathy
@@ -130,18 +179,18 @@ export const OurStoryPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. THE 14 BASTIONS OF CENTRAL INDIA */}
+      {/* 5. THE BASTIONS OF CENTRAL INDIA */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
         <div className="max-w-3xl mb-12">
           <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest mb-3">
             <TreePine className="w-4 h-4 text-gold" />
-            <span>Section IV — Geography & Focus</span>
+            <span>Section V — Geography and Focus</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl text-forest font-bold leading-tight mb-4">
-            Why Only Madhya Pradesh & Maharashtra?
+            Why Madhya Pradesh and Maharashtra? <span className="text-forest/60 italic font-normal text-xl sm:text-2xl">&mdash; and beyond.</span>
           </h2>
           <p className="text-forest/80 text-base leading-relaxed font-sans">
-            Central India and the northern Western Ghats hold the most vital gene pool of Panthera tigris tigris in the world. By hyper-focusing exclusively on these 14 reserves, we maintain intimate relationships with local forest rangers, village eco-development committees, and certified naturalists.
+            Central India and the northern Western Ghats hold the most vital gene pool of Panthera tigris tigris in the world. By hyper-focusing on our core reserves in Madhya Pradesh and Maharashtra&mdash;and adding new regions as we do the same fieldwork&mdash;we maintain intimate relationships with local forest rangers, village eco-development committees, and certified naturalists.
           </p>
         </div>
 
@@ -170,7 +219,7 @@ export const OurStoryPage: React.FC = () => {
               <span className="px-3 py-1 bg-earth text-sand text-xs font-bold rounded-full uppercase tracking-wider">
                 Maharashtra
               </span>
-              <h3 className="font-serif text-2xl font-bold text-forest">The Sahyadri & Vidarbha Bastions</h3>
+              <h3 className="font-serif text-2xl font-bold text-forest">The Sahyadri and Vidarbha Bastions</h3>
             </div>
             <p className="text-forest/70 text-sm leading-relaxed mb-6">
               From Tadoba's legendary dry deciduous valleys to the mist of Melghat and the biodiversity of Sahyadri. A dynamic terrain of community reserves and buffer stewardship.
@@ -200,10 +249,10 @@ export const OurStoryPage: React.FC = () => {
           <div className="space-y-6">
             <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest">
               <Users className="w-4 h-4 text-gold" />
-              <span>Section V — Community Empowerment</span>
+              <span>Section VI — Community Empowerment</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl text-forest font-bold leading-tight">
-              The Guild of Indigenous Trackers & Naturalists
+              The Guild of Indigenous Trackers and Naturalists
             </h2>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
               The true custodians of these forests are the Gond, Baiga, and Korku tribal communities whose ancestors walked beside tigers for millennia. Every safari booked through Shutter And Stripes directly enlists and compensates trained local guides and drivers.
@@ -272,7 +321,7 @@ export const OurStoryPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 7 & 8. CALL TO EXPEDITION */}
+      {/* 7 and 8. CALL TO EXPEDITION */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-forest text-sand p-10 sm:p-16 rounded-3xl relative overflow-hidden text-center max-w-4xl mx-auto">
           <div className="relative z-10 space-y-6">
@@ -283,14 +332,14 @@ export const OurStoryPage: React.FC = () => {
               Ready to Experience the Forest as It Was Meant to Be?
             </h2>
             <p className="text-sand/80 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-              Explore our 14 destinations, inspect verified permit slots, or consult with our lead naturalists for a tailored multi-reserve safari.
+              Explore our destinations, inspect permit availability, or consult with our lead naturalists for a tailored multi-reserve safari.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 to="/destinations"
                 className="w-full sm:w-auto px-8 py-3.5 bg-gold text-forest rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-gold/90 transition shadow-lg"
               >
-                Discover the 14 Reserves
+                Discover Our Reserves
               </Link>
               <Link
                 to="/booking"

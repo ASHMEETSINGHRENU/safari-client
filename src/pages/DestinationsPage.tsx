@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
+import { stateBadgeClass, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE, packageFromOf, inr } from '../lib/site';
+import PackageTiers from '../components/packages/PackageTiers';
 
 export const DestinationsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -88,8 +90,19 @@ export const DestinationsPage: React.FC = () => {
     return matchesState && matchesSearch && matchesAvailability;
   });
 
-  const mpCount = destinations.filter(d => d.state === 'Madhya Pradesh').length;
-  const mhCount = destinations.filter(d => d.state === 'Maharashtra').length;
+  // ponytail: states derived from data, core states first. New states need zero code change.
+  const states = [...new Set(destinations.map(d => d.state))]
+    .sort((a, b) => {
+      const aCore = CORE_STATES.indexOf(a);
+      const bCore = CORE_STATES.indexOf(b);
+      if (aCore === -1 && bCore === -1) return a.localeCompare(b);
+      if (aCore === -1) return 1;
+      if (bCore === -1) return -1;
+      return aCore - bCore;
+    });
+  const coreCount = destinations.filter(d => isCoreState(d.state)).length;
+  const total = destinations.length;
+  const expanding = states.length > CORE_STATES.length;
 
   return (
     <div className="bg-sand min-h-screen pt-28 pb-20">
@@ -98,33 +111,34 @@ export const DestinationsPage: React.FC = () => {
         <div className="max-w-4xl">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-semibold uppercase tracking-widest mb-4">
             <Compass className="w-3.5 h-3.5 text-gold" />
-            <span>The Central Indian & Sahyadri Wild</span>
+            <span>The Central Indian and Sahyadri Wild</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-forest font-bold tracking-tight mb-4">
-            Protected Tiger Reserves & Wildlife Sanctuaries
+            Protected Reserves and Wildlife Sanctuaries
           </h1>
           <p className="text-forest/80 text-lg leading-relaxed font-sans max-w-3xl">
-            Fourteen distinct ecosystems across Madhya Pradesh and Maharashtra. From the sal valleys of Kanha and the crags of Bandhavgarh, to the bamboo glades of Tadoba and the mist of Melghat. Discover authentic forest zones, verified gate permit protocols, and uncompromised wilderness.
+            {total || 'Our'} distinct ecosystems{expanding ? ' across India' : ' across Madhya Pradesh and Maharashtra'}&mdash;from the sal valleys of Kanha and the crags of Bandhavgarh, to the bamboo glades of Tadoba and the mist of Melghat.
+            {' '}Each one mapped by our naturalists over {YEARS_OF_EXPERIENCE}+ years of field work. Explore natural history, prime zones and gates, and package rates with no middleman.
           </p>
         </div>
 
         {/* State Summary Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-forest/10">
           <div className="bg-sand-light/60 p-4 rounded-xl border border-forest/10">
-            <span className="block text-2xl font-serif font-bold text-forest">{destinations.length || 14}</span>
+            <span className="block text-2xl font-serif font-bold text-forest">{total}</span>
             <span className="text-xs uppercase font-medium tracking-wider text-forest/70">Total Reserves</span>
           </div>
           <div className="bg-sand-light/60 p-4 rounded-xl border border-forest/10">
-            <span className="block text-2xl font-serif font-bold text-forest">{mpCount || 7}</span>
-            <span className="text-xs uppercase font-medium tracking-wider text-forest/70">Madhya Pradesh</span>
+            <span className="block text-2xl font-serif font-bold text-forest">{coreCount}</span>
+            <span className="text-xs uppercase font-medium tracking-wider text-forest/70">Core Region (MP and MH)</span>
           </div>
           <div className="bg-sand-light/60 p-4 rounded-xl border border-forest/10">
-            <span className="block text-2xl font-serif font-bold text-forest">{mhCount || 7}</span>
-            <span className="text-xs uppercase font-medium tracking-wider text-forest/70">Maharashtra</span>
+            <span className="block text-2xl font-serif font-bold text-forest">{states.length}</span>
+            <span className="text-xs uppercase font-medium tracking-wider text-forest/70">States Covered</span>
           </div>
           <div className="bg-sand-light/60 p-4 rounded-xl border border-forest/10">
-            <span className="block text-2xl font-serif font-bold text-forest">100%</span>
-            <span className="text-xs uppercase font-medium tracking-wider text-forest/70">Official Forest Dept Permits</span>
+            <span className="block text-2xl font-serif font-bold text-forest">{YEARS_OF_EXPERIENCE}+</span>
+            <span className="text-xs uppercase font-medium tracking-wider text-forest/70">Years in the Field</span>
           </div>
         </div>
       </section>
@@ -133,7 +147,7 @@ export const DestinationsPage: React.FC = () => {
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-8 sticky top-20 z-20">
         <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-md border border-forest/10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
           
-          {/* State Tabs */}
+          {/* State Tabs — generated from data, core states first */}
           <div className="flex items-center space-x-2 bg-sand/60 p-1.5 rounded-xl border border-forest/10 overflow-x-auto">
             <button
               onClick={() => handleStateChange('All')}
@@ -143,28 +157,21 @@ export const DestinationsPage: React.FC = () => {
                   : 'text-forest/70 hover:text-forest hover:bg-forest/5'
               }`}
             >
-              All Reserves ({destinations.length})
+              All ({total})
             </button>
-            <button
-              onClick={() => handleStateChange('Madhya Pradesh')}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap ${
-                selectedState.toLowerCase() === 'madhya pradesh'
-                  ? 'bg-forest text-sand shadow-sm'
-                  : 'text-forest/70 hover:text-forest hover:bg-forest/5'
-              }`}
-            >
-              Madhya Pradesh ({mpCount})
-            </button>
-            <button
-              onClick={() => handleStateChange('Maharashtra')}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap ${
-                selectedState.toLowerCase() === 'maharashtra'
-                  ? 'bg-forest text-sand shadow-sm'
-                  : 'text-forest/70 hover:text-forest hover:bg-forest/5'
-              }`}
-            >
-              Maharashtra ({mhCount})
-            </button>
+            {states.map(state => (
+              <button
+                key={state}
+                onClick={() => handleStateChange(state)}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap flex items-center gap-1.5 ${
+                  selectedState === state
+                    ? 'bg-forest text-sand shadow-sm'
+                    : 'text-forest/70 hover:text-forest hover:bg-forest/5'
+                }`}
+              >
+                {state} ({destinations.filter(d => d.state === state).length})
+              </button>
+            ))}
           </div>
 
           {/* Search Input */}
@@ -187,7 +194,7 @@ export const DestinationsPage: React.FC = () => {
             )}
           </div>
 
-          {/* Availability & View Mode */}
+          {/* Availability and View Mode */}
           <div className="flex items-center space-x-3">
             <select
               value={availabilityFilter}
@@ -246,7 +253,7 @@ export const DestinationsPage: React.FC = () => {
             <Compass className="w-12 h-12 text-forest/30 mx-auto mb-4" />
             <h3 className="font-serif text-2xl text-forest font-bold mb-2">No Reserves Match Your Search</h3>
             <p className="text-forest/70 text-sm mb-6">
-              Try adjusting your search criteria or resetting filters to view all 14 reserves.
+              Try adjusting your search criteria or resetting filters to view all reserves.
             </p>
             <button
               onClick={() => {
@@ -282,7 +289,7 @@ export const DestinationsPage: React.FC = () => {
                       />
                       <div className="absolute top-4 left-4 flex flex-col gap-2">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-white shadow ${
-                          dest.state === 'Madhya Pradesh' ? 'bg-forest' : 'bg-earth'
+                          stateBadgeClass(dest.state)
                         }`}>
                           {dest.state}
                         </span>
@@ -330,8 +337,10 @@ export const DestinationsPage: React.FC = () => {
                             <span className="font-semibold text-forest">{dest.areaSqKm} km²</span>
                           </div>
                           <div>
-                            <span className="text-forest/50 block">Tiger Est.</span>
-                            <span className="font-semibold text-forest">{dest.tigerCount}</span>
+                            <span className="text-forest/50 block">Headline</span>
+                            <span className="font-semibold text-forest truncate block">
+                              {dest.headlineSpecies || dest.tigerCount}
+                            </span>
                           </div>
                           <div>
                             <span className="text-forest/50 block">Best Months</span>
@@ -349,30 +358,33 @@ export const DestinationsPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-forest/10">
-                        <div>
-                          <span className="text-[11px] text-forest/60 uppercase tracking-wider block">Permits From</span>
-                          <span className="font-serif text-xl font-bold text-forest">₹{dest.startingPrice.toLocaleString('en-IN')}</span>
-                        </div>
-                        <div className="flex space-x-3">
-                          <Link
-                            to={`/destinations/${dest.slug}`}
-                            className="px-4 py-2 border border-forest/30 text-forest rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest hover:text-sand transition"
-                          >
-                            View Guide
-                          </Link>
-                          <Link
-                            to={`/booking?destination=${dest.slug}`}
-                            className="px-5 py-2 bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow"
-                          >
-                            Book Safari
-                          </Link>
+                      <div className="pt-4 border-t border-forest/10">
+                        <PackageTiers destination={dest} variant="card" />
+                        <div className="flex items-end justify-between gap-3 mt-4">
+                          <div>
+                            <span className="text-[11px] text-forest/60 uppercase tracking-wider block">Packages From</span>
+                            <span className="font-serif text-xl font-bold text-forest">{inr(packageFromOf(dest))}</span>
+                          </div>
+                          <div className="flex space-x-3">
+                            <Link
+                              to={`/destinations/${dest.slug}`}
+                              className="px-4 py-2 border border-forest/30 text-forest rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest hover:text-sand transition"
+                            >
+                              View Destination
+                            </Link>
+                            <Link
+                              to={`/booking?destination=${dest.slug}`}
+                              className="px-5 py-2 bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow"
+                            >
+                              Book Safari
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 );
-              }
+                }
 
               // Standard Grid Card
               return (
@@ -392,7 +404,7 @@ export const DestinationsPage: React.FC = () => {
                     
                     <div className="absolute top-4 left-4 flex flex-col gap-1.5">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-white shadow-md ${
-                        dest.state === 'Madhya Pradesh' ? 'bg-forest' : 'bg-earth'
+                        stateBadgeClass(dest.state)
                       }`}>
                         {dest.state}
                       </span>
@@ -440,8 +452,10 @@ export const DestinationsPage: React.FC = () => {
                           <span className="font-semibold text-forest text-xs">{dest.areaSqKm} km²</span>
                         </div>
                         <div className="border-r border-forest/10 px-1">
-                          <span className="text-[10px] text-forest/50 uppercase block">Tigers</span>
-                          <span className="font-semibold text-forest text-xs">{dest.tigerCount}</span>
+                          <span className="text-[10px] text-forest/50 uppercase block">Headline</span>
+                          <span className="font-semibold text-forest text-xs truncate block">
+                            {dest.headlineSpecies || dest.tigerCount}
+                          </span>
                         </div>
                         <div className="pl-1">
                           <span className="text-[10px] text-forest/50 uppercase block">Zones</span>
@@ -466,8 +480,8 @@ export const DestinationsPage: React.FC = () => {
 
                     <div className="pt-4 border-t border-forest/10 flex items-center justify-between">
                       <div>
-                        <span className="text-[10px] text-forest/50 uppercase tracking-wider block">Permits From</span>
-                        <span className="font-serif text-lg font-bold text-forest">₹{dest.startingPrice.toLocaleString('en-IN')}</span>
+                        <span className="text-[10px] text-forest/50 uppercase tracking-wider block">Packages From</span>
+                        <span className="font-serif text-lg font-bold text-forest">{inr(packageFromOf(dest))}</span>
                       </div>
                       <div className="flex space-x-2">
                         <Link

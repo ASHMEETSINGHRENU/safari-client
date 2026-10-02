@@ -50,7 +50,7 @@ export const AdminInquiriesPage: React.FC = () => {
         {/* Header */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-forest/15 shadow-sm">
           <h2 className="font-serif text-2xl font-bold text-forest">
-            Traveler Inquiries & Bespoke Requests
+            Traveler Inquiries and Bespoke Requests
           </h2>
           <p className="text-forest/60 text-xs mt-1">
             Incoming dispatches for photography gypsies, multi-park routing, and custom permit queries
@@ -71,7 +71,7 @@ export const AdminInquiriesPage: React.FC = () => {
                     <th className="p-4 font-semibold">Date</th>
                     <th className="p-4 font-semibold">Traveler</th>
                     <th className="p-4 font-semibold">Target Reserve</th>
-                    <th className="p-4 font-semibold">Subject & Message</th>
+                    <th className="p-4 font-semibold">Subject and Message</th>
                     <th className="p-4 font-semibold">Status</th>
                     <th className="p-4 font-semibold text-right">Inspect</th>
                   </tr>

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { safariService, destinationService } from '../services/api';
 import { Safari, Destination } from '../types';
+import { stateCode, inr } from '../lib/site';
 
 export const SafarisPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -84,7 +85,7 @@ export const SafarisPage: React.FC = () => {
         <div className="max-w-3xl">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-semibold uppercase tracking-widest mb-4">
             <Compass className="w-3.5 h-3.5 text-gold" />
-            <span>Permit & Vehicle Configurations</span>
+            <span>Permit and Vehicle Configurations</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-forest font-bold tracking-tight mb-4">
             Curated Safari Experiences
@@ -127,9 +128,9 @@ export const SafarisPage: React.FC = () => {
                 onChange={(e) => setSelectedDestination(e.target.value)}
                 className="w-full px-3 py-2 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
               >
-                <option value="All">All 14 Reserves</option>
+                <option value="All">All Reserves</option>
                 {destinations.map(d => (
-                  <option key={d._id} value={d.slug}>{d.name} ({d.state === 'Madhya Pradesh' ? 'MP' : 'MH'})</option>
+                  <option key={d._id} value={d.slug}>{d.name} ({stateCode(d.state)})</option>
                 ))}
               </select>
             </div>
@@ -276,11 +277,12 @@ export const SafarisPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Footer price & CTA */}
+                {/* Footer price and CTA */}
                 <div className="px-6 py-4 bg-sand-light/50 border-t border-forest/10 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] uppercase tracking-wider text-forest/50 block">All-Inclusive</span>
-                    <span className="font-serif text-xl font-bold text-forest">₹{s.basePrice.toLocaleString('en-IN')}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-forest/50 block">Package From</span>
+                    <span className="font-serif text-xl font-bold text-forest">{inr(s.basePrice)}</span>
+                    <span className="text-[10px] text-forest/50 block mt-0.5">Per person, all-inclusive</span>
                   </div>
                   <Link
                     to={`/booking?destination=${s.destinationSlug}&safari=${s.slug}`}

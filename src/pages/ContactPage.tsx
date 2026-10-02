@@ -12,6 +12,7 @@ import {
   MessageSquare,
   ShieldCheck
 } from 'lucide-react';
+import { stateCode } from '../lib/site';
 import { cmsService, destinationService } from '../services/api';
 import { Destination } from '../types';
 
@@ -245,7 +246,7 @@ export const ContactPage: React.FC = () => {
                       >
                         <option value="">-- Multiple / Unsure --</option>
                         {destinations.map(d => (
-                          <option key={d._id} value={d.name}>{d.name} ({d.state === 'Madhya Pradesh' ? 'MP' : 'MH'})</option>
+                          <option key={d._id} value={d.name}>{d.name} ({stateCode(d.state)})</option>
                         ))}
                       </select>
                     </div>
@@ -280,7 +281,7 @@ export const ContactPage: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
-                      Your Requirements & Notes *
+                      Your Requirements and Notes *
                     </label>
                     <textarea
                       required

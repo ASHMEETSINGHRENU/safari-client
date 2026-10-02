@@ -50,12 +50,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   }
 
   const navItems = [
-    { label: 'Overview & KPIs', path: '/admin', icon: LayoutDashboard },
-    { label: 'Safari Permits & Bookings', path: '/admin/bookings', icon: BookOpen },
-    { label: 'Reserves & Sanctuaries', path: '/admin/destinations', icon: MapPin },
-    { label: 'Safari Packages & Tariffs', path: '/admin/safaris', icon: Compass },
+    { label: 'Overview and KPIs', path: '/admin', icon: LayoutDashboard },
+    { label: 'Safari Permits and Bookings', path: '/admin/bookings', icon: BookOpen },
+    { label: 'Reserves and Sanctuaries', path: '/admin/destinations', icon: MapPin },
+    { label: 'Safari Packages and Tariffs', path: '/admin/safaris', icon: Compass },
     { label: 'Traveler Inquiries', path: '/admin/inquiries', icon: MessageSquare },
-    { label: 'CMS & Brand Story', path: '/admin/cms', icon: FileEdit },
+    { label: 'CMS and Brand Story', path: '/admin/cms', icon: FileEdit },
   ];
 
   const currentNav = navItems.find(item => item.path === location.pathname) || navItems[0];
@@ -66,7 +66,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       {/* Mobile Top Header */}
       <div className="md:hidden bg-forest text-sand px-4 py-3 flex items-center justify-between shadow-md z-30">
         <div className="flex items-center space-x-2">
-          <img src="/assets/logo/logo.png" alt="Shutter And Stripes" className="h-8 w-auto" />
+          <img src="/assets/logo/logo.png" alt="Shutter And Stripes" className="h-7 w-auto object-contain rounded bg-sand-warm px-1.5 py-1" />
           <span className="font-serif font-bold text-sm tracking-wide">ADMIN CONSOLE</span>
         </div>
         <button
@@ -83,14 +83,14 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         
-        {/* Sidebar Header & Brand */}
+        {/* Sidebar Header and Brand */}
         <div>
           <div className="p-6 border-b border-sand/10">
             <Link to="/admin" className="flex items-center space-x-3 group">
               <img 
                 src="/assets/logo/logo.png" 
                 alt="Shutter And Stripes Logo" 
-                className="h-10 w-auto group-hover:scale-105 transition-transform" 
+                className="h-9 w-auto object-contain rounded bg-sand-warm px-2 py-1.5 group-hover:scale-105 transition-transform"
               />
               <div>
                 <span className="font-serif font-bold text-base tracking-wider block text-sand leading-tight">

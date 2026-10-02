@@ -5,13 +5,14 @@ export interface Zone {
   vehicleQuotaPerDay?: number;
   description?: string;
   highlight?: string;
+  isPrime?: boolean;
 }
 
 export interface Destination {
   _id: string;
   name: string;
   slug: string;
-  state: 'Madhya Pradesh' | 'Maharashtra';
+  state: string;
   tagline: string;
   shortDesc: string;
   editorialQuote?: string;
@@ -20,6 +21,7 @@ export interface Destination {
   galleryImages: string[];
   areaSqKm: number;
   tigerCount: string;
+  headlineSpecies?: string;
   bestTimeToVisit: string;
   coordinates: {
     lat: number;
@@ -30,6 +32,18 @@ export interface Destination {
     y: number;
   };
   startingPrice: number;
+  packages?: Array<{
+    label: 'Budget' | 'Mid-Range' | 'Luxury';
+    min: number;
+    max: number;
+    openEnded?: boolean;
+    includes: string[];
+  }>;
+  positioning?: string;
+  bestSuitedFor?: string;
+  gateway?: string;
+  packageDuration?: string;
+  safariPlan?: string;
   availability: 'AVAILABLE' | 'FEW PERMITS' | 'LIMITED' | 'SOLD OUT';
   zones: Zone[];
   wildlifeHighlights: string[];
@@ -58,8 +72,6 @@ export interface Safari {
   capacity: number;
   zones: string[];
   basePrice: number;
-  permitFee: number;
-  guideFee: number;
   description: string;
   inclusions: string[];
   exclusions: string[];
@@ -98,6 +110,7 @@ export interface Booking {
   naturalistRequested: boolean;
   specialRequests?: string;
   totalAmount: number;
+  packageLabel?: 'Budget' | 'Mid-Range' | 'Luxury';
   bookingStatus: 'pending' | 'confirmed' | 'payment_pending' | 'paid' | 'cancelled' | 'completed' | 'rejected';
   paymentStatus: 'pending' | 'paid' | 'refunded';
   createdAt: string;

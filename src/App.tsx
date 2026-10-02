@@ -52,7 +52,7 @@ export const App: React.FC = () => {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          {/* Consumer Facing Pages (With Public Navbar & Footer) */}
+          {/* Consumer Facing Pages (With Public Navbar and Footer) */}
           <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
           <Route path="/destinations" element={<PublicRoute><DestinationsPage /></PublicRoute>} />
           <Route path="/destinations/:slug" element={<PublicRoute><DestinationDetailPage /></PublicRoute>} />
@@ -69,7 +69,7 @@ export const App: React.FC = () => {
           <Route path="/faqs" element={<PublicRoute><FAQPage /></PublicRoute>} />
           <Route path="/contact" element={<PublicRoute><ContactPage /></PublicRoute>} />
 
-          {/* Booking & Account */}
+          {/* Booking and Account */}
           <Route path="/booking" element={<PublicRoute><BookingPage /></PublicRoute>} />
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />

@@ -56,7 +56,7 @@ export const AdminOurStoryCMSPage: React.FC = () => {
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-forest/15 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="font-serif text-2xl font-bold text-forest">
-              Content Management & Brand Narrative
+              Content Management and Brand Narrative
             </h2>
             <p className="text-forest/60 text-xs">
               Live updates to the Our Story page, homepage highlights, and conservation statements
@@ -113,7 +113,7 @@ export const AdminOurStoryCMSPage: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      value={contentData.headline || 'Born in the Dust & Sal Valleys of Central India'}
+                      value={contentData.headline || 'Born in the Dust and Sal Valleys of Central India'}
                       onChange={e => setContentData({ ...contentData, headline: e.target.value })}
                       className="w-full px-4 py-2.5 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
                     />
@@ -153,7 +153,7 @@ export const AdminOurStoryCMSPage: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      value={contentData.badge || 'Premium Indian Wildlife Safari & Booking Platform'}
+                      value={contentData.badge || 'Premium Indian Wildlife Safari and Booking Platform'}
                       onChange={e => setContentData({ ...contentData, badge: e.target.value })}
                       className="w-full px-4 py-2.5 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
                     />
@@ -220,7 +220,7 @@ export const AdminOurStoryCMSPage: React.FC = () => {
                   className="px-6 py-2.5 bg-forest text-sand rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-forest/90 transition shadow flex items-center space-x-2"
                 >
                   <Save className="w-4 h-4 text-gold" />
-                  <span>{saving ? 'Publishing Changes...' : 'Save & Publish Live'}</span>
+                  <span>{saving ? 'Publishing Changes...' : 'Save and Publish Live'}</span>
                 </button>
               </div>
 

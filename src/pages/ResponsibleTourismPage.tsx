@@ -81,7 +81,7 @@ export const ResponsibleTourismPage: React.FC = () => {
               </li>
               <li className="flex items-center space-x-2">
                 <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
-                <span>English & scientific terminology training workshops.</span>
+                <span>English and scientific terminology training workshops.</span>
               </li>
             </ul>
           </div>
@@ -117,7 +117,7 @@ export const ResponsibleTourismPage: React.FC = () => {
               <ShieldCheck className="w-6 h-6 text-gold" />
             </div>
             <h2 className="font-serif text-2xl font-bold text-forest">
-              4. NTCA & Forest Department Alignment
+              4. NTCA and Forest Department Alignment
             </h2>
             <p className="text-forest/70 text-sm leading-relaxed">
               We respect carrying capacity quotas established by the National Tiger Conservation Authority. We do not lobby for unauthorized extra vehicle permits into fragile core zones.

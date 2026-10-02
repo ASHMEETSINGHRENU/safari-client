@@ -9,6 +9,7 @@ import {
   CheckCircle2, 
   AlertCircle 
 } from 'lucide-react';
+import { stateCode } from '../../lib/site';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { safariService, destinationService } from '../../services/api';
 import { Safari, Destination } from '../../types';
@@ -61,7 +62,7 @@ export const AdminSafarisPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="font-serif text-2xl font-bold text-forest">
-                Safari Packages & Vehicle Allocations
+                Safari Packages and Vehicle Allocations
               </h2>
               <p className="text-forest/60 text-xs">
                 Manage 42 active safari vehicle allotments, gate slots, and pricing across MP and MH
@@ -74,9 +75,9 @@ export const AdminSafarisPage: React.FC = () => {
                 onChange={e => setSelectedDest(e.target.value)}
                 className="px-3 py-2 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
               >
-                <option value="All">All 14 Destinations</option>
+                <option value="All">All Destinations</option>
                 {destinations.map(d => (
-                  <option key={d._id} value={d.slug}>{d.name} ({d.state === 'Madhya Pradesh' ? 'MP' : 'MH'})</option>
+                  <option key={d._id} value={d.slug}>{d.name} ({stateCode(d.state)})</option>
                 ))}
               </select>
             </div>
@@ -94,8 +95,8 @@ export const AdminSafarisPage: React.FC = () => {
                   <tr className="bg-sand/30 border-b border-forest/10 text-forest/60 uppercase tracking-wider text-[10px]">
                     <th className="p-4 font-semibold">Safari Package</th>
                     <th className="p-4 font-semibold">Destination</th>
-                    <th className="p-4 font-semibold">Type & Slot</th>
-                    <th className="p-4 font-semibold">Vehicle & Capacity</th>
+                    <th className="p-4 font-semibold">Type and Slot</th>
+                    <th className="p-4 font-semibold">Vehicle and Capacity</th>
                     <th className="p-4 font-semibold">Base Price</th>
                     <th className="p-4 font-semibold">Availability Status</th>
                   </tr>

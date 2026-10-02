@@ -123,7 +123,7 @@ export const AboutPage: React.FC = () => {
         <div className="text-center max-w-xl mx-auto space-y-4">
           <h3 className="font-serif text-2xl font-bold text-forest">Ready to Experience the Forest?</h3>
           <p className="text-forest/70 text-sm">
-            Browse all 14 tiger reserves or initiate your booking permit verification today.
+            Browse our reserves or initiate your booking permit verification today.
           </p>
           <div className="flex justify-center gap-4 pt-2">
             <Link

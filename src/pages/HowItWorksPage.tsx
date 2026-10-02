@@ -1,13 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Compass, 
-  MapPin, 
-  Calendar, 
-  FileCheck2, 
-  Car, 
-  ShieldCheck, 
-  Sparkles, 
+import {
+  Compass,
   ArrowRight,
   AlertCircle
 } from 'lucide-react';
@@ -16,8 +10,8 @@ export const HowItWorksPage: React.FC = () => {
   const steps = [
     {
       num: '01',
-      title: 'Choose Reserve & Safari Category',
-      desc: 'Browse our 14 protected reserves in MP and MH. Select between classic Open Safari Jeeps, full-day dawn-to-dusk photographic permits, or serene buffer night drives.'
+      title: 'Choose Reserve and Safari Category',
+      desc: 'Browse our reserves across Madhya Pradesh and Maharashtra. Select between classic Open Safari Jeeps, full-day dawn-to-dusk photographic permits, or serene buffer night drives.'
     },
     {
       num: '02',
@@ -31,17 +25,17 @@ export const HowItWorksPage: React.FC = () => {
     },
     {
       num: '04',
-      title: 'Dedicated Tracker & Safari Vehicle Allocation',
+      title: 'Dedicated Tracker and Safari Vehicle Allocation',
       desc: 'We match your vehicle with an experienced local tribal naturalist and certified driver, ensuring your 4x4 safari vehicle is equipped with photo bean-bag rests.'
     },
     {
       num: '05',
-      title: 'Gate Check-in & Forest Entry',
+      title: 'Gate Check-in and Forest Entry',
       desc: 'On safari morning, your driver arrives at your lodge 30 minutes prior to gate opening. Present your original ID at the forest checkpoint, and enter as the dawn mist clears.'
     },
     {
       num: '06',
-      title: 'Ethical Tracking & Silent Observation',
+      title: 'Ethical Tracking and Silent Observation',
       desc: 'Experience pure tracking based on pugmarks, bird alarms, and deer distress calls. Engines cut during sightings to ensure animal peace and prime audio recording.'
     }
   ];
@@ -54,7 +48,7 @@ export const HowItWorksPage: React.FC = () => {
         <div className="max-w-3xl mb-16">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-semibold uppercase tracking-widest mb-4">
             <Compass className="w-3.5 h-3.5 text-gold" />
-            <span>Permit & Expedition Protocol</span>
+            <span>Permit and Expedition Protocol</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl text-forest font-bold tracking-tight mb-4">
             How Safari Booking Works
@@ -123,7 +117,7 @@ export const HowItWorksPage: React.FC = () => {
         <div className="text-center max-w-xl mx-auto space-y-4">
           <h3 className="font-serif text-3xl font-bold text-forest">Begin Your Safari Application</h3>
           <p className="text-forest/70 text-sm">
-            Launch our interactive 10-step wizard to secure your permits with zero upfront payment stress.
+            Launch our interactive booking wizard to secure your permits with zero upfront payment stress.
           </p>
           <div className="pt-2">
             <Link

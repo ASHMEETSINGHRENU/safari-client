@@ -6,18 +6,20 @@ import { cmsService } from '../../services/api';
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
+    setError('');
     try {
       await cmsService.subscribeNewsletter(email);
       setSubscribed(true);
       setEmail('');
     } catch (err) {
-      console.error(err);
+      setError('Could not subscribe. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -31,12 +33,10 @@ export const Footer: React.FC = () => {
           {/* Brand Bio */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden border border-gold/60 bg-sand p-0.5">
-                <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="w-full h-full object-cover" />
-              </div>
+              <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-11 w-auto object-contain shrink-0" />
               <div>
                 <span className="font-serif text-xl font-bold tracking-wider text-sand block">
-                  SHUTTER <span className="text-gold font-normal">&</span> STRIPES
+                  SHUTTER <span className="text-gold font-normal lowercase">and</span> STRIPES
                 </span>
                 <span className="text-[10px] tracking-widest-safari uppercase text-sand/70 block mt-0.5">
                   Guided By Locals • Inspired By Nature
@@ -64,7 +64,7 @@ export const Footer: React.FC = () => {
           {/* Column 1: Destinations */}
           <div>
             <h4 className="font-serif text-base font-semibold text-gold mb-4 uppercase tracking-wider text-xs">
-              Reserves & Parks
+              Reserves and Parks
             </h4>
             <ul className="space-y-2.5 text-sm text-sand/80">
               <li><Link to="/destinations/tadoba-andhari" className="hover:text-gold transition-colors">Tadoba-Andhari (MH)</Link></li>
@@ -73,11 +73,11 @@ export const Footer: React.FC = () => {
               <li><Link to="/destinations/pench-mp" className="hover:text-gold transition-colors">Pench (Madhya Pradesh)</Link></li>
               <li><Link to="/destinations/pench-mh" className="hover:text-gold transition-colors">Pench (Maharashtra)</Link></li>
               <li><Link to="/destinations/satpura" className="hover:text-gold transition-colors">Satpura Wilderness (MP)</Link></li>
-              <li><Link to="/destinations" className="text-gold hover:underline flex items-center gap-1 text-xs pt-1">View All 14 Reserves →</Link></li>
+              <li><Link to="/destinations" className="text-gold hover:underline flex items-center gap-1 text-xs pt-1">View All Reserves →</Link></li>
             </ul>
           </div>
 
-          {/* Column 2: Navigation & Discovery */}
+          {/* Column 2: Navigation and Discovery */}
           <div>
             <h4 className="font-serif text-base font-semibold text-gold mb-4 uppercase tracking-wider text-xs">
               Explore Platform
@@ -87,14 +87,14 @@ export const Footer: React.FC = () => {
               <li><Link to="/map" className="hover:text-gold transition-colors">Interactive Reserve Map</Link></li>
               <li><Link to="/compare" className="hover:text-gold transition-colors">Compare Reserves</Link></li>
               <li><Link to="/how-it-works" className="hover:text-gold transition-colors">How Booking Works</Link></li>
-              <li><Link to="/our-story" className="hover:text-gold transition-colors">Our Story & Philosophy</Link></li>
+              <li><Link to="/our-story" className="hover:text-gold transition-colors">Our Story and Philosophy</Link></li>
               <li><Link to="/journal" className="hover:text-gold transition-colors">Wildlife Journal</Link></li>
               <li><Link to="/gallery" className="hover:text-gold transition-colors">Photography Showcase</Link></li>
               <li><Link to="/responsible-tourism" className="hover:text-gold transition-colors">Ethical Tourism Rules</Link></li>
             </ul>
           </div>
 
-          {/* Column 3: Newsletter & Inquiries */}
+          {/* Column 3: Newsletter and Inquiries */}
           <div>
             <h4 className="font-serif text-base font-semibold text-gold mb-4 uppercase tracking-wider text-xs">
               Wildlife Gazette
@@ -126,6 +126,9 @@ export const Footer: React.FC = () => {
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
+                {error && (
+                  <p role="alert" className="text-[11px] text-red-300 leading-snug">{error}</p>
+                )}
               </form>
             )}
 
@@ -153,7 +156,7 @@ export const Footer: React.FC = () => {
             © {new Date().getFullYear()} SHUTTER AND STRIPES Expeditions Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <Link to="/faq" className="hover:text-gold transition-colors">FAQs</Link>
+            <Link to="/faqs" className="hover:text-gold transition-colors">FAQs</Link>
             <Link to="/contact" className="hover:text-gold transition-colors">Contact Concierge</Link>
             <Link to="/responsible-tourism" className="hover:text-gold transition-colors">Park Guidelines</Link>
             <Link to="/about" className="hover:text-gold transition-colors">About Company</Link>

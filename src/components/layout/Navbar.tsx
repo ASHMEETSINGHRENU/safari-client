@@ -19,8 +19,9 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { MAP_LABEL, MAP_ROUTE, YEARS_OF_EXPERIENCE } from '../../lib/site';
 
-// --- Types & Navigation Config ---
+// --- Types and Navigation Config ---
 interface NavLinkItem {
   name: string;
   path: string;
@@ -36,7 +37,7 @@ interface NavGroup {
 const PRIMARY_LINKS: NavLinkItem[] = [
   { name: 'Destinations', path: '/destinations' },
   { name: 'Safaris', path: '/safaris' },
-  { name: 'Corridor Map', path: '/map' },
+  { name: MAP_LABEL, path: MAP_ROUTE },
   { name: 'Our Story', path: '/our-story' },
   { name: 'Journal', path: '/journal' },
   { name: 'Gallery', path: '/gallery' },
@@ -45,10 +46,10 @@ const PRIMARY_LINKS: NavLinkItem[] = [
 const MORE_LINKS: NavLinkItem[] = [
   { name: 'Compare Reserves', path: '/compare', icon: Scale, description: 'Side-by-side habitat and permit matrix' },
   { name: 'How It Works', path: '/how-it-works', icon: Compass, description: '6-step permit and entry guide' },
-  { name: 'Responsible Tourism', path: '/responsible-tourism', icon: Shield, description: 'NTCA ethics & tribal empowerment' },
+  { name: 'Responsible Tourism', path: '/responsible-tourism', icon: Shield, description: 'NTCA ethics and tribal empowerment' },
   { name: 'About Shutter And Stripes', path: '/about', icon: Sparkles, description: 'Brand heritage and conservation vision' },
   { name: 'Field FAQs', path: '/faqs', icon: HelpCircle, description: 'Everything regarding park gates and permits' },
-  { name: 'Contact Concierge', path: '/contact', icon: Phone, description: 'Jabalpur & Nagpur naturalist desks' },
+  { name: 'Contact Concierge', path: '/contact', icon: Phone, description: 'Jabalpur and Nagpur naturalist desks' },
 ];
 
 export const Navbar: React.FC = () => {
@@ -82,6 +83,21 @@ export const Navbar: React.FC = () => {
     setMoreDropdownOpen(false);
   }, [location.pathname]);
 
+  // Lock background scroll while the mobile drawer is open, else the page
+  // scrolls behind it and the fixed header draws over content mid-read.
+  // ponytail: scrollingElement is <html>, not <body> — locking body alone is a no-op.
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const prevHtml = document.documentElement.style.overflow;
+    const prevBody = document.body.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.style.overflow = prevHtml;
+      document.body.style.overflow = prevBody;
+    };
+  }, [mobileMenuOpen]);
+
   // Click outside listener for dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -110,29 +126,27 @@ export const Navbar: React.FC = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-6">
           
           {/* Brand Identity / Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-full border border-forest/20 overflow-hidden shadow-sm flex items-center justify-center bg-sand-warm group-hover:border-gold transition-colors shrink-0">
-              <img 
-                src="/assets/logo/logo.png" 
-                alt="Shutter and Stripes Emblem" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
+          <Link to="/" className="flex items-center space-x-3 group shrink-0">
+            <img
+              src="/assets/logo/logo.png"
+              alt="Shutter and Stripes Emblem"
+              className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+            />
             <div>
               <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-forest block leading-none">
                 SHUTTER <span className="text-earth text-sm font-normal tracking-normal">And</span> STRIPES
               </span>
               <span className="text-[9px] tracking-widest-safari uppercase text-forest/70 font-semibold block mt-1">
-                Central India Wildlife
+                {YEARS_OF_EXPERIENCE}+ Years in the Indian Wild
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center space-x-6">
+          <nav className="hidden xl:flex items-center space-x-4">
             {PRIMARY_LINKS.map((link) => (
               <NavLink
                 key={link.path}
@@ -156,6 +170,7 @@ export const Navbar: React.FC = () => {
                 className={`text-xs font-semibold uppercase tracking-wider transition-colors py-1.5 flex items-center space-x-1 ${
                   moreDropdownOpen ? 'text-forest font-bold' : 'text-forest/75 hover:text-forest'
                 }`}
+                aria-expanded={moreDropdownOpen}
               >
                 <span>More</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreDropdownOpen ? 'rotate-180 text-gold' : ''}`} />
@@ -164,7 +179,7 @@ export const Navbar: React.FC = () => {
               {moreDropdownOpen && (
                 <div className="absolute top-full left-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-forest/15 py-3 z-50 animate-fadeIn">
                   <div className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-forest/40 border-b border-forest/5 mb-1">
-                    Expedition & Planning
+                    Expedition and Planning
                   </div>
                   {MORE_LINKS.map((item) => {
                     const Icon = item.icon || Compass;
@@ -282,6 +297,8 @@ export const Navbar: React.FC = () => {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-xl text-forest hover:bg-forest/5 focus:outline-none"
               aria-label="Toggle Navigation Drawer"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-drawer"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -292,10 +309,10 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer (Responsive Overlay) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-sand border-b border-forest/15 px-4 pt-3 pb-6 shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+        <div id="mobile-nav-drawer" className="lg:hidden bg-sand border-b border-forest/15 px-4 pt-3 pb-6 shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
           <nav className="flex flex-col space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-forest/40 px-3 pt-1 pb-1">
-              Primary Destinations & Wild
+              Primary Destinations and Wild
             </span>
             {PRIMARY_LINKS.map((link) => (
               <Link
@@ -308,7 +325,7 @@ export const Navbar: React.FC = () => {
             ))}
 
             <span className="text-[10px] font-bold uppercase tracking-widest text-forest/40 px-3 pt-3 pb-1">
-              Planning & Ethics
+              Planning and Ethics
             </span>
             {MORE_LINKS.map((item) => (
               <Link
@@ -321,7 +338,7 @@ export const Navbar: React.FC = () => {
               </Link>
             ))}
 
-            {/* Mobile Auth & Admin Block */}
+            {/* Mobile Auth and Admin Block */}
             <div className="border-t border-forest/10 pt-3 mt-3 space-y-2">
               {isAdmin && (
                 <Link 

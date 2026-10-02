@@ -10,6 +10,7 @@ import {
   IndianRupee,
   Layers
 } from 'lucide-react';
+import { stateBadgeClass, inr, packageFromOf } from '../../lib/site';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { destinationService } from '../../services/api';
 import { Destination } from '../../types';
@@ -54,6 +55,8 @@ export const AdminDestinationsPage: React.FC = () => {
       await destinationService.update(editingDest._id, {
         tagline: editingDest.tagline,
         startingPrice: editingDest.startingPrice,
+        packages: editingDest.packages,
+        headlineSpecies: editingDest.headlineSpecies ?? '',
         availability: editingDest.availability,
         tigerCount: editingDest.tigerCount
       });
@@ -75,14 +78,14 @@ export const AdminDestinationsPage: React.FC = () => {
     <AdminLayout>
       <div className="space-y-6">
         
-        {/* Header & Search */}
+        {/* Header and Search */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-forest/15 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="font-serif text-2xl font-bold text-forest">
-              Reserves & Sanctuary Management
+              Reserves and Sanctuary Management
             </h2>
             <p className="text-forest/60 text-xs">
-              Manage live permit quotas, starting tariffs, and field parameters for all 14 reserves
+              Manage live permit quotas, package rates, and field parameters for all reserves
             </p>
           </div>
 
@@ -126,16 +129,14 @@ export const AdminDestinationsPage: React.FC = () => {
                         <span className="text-[11px] text-gold italic">{d.tagline}</span>
                       </td>
                       <td className="p-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase ${
-                          d.state === 'Madhya Pradesh' ? 'bg-forest' : 'bg-earth'
-                        }`}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase ${stateBadgeClass(d.state)}`}>
                           {d.state}
                         </span>
                       </td>
                       <td className="p-4 font-bold text-forest">{d.tigerCount}</td>
                       <td className="p-4">{d.zones.length} Zones</td>
                       <td className="p-4 font-serif font-bold text-sm text-forest">
-                        ₹{d.startingPrice.toLocaleString('en-IN')}
+                        {inr(packageFromOf(d))}
                       </td>
                       <td className="p-4">
                         <select
@@ -198,12 +199,29 @@ export const AdminDestinationsPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold uppercase tracking-wider text-forest/70 mb-1.5">
-                      Starting Permit Rate (₹)
+                      Budget Package Floor (₹)
                     </label>
                     <input
                       type="number"
                       value={editingDest.startingPrice}
                       onChange={e => setEditingDest({ ...editingDest, startingPrice: Number(e.target.value) })}
+                      className="w-full px-3 py-2 bg-sand/30 border border-forest/15 rounded-xl text-forest"
+                    />
+                    <p className="text-[10px] text-forest/50 mt-1">
+                      Sort floor only. Tiers come from the Content Master via the seed or
+                      sync:editorial script.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block font-bold uppercase tracking-wider text-forest/70 mb-1.5">
+                      Headline Species
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Blank = Tiger count"
+                      value={editingDest.headlineSpecies ?? ''}
+                      onChange={e => setEditingDest({ ...editingDest, headlineSpecies: e.target.value })}
                       className="w-full px-3 py-2 bg-sand/30 border border-forest/15 rounded-xl text-forest"
                     />
                   </div>

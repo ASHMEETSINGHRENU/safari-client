@@ -8,6 +8,8 @@ import {
 import { Destination, Safari, GalleryItem, JournalArticle } from '../types';
 import { destinationService, safariService, cmsService } from '../services/api';
 import { ReserveMap } from '../components/map/ReserveMap';
+import { SplashScreen, SPLASH_SEEN_KEY } from '../components/SplashScreen';
+import { stateCode, YEARS_OF_EXPERIENCE, inr, packageFromOf } from '../lib/site';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,6 +22,9 @@ export const HomePage: React.FC = () => {
   // Hero Video State
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  const [splashDone, setSplashDone] = useState(
+    () => sessionStorage.getItem(SPLASH_SEEN_KEY) === '1'
+  );
 
   // Floating search state
   const [searchState, setSearchState] = useState('');
@@ -76,6 +81,15 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="bg-sand text-forest min-h-screen">
+      {!splashDone && (
+        <SplashScreen
+          getVideo={() => videoRef.current}
+          onDone={() => {
+            sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
+            setSplashDone(true);
+          }}
+        />
+      )}
       
       {/* 01. CINEMATIC VIDEO HERO */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden pt-20">
@@ -87,6 +101,7 @@ export const HomePage: React.FC = () => {
             loop
             muted={isMuted}
             playsInline
+            preload="auto"
             poster="/assets/img/bengal-tiger-portrait.jpg"
             className="w-full h-full object-cover scale-100 brightness-[1.02] contrast-[1.03] transition-transform duration-1000"
           >
@@ -134,16 +149,16 @@ export const HomePage: React.FC = () => {
           <div className="max-w-2xl space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-gold/50 text-gold text-xs font-bold tracking-widest-safari uppercase shadow-lg">
               <Compass className="w-3.5 h-3.5" />
-              <span>Madhya Pradesh & Maharashtra</span>
+              <span>Madhya Pradesh &amp; Maharashtra &middot; {YEARS_OF_EXPERIENCE}+ Years in the Field</span>
             </div>
 
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
-              CHASE THE <br />
-              <span className="italic font-normal text-gold drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">WILD.</span>
+              THE WILD <br />
+              <span className="italic font-normal text-gold drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">STILL CALLS.</span>
             </h1>
 
             <p className="text-sm sm:text-base text-sand font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-              Immerse yourself in India’s premier tiger sanctuaries. Tailored wildlife safaris, generational field naturalists, and mindful conservation storytelling.
+              Hand-picked tiger safaris through Madhya Pradesh and Maharashtra, led by guides who grew up in these forests. Every booking funds the villages on their edges.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -182,9 +197,12 @@ export const HomePage: React.FC = () => {
               onChange={(e) => setSearchState(e.target.value)}
               className="w-full bg-forest-deep border border-sand/20 rounded-lg p-2.5 text-xs text-sand focus:outline-none focus:border-gold"
             >
-              <option value="">Both States</option>
-              <option value="madhya-pradesh">Madhya Pradesh (7)</option>
-              <option value="maharashtra">Maharashtra (7)</option>
+              <option value="">All States</option>
+              {[...new Set(destinations.map(d => d.state))].map(s => (
+                <option key={s} value={s.toLowerCase().replace(/\s+/g, '-')}>
+                  {s} ({destinations.filter(d => d.state === s).length})
+                </option>
+              ))}
             </select>
           </div>
 
@@ -201,7 +219,7 @@ export const HomePage: React.FC = () => {
               <option value="">Any Reserve</option>
               {destinations.map(d => (
                 <option key={d.slug} value={d.slug}>
-                  {d.name} ({d.state === 'Madhya Pradesh' ? 'MP' : 'MH'})
+                  {d.name} ({stateCode(d.state)})
                 </option>
               ))}
             </select>
@@ -339,7 +357,7 @@ export const HomePage: React.FC = () => {
               to="/destinations" 
               className="text-xs font-bold uppercase tracking-wider text-earth hover:text-forest flex items-center gap-1.5"
             >
-              <span>View All 14 Destinations</span>
+              <span>View All Destinations</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -380,8 +398,8 @@ export const HomePage: React.FC = () => {
 
                 <div className="p-5 pt-0 border-t border-forest/10 mt-3 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-forest/60 block">From</span>
-                    <span className="font-serif text-base font-bold text-forest">₹{d.startingPrice.toLocaleString('en-IN')}</span>
+                    <span className="text-[10px] text-forest/60 block">Packages From</span>
+                    <span className="font-serif text-base font-bold text-forest">{inr(packageFromOf(d))}</span>
                   </div>
                   <Link 
                     to={`/destinations/${d.slug}`}
@@ -406,7 +424,7 @@ export const HomePage: React.FC = () => {
             FIND YOUR WILD
           </h2>
           <p className="text-xs text-forest/70 leading-relaxed">
-            Central India’s 14 tiger sanctuaries form one of the world's most critical interconnected wildlife networks. Explore geographic positions, buffer corridors, and instant permits.
+            Central India's reserves form one of the world's most critical interconnected wildlife networks. Explore geographic positions, buffer corridors, and permit availability.
           </p>
         </div>
 
@@ -549,7 +567,7 @@ export const HomePage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <div>
             <span className="text-[11px] tracking-widest-safari uppercase text-earth font-bold block">
-              Field Notes & Natural History
+              Field Notes and Natural History
             </span>
             <h2 className="font-serif text-3xl font-bold text-forest mt-1">
               The Wildlife Journal

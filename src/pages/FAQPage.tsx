@@ -33,7 +33,7 @@ export const FAQPage: React.FC = () => {
     fetchFaqs();
   }, []);
 
-  const categories = ['All', 'Booking & Permits', 'Safari Operations', 'Wildlife & Photography', 'Logistics & Seasons'];
+  const categories = ['All', 'Booking and Permits', 'Safari Operations', 'Wildlife and Photography', 'Logistics and Seasons'];
 
   const filteredFaqs = faqs.filter(f => {
     const matchesCat = selectedCategory === 'All' || f.category.toLowerCase() === selectedCategory.toLowerCase();
@@ -61,7 +61,7 @@ export const FAQPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Search & Category Filter */}
+        {/* Search and Category Filter */}
         <div className="space-y-4 mb-10">
           <div className="relative">
             <Search className="w-5 h-5 text-forest/40 absolute left-4 top-1/2 -translate-y-1/2" />

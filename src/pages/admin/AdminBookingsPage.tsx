@@ -72,7 +72,7 @@ export const AdminBookingsPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="font-serif text-2xl font-bold text-forest">
-                Safari Permits & Bookings Ledger
+                Safari Permits and Bookings Ledger
               </h2>
               <p className="text-forest/60 text-xs">
                 Official register of traveler applications, ID verification, and permit allotment
@@ -134,9 +134,9 @@ export const AdminBookingsPage: React.FC = () => {
                 <thead>
                   <tr className="bg-sand/30 border-b border-forest/10 text-forest/60 uppercase tracking-wider text-[10px]">
                     <th className="p-4 font-semibold">Ref #</th>
-                    <th className="p-4 font-semibold">Traveler & ID</th>
+                    <th className="p-4 font-semibold">Traveler and ID</th>
                     <th className="p-4 font-semibold">Destination / Safari</th>
-                    <th className="p-4 font-semibold">Date & Zone</th>
+                    <th className="p-4 font-semibold">Date and Zone</th>
                     <th className="p-4 font-semibold">Tariff</th>
                     <th className="p-4 font-semibold">Booking Status</th>
                     <th className="p-4 font-semibold">Payment</th>
