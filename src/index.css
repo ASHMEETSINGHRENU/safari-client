@@ -65,3 +65,40 @@ h1, h2, h3, h4, .font-serif {
 .custom-map-popup .leaflet-popup-tip {
   background: #2E3A23 !important;
 }
+
+/* Print: isolate the permit receipt so it prints clean, centered on A4 */
+@media print {
+  @page {
+    margin: 10mm;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #permit-receipt,
+  #permit-receipt * {
+    visibility: visible;
+  }
+
+  #permit-receipt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: 180mm;
+    margin: 0 auto;
+    border: 1px solid #171717;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .rc-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .rc-charge {
+    background: #fff;
+  }
+}

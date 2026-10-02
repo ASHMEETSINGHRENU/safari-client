@@ -107,6 +107,7 @@ export interface Booking {
     adults: number;
     children: number;
   };
+  guestDetails?: { fullName: string; idType: string; idNumber: string }[];
   naturalistRequested: boolean;
   specialRequests?: string;
   totalAmount: number;
