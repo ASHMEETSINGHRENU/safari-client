@@ -477,43 +477,45 @@ export const HomePage: React.FC = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"></div>
             <div className="absolute bottom-4 left-4 right-4 bg-forest/90 backdrop-blur-md p-3.5 rounded-xl text-xs text-sand border border-sand/20 shadow-lg">
-              <span className="text-gold font-bold block text-[10px] uppercase">Field Guiding Master</span>
+              <span className="text-gold font-bold block text-xs uppercase">Field Guiding Master</span>
               Generations of indigenous forest instincts passed down on the trails of Vidarbha.
             </div>
           </div>
 
           <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between space-y-6">
             <div className="space-y-4 flex flex-col flex-1">
-              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest-safari text-earth">
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest-safari text-earth-dark">
                 <HeartHandshake className="w-4 h-4" />
                 <span>The Story of Shutter and Stripes</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest leading-tight">
                 Where Photography Meets Forest Wisdom
               </h2>
-              <p className="font-serif italic text-earth text-base sm:text-lg">
-                Guided by Locals · Inspired by Nature
+              <p className="font-serif italic text-earth-dark text-base sm:text-lg">
+                Inspired by Nature · Guided by Locals
               </p>
-              <p className="text-xs sm:text-sm text-forest/80 leading-relaxed">
+              <p className="text-xs sm:text-sm text-forest/95 leading-relaxed">
                 Shutter and Stripes was founded on a simple truth: that genuine wildlife encounters require stillness, respect, and deep ecological familiarity.
               </p>
+<div className="flex-1 flex items-center justify-center">
+                <div className="px-8 py-6 bg-forest-deep rounded-xl border border-gold/30 shadow-md">
+                  <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-42 w-auto object-contain" />
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div className="p-3.5 bg-sand rounded-xl border border-forest/10 shadow-sm">
                   <strong className="text-xs font-serif text-forest block">SHUTTER</strong>
-                  <span className="text-[11px] text-forest/70">Observing without disturbing; patient framing of wildlife behavior.</span>
+                  <span className="text-xs sm:text-sm text-forest/90">Observing without disturbing; patient framing of wildlife behavior.</span>
                 </div>
                 <div className="p-3.5 bg-sand rounded-xl border border-forest/10 shadow-sm">
                   <strong className="text-xs font-serif text-forest block">STRIPES</strong>
-                  <span className="text-[11px] text-forest/70">The living pulse of the Royal Bengal Tiger and Central India's forests.</span>
+                  <span className="text-xs sm:text-sm text-forest/90">The living pulse of the Royal Bengal Tiger and Central India's forests.</span>
                 </div>
               </div>
-              <div className="flex-1 flex flex-col items-center justify-center gap-3 p-6 bg-forest-deep rounded-xl border border-gold/30 shadow-sm text-center">
-                <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-20 w-auto object-contain" />
-                <div>
-                  <strong className="text-xs font-serif text-gold block uppercase tracking-wider">The 1% Community Pledge</strong>
-                  <span className="text-[11px] text-sand/85 block">1% of all bookings is contributed to the welfare of the local community and nature preservation.</span>
+              <div className="p-4 bg-forest-deep rounded-xl border border-gold/30 shadow-sm text-center">
+                  <strong className="text-xs sm:text-sm font-serif text-gold block uppercase tracking-wider">The 1% Community Pledge</strong>
+                  <span className="text-xs sm:text-sm text-sand block">1% of all bookings is contributed to the welfare of the local community and nature preservation.</span>
                 </div>
-              </div>
             </div>
 
             <div>

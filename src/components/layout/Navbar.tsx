@@ -131,7 +131,7 @@ export const Navbar: React.FC = () => {
           {/* Brand Identity / Logo */}
           <Link to="/" className="flex items-center space-x-3 group shrink-0">
             <img
-              src="/assets/logo/logo.png"
+              src="/assets/logo/nav-logo.png"
               alt="Shutter and Stripes Emblem"
               className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
