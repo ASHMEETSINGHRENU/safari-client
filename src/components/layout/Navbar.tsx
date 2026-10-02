@@ -133,7 +133,7 @@ export const Navbar: React.FC = () => {
             <img
               src="/assets/logo/nav-logo.png"
               alt="Shutter and Stripes Emblem"
-              className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+              className="h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
             <div>
               <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-forest block leading-none">
