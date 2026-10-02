@@ -483,7 +483,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col flex-1">
               <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest-safari text-earth">
                 <HeartHandshake className="w-4 h-4" />
                 <span>The Story of Shutter and Stripes</span>
@@ -491,6 +491,9 @@ export const HomePage: React.FC = () => {
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest leading-tight">
                 Where Photography Meets Forest Wisdom
               </h2>
+              <p className="font-serif italic text-earth text-base sm:text-lg">
+                Guided by Locals · Inspired by Nature
+              </p>
               <p className="text-xs sm:text-sm text-forest/80 leading-relaxed">
                 Shutter and Stripes was founded on a simple truth: that genuine wildlife encounters require stillness, respect, and deep ecological familiarity.
               </p>
@@ -502,6 +505,13 @@ export const HomePage: React.FC = () => {
                 <div className="p-3.5 bg-sand rounded-xl border border-forest/10 shadow-sm">
                   <strong className="text-xs font-serif text-forest block">STRIPES</strong>
                   <span className="text-[11px] text-forest/70">The living pulse of the Royal Bengal Tiger and Central India's forests.</span>
+                </div>
+              </div>
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 p-6 bg-forest-deep rounded-xl border border-gold/30 shadow-sm text-center">
+                <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-20 w-auto object-contain" />
+                <div>
+                  <strong className="text-xs font-serif text-gold block uppercase tracking-wider">The 1% Community Pledge</strong>
+                  <span className="text-[11px] text-sand/85 block">1% of all bookings is contributed to the welfare of the local community and nature preservation.</span>
                 </div>
               </div>
             </div>
