@@ -67,6 +67,7 @@ export interface Safari {
   slug: string;
   safariType: 'Jeep Safari' | 'Canter Safari' | 'Private Photography Safari' | 'Full-Day Safari' | 'Night Buffer Safari' | 'Walking Safari';
   slot: 'Morning' | 'Afternoon' | 'Full Day' | 'Night';
+  protectedAreaType: 'Sanctuary' | 'Reserve' | 'National Park';
   duration: string;
   vehicle: string;
   capacity: number;
@@ -123,7 +124,7 @@ export interface User {
   _id?: string;
   name: string;
   email: string;
-  role: 'super_admin' | 'admin' | 'booking_manager' | 'customer';
+  role: 'super_admin' | 'admin' | 'booking_manager' | 'content_manager' | 'customer';
   phone?: string;
   country?: string;
   savedDestinations?: string[];

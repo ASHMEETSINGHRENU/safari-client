@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
+const STAFF = ['super_admin', 'admin', 'booking_manager', 'content_manager'];
+
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,14 +51,16 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   }
 
+  // Each module lists the roles the API actually lets it through, so a content_manager
+  // is not offered bookings/safaris/inquiries, which require booking_manager or admin.
   const navItems = [
-    { label: 'Overview and KPIs', path: '/admin', icon: LayoutDashboard },
-    { label: 'Safari Permits and Bookings', path: '/admin/bookings', icon: BookOpen },
-    { label: 'Reserves and Sanctuaries', path: '/admin/destinations', icon: MapPin },
-    { label: 'Safari Packages and Tariffs', path: '/admin/safaris', icon: Compass },
-    { label: 'Traveler Inquiries', path: '/admin/inquiries', icon: MessageSquare },
-    { label: 'CMS and Brand Story', path: '/admin/cms', icon: FileEdit },
-  ];
+    { label: 'Overview and KPIs', path: '/admin', icon: LayoutDashboard, roles: STAFF },
+    { label: 'Safari Permits and Bookings', path: '/admin/bookings', icon: BookOpen, roles: ['super_admin', 'admin', 'booking_manager'] },
+    { label: 'Reserves and Sanctuaries', path: '/admin/destinations', icon: MapPin, roles: STAFF },
+    { label: 'Safari Packages and Tariffs', path: '/admin/safaris', icon: Compass, roles: ['super_admin', 'admin', 'booking_manager'] },
+    { label: 'Traveler Inquiries', path: '/admin/inquiries', icon: MessageSquare, roles: ['super_admin', 'admin', 'booking_manager'] },
+    { label: 'CMS and Brand Story', path: '/admin/cms', icon: FileEdit, roles: STAFF },
+  ].filter(item => item.roles.includes(user.role));
 
   const currentNav = navItems.find(item => item.path === location.pathname) || navItems[0];
 

@@ -18,10 +18,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('sns_user');
-    return saved ? JSON.parse(saved) : null;
-  });
+  // A truncated or hand-edited sns_user would otherwise throw inside the useState
+  // initialiser and white-screen the whole app before a single route renders.
+  const readCachedUser = (): User | null => {
+    try {
+      const raw = localStorage.getItem('sns_user');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      localStorage.removeItem('sns_user');
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState<User | null>(readCachedUser);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('sns_token'));
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
@@ -78,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const isAuthenticated = !!user && !!token;
-  const isAdmin = !!user && (user.role === 'super_admin' || user.role === 'admin' || user.role === 'booking_manager');
+  const isAdmin = !!user && user.role !== 'customer';
 
   return (
     <AuthContext.Provider value={{

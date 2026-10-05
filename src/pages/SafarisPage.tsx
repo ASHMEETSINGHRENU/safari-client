@@ -29,6 +29,7 @@ export const SafarisPage: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>(searchParams.get('type') || 'All');
   const [selectedSlot, setSelectedSlot] = useState<string>(searchParams.get('slot') || 'All');
   const [selectedDestination, setSelectedDestination] = useState<string>(searchParams.get('destination') || 'All');
+  const [selectedArea, setSelectedArea] = useState<string>(searchParams.get('area') || 'All');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -62,15 +63,18 @@ export const SafarisPage: React.FC = () => {
 
   const slots = ['All', 'Morning', 'Afternoon', 'Full Day', 'Night'];
 
+  const protectedAreaTypes = ['All', 'Sanctuary', 'Reserve', 'National Park'];
+
   const filteredSafaris = safaris.filter(s => {
     const matchesType = selectedType === 'All' || s.safariType.toLowerCase() === selectedType.toLowerCase();
     const matchesSlot = selectedSlot === 'All' || s.slot.toLowerCase() === selectedSlot.toLowerCase();
+    const matchesArea = selectedArea === 'All' || s.protectedAreaType === selectedArea;
     const matchesDest = selectedDestination === 'All' || s.destinationSlug === selectedDestination;
     const matchesSearch = searchQuery === '' || 
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.destinationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesSlot && matchesDest && matchesSearch;
+    return matchesType && matchesSlot && matchesArea && matchesDest && matchesSearch;
   });
 
   const getDestinationImage = (slug: string) => {
@@ -167,17 +171,34 @@ export const SafarisPage: React.FC = () => {
               </select>
             </div>
 
+            {/* Protected Area */}
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-forest/60 mb-1.5">
+                Protected Area
+              </label>
+              <select
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="w-full px-3 py-2 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
+              >
+                {protectedAreaTypes.map(a => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+              </select>
+            </div>
+
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-forest/10 text-xs">
             <span className="text-forest/60">
               Showing <strong>{filteredSafaris.length}</strong> available safari packages
             </span>
-            {(selectedType !== 'All' || selectedSlot !== 'All' || selectedDestination !== 'All' || searchQuery !== '') && (
+            {(selectedType !== 'All' || selectedSlot !== 'All' || selectedArea !== 'All' || selectedDestination !== 'All' || searchQuery !== '') && (
               <button
                 onClick={() => {
                   setSelectedType('All');
                   setSelectedSlot('All');
+                  setSelectedArea('All');
                   setSelectedDestination('All');
                   setSearchQuery('');
                 }}
@@ -224,10 +245,13 @@ export const SafarisPage: React.FC = () => {
                     <span className="px-2.5 py-1 rounded-md bg-forest/90 backdrop-blur-sm text-sand text-[10px] font-bold uppercase tracking-wider shadow">
                       {s.safariType}
                     </span>
-                    <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-sm text-gold text-[10px] font-bold uppercase tracking-wider border border-gold/30 shadow">
-                      {s.slot} Slot
-                    </span>
-                  </div>
+<span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-sm text-gold text-[10px] font-bold uppercase tracking-wider border border-gold/30 shadow">
+                       {s.slot} Slot
+                     </span>
+                     <span className="px-2.5 py-1 rounded-md bg-sand/90 backdrop-blur-sm text-forest text-[10px] font-bold uppercase tracking-wider shadow">
+                       {s.protectedAreaType}
+                     </span>
+                   </div>
 
                   <div className="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center space-x-1.5 drop-shadow">
                     <MapPin className="w-3.5 h-3.5 text-gold" />

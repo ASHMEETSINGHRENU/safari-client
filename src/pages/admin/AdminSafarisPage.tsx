@@ -53,6 +53,15 @@ export const AdminSafarisPage: React.FC = () => {
     }
   };
 
+  const handleAreaChange = async (id: string, protectedAreaType: string) => {
+    try {
+      await safariService.update(id, { protectedAreaType: protectedAreaType as any });
+      await fetchSafaris();
+    } catch (err: any) {
+      alert('Failed to update protected area type.');
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -96,6 +105,7 @@ export const AdminSafarisPage: React.FC = () => {
                     <th className="p-4 font-semibold">Safari Package</th>
                     <th className="p-4 font-semibold">Destination</th>
                     <th className="p-4 font-semibold">Type and Slot</th>
+                    <th className="p-4 font-semibold">Protected Area</th>
                     <th className="p-4 font-semibold">Vehicle and Capacity</th>
                     <th className="p-4 font-semibold">Base Price</th>
                     <th className="p-4 font-semibold">Availability Status</th>
@@ -114,6 +124,18 @@ export const AdminSafarisPage: React.FC = () => {
                       <td className="p-4">
                         <div className="font-semibold text-earth">{s.safariType}</div>
                         <div className="text-forest/60">{s.slot} Slot</div>
+                      </td>
+                      <td className="p-4">
+                        <select
+                          value={s.protectedAreaType}
+                          onChange={e => handleAreaChange(s._id, e.target.value)}
+                          title="Protected area category"
+                          className="px-2.5 py-1 rounded-lg border border-forest/20 text-xs font-semibold bg-white text-forest focus:outline-none"
+                        >
+                          <option value="Sanctuary">Sanctuary</option>
+                          <option value="Reserve">Reserve</option>
+                          <option value="National Park">National Park</option>
+                        </select>
                       </td>
                       <td className="p-4">
                         <div>{s.vehicle}</div>

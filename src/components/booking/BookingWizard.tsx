@@ -9,56 +9,14 @@ import { Destination, Safari, Booking } from '../../types';
 import { destinationService, safariService, bookingService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { inr, tierPrice, packageFromOf } from '../../lib/site';
+// Receipt styles: the bare import applies them to the on-screen permit, the ?inline
+// import hands back the same CSS as a string for the downloaded standalone file.
+import './permit.css';
+import permitStyle from './permit.css?inline';
 
 const isoOf = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-// Single source for the permit receipt's styles — used on screen (injected),
-// in the print block, and embedded into the downloaded permit file.
-const PERMIT_STYLE = `
-  .rc-sheet {
-    max-width: 44rem;
-    margin: 14px auto;
-    background: #fff;
-    color: #171717;
-    border: 2px solid #171717;
-    border-radius: 4px;
-    overflow: hidden;
-    text-align: left;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.10);
-  }
-  .rc-head { background: #171717; color: #fff; padding: 16px 22px; }
-  .rc-head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
-  .rc-brand-name { display: block; font-family: Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
-  .rc-brand-sub { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: #d4d4d4; }
-  .rc-ref-block { text-align: right; }
-  .rc-ref { font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; }
-  .rc-ref-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: #d4d4d4; }
-  .rc-head-meta { margin-top: 10px; border-top: 1px solid #444; padding-top: 8px; font-size: 11px; }
-  .rc-head-meta strong { font-weight: 600; color: #a3a3a3; }
-  .rc-head-meta span { display: inline-block; }
-  .rc-head-meta span + span { margin-left: 22px; }
-  .rc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px 14px; padding: 14px 22px; border-bottom: 1px solid #d4d4d4; font-size: 12px; }
-  .rc-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #737373; }
-  .rc-value { font-weight: 600; }
-  .rc-body { padding: 14px 22px; }
-  .rc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .rc-table th { text-align: left; padding: 6px 4px; border-top: 2px solid #171717; border-bottom: 2px solid #171717; font-weight: 600; color: #737373; }
-  .rc-table th:first-child, .rc-table td:first-child { padding-left: 2px; }
-  .rc-table td { padding: 6px 4px; border-bottom: 1px solid #e5e5e5; }
-  .rc-table .rc-mono { font-family: 'Courier New', monospace; }
-  .rc-lead { font-size: 10px; color: #737373; font-weight: 400; }
-  .rc-charge { display: flex; flex-direction: column; gap: 10px; padding: 14px 22px; background: #f5f5f5; border-top: 2px solid #171717; }
-  .rc-charge-note { font-size: 11px; color: #525252; margin: 0; }
-  .rc-charge-total { text-align: right; }
-  .rc-charge-amt { font-family: 'Courier New', monospace; font-size: 22px; font-weight: 700; }
-  .rc-foot { padding: 10px 22px 12px; font-size: 10px; color: #737373; }
-  .rc-foot p { margin: 0 0 6px; }
-  .rc-foot-row { border-top: 1px solid #d4d4d4; padding-top: 8px; display: flex; justify-content: space-between; align-items: center; }
-  .rc-everify { font-family: 'Courier New', monospace; }
-  .rc-sign { text-transform: uppercase; letter-spacing: 0.1em; }
-  @media (max-width: 640px) { .rc-grid { grid-template-columns: repeat(2, 1fr); } }
-`;
 
 const SafariCalendar: React.FC<{ value: string; onSelect: (iso: string) => void }> = ({ value, onSelect }) => {
   const today = new Date();
@@ -360,7 +318,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
       `<title>${confirmedBooking.bookingRef} — Safari Permit Cum Receipt</title>`,
       '<style>body{margin:0;background:#e7e7e7;padding:16px 8px;font-family:Arial,Helvetica,sans-serif}</style>',
       '<style>',
-      PERMIT_STYLE,
+      permitStyle,
       '</style></head><body>',
       el.outerHTML,
       '</body></html>'
@@ -1203,8 +1161,6 @@ onClick={() => {
                 Official Forest Permit voucher has been dispatched to <strong>{confirmedBooking.customerInfo.email}</strong>.
               </p>
             </div>
-
-            <style>{PERMIT_STYLE}</style>
 
             {(() => {
               const guests = confirmedBooking.guestDetails?.length ? confirmedBooking.guestDetails : guestDetails;

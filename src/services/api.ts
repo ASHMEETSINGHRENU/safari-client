@@ -1,8 +1,15 @@
 import axios from 'axios';
 import { Destination, Safari, Booking, User, GalleryItem, JournalArticle, FAQItem, ReviewItem, SiteSettings } from '../types';
 
-const RENDER_PROD_URL = 'https://safari-server-v3ih.onrender.com';
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? RENDER_PROD_URL : '')).replace(/\/$/, '') + '/api/v1';
+// One source of truth per environment: .env.development leaves this empty so dev hits
+// the Vite proxy in vite.config.ts, and .env.production pins the live API host. There is
+// deliberately no hardcoded fallback — a stale baked-in URL is how the frontend ends up
+// silently talking to a decommissioned backend.
+const envBase = (import.meta.env.VITE_API_BASE_URL || '').trim();
+if (import.meta.env.PROD && !envBase) {
+  throw new Error('VITE_API_BASE_URL must be set for a production build (see client/.env.production).');
+}
+const API_BASE = envBase.replace(/\/$/, '') + '/api/v1';
 
 export const api = axios.create({
   baseURL: API_BASE,

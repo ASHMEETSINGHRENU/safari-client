@@ -452,6 +452,9 @@ export const DestinationDetailPage: React.FC = () => {
                             <span className="px-2.5 py-0.5 rounded bg-forest/10 text-forest text-[10px] font-bold uppercase tracking-wider">
                               {s.slot} Slot
                             </span>
+                            <span className="px-2.5 py-0.5 rounded bg-earth/15 text-earth text-[10px] font-bold uppercase tracking-wider">
+                              {s.protectedAreaType}
+                            </span>
                           </div>
                           <h4 className="font-serif text-xl font-bold text-forest">{s.name}</h4>
                           <p className="text-forest/70 text-xs line-clamp-2 leading-relaxed">{s.description}</p>
