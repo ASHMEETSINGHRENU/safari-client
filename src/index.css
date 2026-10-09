@@ -88,6 +88,8 @@ h1, h2, h3, h4, .font-serif {
     right: 0;
     width: auto;
     max-width: 180mm;
+    max-height: none !important;
+    overflow: visible !important;
     margin: 0 auto;
     border: 1px solid #171717;
     border-radius: 0;

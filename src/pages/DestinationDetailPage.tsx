@@ -91,7 +91,7 @@ export const DestinationDetailPage: React.FC = () => {
             to="/destinations"
             className="px-6 py-2.5 bg-forest text-sand rounded-xl text-xs font-bold uppercase tracking-wider inline-block"
           >
-            Back to Destinations
+            Back to Reserves
           </Link>
         </div>
       </div>

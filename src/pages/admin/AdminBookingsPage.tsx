@@ -13,19 +13,25 @@ import {
   Printer 
 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { bookingService } from '../../services/api';
-import { Booking } from '../../types';
+import { bookingService, destinationService } from '../../services/api';
+import { Booking, Destination } from '../../types';
 
 export const AdminBookingsPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
 
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  // Alternative reserve/package counter-offer form
+  const [suggesting, setSuggesting] = useState(false);
+  const [sugDestSlug, setSugDestSlug] = useState('');
+  const [sugPackage, setSugPackage] = useState('');
+  const [sugMessage, setSugMessage] = useState('');
 
   const fetchBookings = async () => {
     try {
@@ -46,6 +52,10 @@ export const AdminBookingsPage: React.FC = () => {
     fetchBookings();
   }, [statusFilter]);
 
+  useEffect(() => {
+    destinationService.getAll().then(setDestinations).catch(console.error);
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     fetchBookings();
@@ -63,6 +73,60 @@ export const AdminBookingsPage: React.FC = () => {
     }
   };
 
+  const openBooking = (b: Booking) => {
+    setSelectedBooking(b);
+    setSuggesting(false);
+    setSugDestSlug(b.suggestion?.destinationSlug || '');
+    setSugPackage(b.suggestion?.packageLabel || '');
+    setSugMessage(b.suggestion?.message || '');
+  };
+
+  const handleSuggest = async () => {
+    if (!selectedBooking) return;
+    const dest = destinations.find(d => d.slug === sugDestSlug);
+    if (!dest) {
+      alert('Pick an alternative reserve.');
+      return;
+    }
+    try {
+      setUpdatingId(selectedBooking._id);
+      const updated = await bookingService.updateStatus(selectedBooking._id, {
+        bookingStatus: 'alternative_suggested',
+        suggestion: {
+          destinationName: dest.name,
+          destinationSlug: dest.slug,
+          packageLabel: sugPackage || undefined,
+          message: sugMessage || undefined,
+        },
+      });
+      setSelectedBooking(updated);
+      setSuggesting(false);
+      await fetchBookings();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to send the suggestion.');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleClearSuggestion = async () => {
+    if (!selectedBooking) return;
+    try {
+      setUpdatingId(selectedBooking._id);
+      const updated = await bookingService.updateStatus(selectedBooking._id, {
+        bookingStatus: 'under_review',
+        suggestion: null,
+      });
+      setSelectedBooking(updated);
+      setSuggesting(false);
+      await fetchBookings();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to withdraw the suggestion.');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -72,10 +136,10 @@ export const AdminBookingsPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="font-serif text-2xl font-bold text-forest">
-                Safari Permits and Bookings Ledger
+                Booking Leads &amp; Safari Permits
               </h2>
               <p className="text-forest/60 text-xs">
-                Official register of traveler applications, ID verification, and permit allotment
+                Lead requests under review, alternative suggestions, and permit allotment
               </p>
             </div>
 
@@ -101,7 +165,7 @@ export const AdminBookingsPage: React.FC = () => {
 
           {/* Filter Pills */}
           <div className="flex items-center space-x-2 overflow-x-auto pt-2 border-t border-forest/10 text-xs">
-            {['all', 'pending', 'confirmed', 'paid', 'cancelled', 'completed'].map(st => (
+            {['all', 'pending', 'under_review', 'alternative_suggested', 'confirmed', 'payment_pending', 'paid', 'cancelled', 'completed', 'rejected'].map(st => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
@@ -174,10 +238,14 @@ export const AdminBookingsPage: React.FC = () => {
                           className="px-2.5 py-1 rounded-lg border border-forest/20 text-xs font-semibold bg-white text-forest focus:outline-none"
                         >
                           <option value="pending">Pending</option>
+                          <option value="under_review">Under Review</option>
                           <option value="confirmed">Confirmed</option>
+                          <option value="alternative_suggested">Alternative Sent</option>
+                          <option value="payment_pending">Payment Pending</option>
                           <option value="paid">Paid</option>
                           <option value="cancelled">Cancelled</option>
                           <option value="completed">Completed</option>
+                          <option value="rejected">Rejected</option>
                         </select>
                       </td>
                       <td className="p-4">
@@ -194,7 +262,7 @@ export const AdminBookingsPage: React.FC = () => {
                       </td>
                       <td className="p-4 text-right">
                         <button
-                          onClick={() => setSelectedBooking(b)}
+                          onClick={() => openBooking(b)}
                           className="p-1.5 rounded-lg bg-sand hover:bg-forest hover:text-sand text-forest transition"
                           title="View Full Application"
                         >
@@ -212,7 +280,7 @@ export const AdminBookingsPage: React.FC = () => {
         {/* Detail Inspection Modal */}
         {selectedBooking && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white max-w-2xl w-full rounded-3xl overflow-hidden shadow-2xl border border-forest/20 p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div id="permit-receipt" className="bg-white max-w-2xl w-full rounded-3xl overflow-hidden shadow-2xl border border-forest/20 p-8 space-y-6 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b border-forest/10 pb-4">
                 <div>
                   <h3 className="font-serif text-2xl font-bold text-forest">Permit Application Dossier</h3>
@@ -220,7 +288,7 @@ export const AdminBookingsPage: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setSelectedBooking(null)}
-                  className="p-1 rounded-full text-forest/40 hover:text-forest"
+                  className="p-1 rounded-full text-forest/40 hover:text-forest print:hidden"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -257,12 +325,84 @@ export const AdminBookingsPage: React.FC = () => {
                 </div>
               )}
 
+              {/* Counter-offer when the requested reserve/package is unavailable */}
+              {selectedBooking.suggestion?.destinationSlug && (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-xs space-y-1">
+                  <strong className="block text-blue-900">Alternative sent to traveler</strong>
+                  <div>Reserve: {selectedBooking.suggestion.destinationName}</div>
+                  {selectedBooking.suggestion.packageLabel && <div>Package: {selectedBooking.suggestion.packageLabel}</div>}
+                  {selectedBooking.suggestion.message && <p className="italic text-blue-900/80">{selectedBooking.suggestion.message}</p>}
+                  <button
+                    onClick={handleClearSuggestion}
+                    disabled={updatingId === selectedBooking._id}
+                    className="mt-2 px-3 py-1.5 border border-blue-300 text-blue-900 rounded-lg font-semibold hover:bg-blue-100 transition disabled:opacity-50"
+                  >
+                    Withdraw & Return to Review
+                  </button>
+                </div>
+              )}
+
+              {!suggesting ? (
+                <button
+                  onClick={() => setSuggesting(true)}
+                  className="px-4 py-2 bg-sand border border-forest/25 text-forest rounded-xl text-xs font-semibold hover:bg-gold transition"
+                >
+                  Suggest Alternative Reserve / Package
+                </button>
+              ) : (
+                <div className="p-4 bg-sand/40 rounded-xl space-y-3 text-xs">
+                  <strong className="block text-forest">Suggest an Alternative</strong>
+                  <select
+                    value={sugDestSlug}
+                    onChange={e => { setSugDestSlug(e.target.value); setSugPackage(''); }}
+                    className="w-full px-3 py-2 border border-forest/20 rounded-lg bg-white text-forest"
+                  >
+                    <option value="">Pick a reserve...</option>
+                    {destinations.map(d => (
+                      <option key={d.slug} value={d.slug}>{d.name}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={sugPackage}
+                    onChange={e => setSugPackage(e.target.value)}
+                    className="w-full px-3 py-2 border border-forest/20 rounded-lg bg-white text-forest"
+                  >
+                    <option value="">Any package</option>
+                    {(destinations.find(d => d.slug === sugDestSlug)?.packages ?? []).map(p => (
+                      <option key={p.label} value={p.label}>{p.label}</option>
+                    ))}
+                  </select>
+                  <textarea
+                    value={sugMessage}
+                    onChange={e => setSugMessage(e.target.value)}
+                    rows={3}
+                    placeholder="Note for the traveler (e.g. your date is full; this reserve has permits open)."
+                    className="w-full px-3 py-2 border border-forest/20 rounded-lg bg-white text-forest"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSuggest}
+                      disabled={updatingId === selectedBooking._id}
+                      className="px-4 py-2 bg-forest text-sand rounded-lg font-semibold hover:bg-forest/90 transition disabled:opacity-50"
+                    >
+                      Send Suggestion
+                    </button>
+                    <button
+                      onClick={() => setSuggesting(false)}
+                      className="px-4 py-2 border border-forest/20 rounded-lg font-semibold hover:bg-sand transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-4 border-t border-forest/10 text-xs">
                 <div>
                   <span className="text-forest/60 block">Total Tariff:</span>
                   <span className="font-serif text-2xl font-bold text-forest">₹{selectedBooking.totalAmount.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 print:hidden">
                   <button
                     onClick={() => window.print()}
                     className="px-4 py-2 border border-forest/20 text-forest rounded-xl font-semibold hover:bg-sand transition flex items-center space-x-1.5"

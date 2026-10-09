@@ -4,3 +4,9 @@ dist/
 .env.local
 .env.*.local
 .playwright-mcp/
+preview.log
+
+# Archived full-resolution source images (75 MB) and stray raw imports. Kept
+# locally, not shipped in git.
+_source/
+public/assets/img/IMG_20261009_153638.jpg.jpeg

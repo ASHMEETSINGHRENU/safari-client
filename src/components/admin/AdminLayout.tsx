@@ -15,11 +15,16 @@ import {
   X,
   Server,
   Database,
-  ArrowLeft
+  ArrowLeft,
+  Users,
+  UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-const STAFF = ['super_admin', 'admin', 'booking_manager', 'content_manager'];
+const SUPER = ['super_admin'];
+const STAFF = ['super_admin', 'booking_manager', 'content_manager'];
+const BOOKING = ['super_admin', 'booking_manager'];
+const CONTENT = ['super_admin', 'content_manager'];
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -51,15 +56,17 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   }
 
-  // Each module lists the roles the API actually lets it through, so a content_manager
-  // is not offered bookings/safaris/inquiries, which require booking_manager or admin.
+  // Each module lists the roles the API actually lets it through, so a booking_manager
+  // never sees content modules and a content_manager never sees bookings or inquiries.
   const navItems = [
     { label: 'Overview and KPIs', path: '/admin', icon: LayoutDashboard, roles: STAFF },
-    { label: 'Safari Permits and Bookings', path: '/admin/bookings', icon: BookOpen, roles: ['super_admin', 'admin', 'booking_manager'] },
-    { label: 'Reserves and Sanctuaries', path: '/admin/destinations', icon: MapPin, roles: STAFF },
-    { label: 'Safari Packages and Tariffs', path: '/admin/safaris', icon: Compass, roles: ['super_admin', 'admin', 'booking_manager'] },
-    { label: 'Traveler Inquiries', path: '/admin/inquiries', icon: MessageSquare, roles: ['super_admin', 'admin', 'booking_manager'] },
-    { label: 'CMS and Brand Story', path: '/admin/cms', icon: FileEdit, roles: STAFF },
+    { label: 'Booking Leads', path: '/admin/bookings', icon: BookOpen, roles: BOOKING },
+    { label: 'Reserves and Sanctuaries', path: '/admin/destinations', icon: MapPin, roles: CONTENT },
+    { label: 'Safari Packages and Tariffs', path: '/admin/safaris', icon: Compass, roles: CONTENT },
+    { label: 'Traveler Inquiries', path: '/admin/inquiries', icon: MessageSquare, roles: BOOKING },
+    { label: 'CMS and Brand Story', path: '/admin/cms', icon: FileEdit, roles: CONTENT },
+    { label: 'Team Members', path: '/admin/team', icon: Users, roles: SUPER },
+    { label: 'Travelers', path: '/admin/travelers', icon: UserCheck, roles: SUPER },
   ].filter(item => item.roles.includes(user.role));
 
   const currentNav = navItems.find(item => item.path === location.pathname) || navItems[0];

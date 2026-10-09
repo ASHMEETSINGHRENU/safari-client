@@ -1,55 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Compass, 
-  Menu, 
-  X, 
-  User as UserIcon, 
-  Shield, 
-  Bookmark, 
-  LogOut, 
-  ChevronDown,
-  MapPin,
-  Camera,
-  BookOpen,
-  HelpCircle,
-  Phone,
-  Scale,
-  Sparkles,
-  ArrowRight
+import {
+  Compass,
+  Menu,
+  X,
+  User as UserIcon,
+  Shield,
+  LogOut,
+  ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { MAP_LABEL, MAP_ROUTE, YEARS_OF_EXPERIENCE } from '../../lib/site';
 
 // --- Types and Navigation Config ---
 interface NavLinkItem {
   name: string;
   path: string;
-  description?: string;
-  icon?: React.ComponentType<{ className?: string }>;
 }
 
-interface NavGroup {
-  label: string;
-  items: NavLinkItem[];
-}
-
+// Kept deliberately short — everything else lives in the Footer.
 const PRIMARY_LINKS: NavLinkItem[] = [
-  { name: 'Destinations', path: '/destinations' },
-  { name: 'Safaris', path: '/safaris' },
-  { name: MAP_LABEL, path: MAP_ROUTE },
+  { name: 'Reserves', path: '/destinations' },
   { name: 'Our Story', path: '/our-story' },
   { name: 'Journal', path: '/journal' },
   { name: 'Gallery', path: '/gallery' },
-];
-
-const MORE_LINKS: NavLinkItem[] = [
-  { name: 'Compare Reserves', path: '/compare', icon: Scale, description: 'Side-by-side habitat and permit matrix' },
-  { name: 'How It Works', path: '/how-it-works', icon: Compass, description: '6-step permit and entry guide' },
-  { name: 'Responsible Tourism', path: '/responsible-tourism', icon: Shield, description: 'NTCA ethics and tribal empowerment' },
-  { name: 'About Shutter And Stripes', path: '/about', icon: Sparkles, description: 'Brand heritage and conservation vision' },
-  { name: 'Field FAQs', path: '/faqs', icon: HelpCircle, description: 'Everything regarding park gates and permits' },
-  { name: 'Contact Concierge', path: '/contact', icon: Phone, description: 'Jabalpur and Nagpur naturalist desks' },
+  { name: 'Map', path: '/map' },
 ];
 
 export const Navbar: React.FC = () => {
@@ -61,11 +35,9 @@ export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
 
   // Refs for clicking outside
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const moreMenuRef = useRef<HTMLDivElement>(null);
 
   // Scroll detection for sticky header transition
   useEffect(() => {
@@ -80,7 +52,6 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     setMobileMenuOpen(false);
     setUserDropdownOpen(false);
-    setMoreDropdownOpen(false);
   }, [location.pathname]);
 
   // Lock background scroll while the mobile drawer is open, else the page
@@ -98,14 +69,11 @@ export const Navbar: React.FC = () => {
     };
   }, [mobileMenuOpen]);
 
-  // Click outside listener for dropdowns
+  // Click outside listener for the user dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setUserDropdownOpen(false);
-      }
-      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
-        setMoreDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -118,113 +86,57 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-sand/95 backdrop-blur-md shadow-md py-3 border-b border-forest/10' 
-          : 'bg-sand/85 backdrop-blur-sm py-4 border-b border-forest/5'
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-forest border-b-2 border-gold/40 ${
+        isScrolled ? 'shadow-lg py-3' : 'py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-6">
-          
+
           {/* Brand Identity / Logo */}
-          <Link to="/" className="flex items-center space-x-3 group shrink-0">
+          <Link to="/" className="flex items-center group shrink-0">
             <img
-              src="/assets/logo/nav-logo.png"
+              src="/assets/logo/nav-logo.svg"
               alt="Shutter and Stripes Emblem"
-              className="h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+              className="h-10 lg:h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
-            <div>
-              <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-forest block leading-none">
-                SHUTTER <span className="text-earth text-sm font-normal tracking-normal">And</span> STRIPES
-              </span>
-              <span className="text-[9px] tracking-widest-safari uppercase text-forest/70 font-semibold block mt-1">
-                {YEARS_OF_EXPERIENCE}+ Years in the Indian Wild
-              </span>
-            </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center space-x-4">
+          <nav className="hidden lg:flex items-center space-x-7">
             {PRIMARY_LINKS.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
                   `text-xs font-semibold uppercase tracking-wider transition-colors relative py-1.5 ${
-                    isActive 
-                      ? 'text-forest font-bold after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gold' 
-                      : 'text-forest/75 hover:text-forest'
+                    isActive
+                      ? 'text-gold font-bold after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gold'
+                      : 'text-sand/80 hover:text-sand'
                   }`
                 }
               >
                 {link.name}
               </NavLink>
             ))}
-
-            {/* "More Explore" Dropdown */}
-            <div className="relative" ref={moreMenuRef}>
-              <button
-                onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
-                className={`text-xs font-semibold uppercase tracking-wider transition-colors py-1.5 flex items-center space-x-1 ${
-                  moreDropdownOpen ? 'text-forest font-bold' : 'text-forest/75 hover:text-forest'
-                }`}
-                aria-expanded={moreDropdownOpen}
-              >
-                <span>More</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreDropdownOpen ? 'rotate-180 text-gold' : ''}`} />
-              </button>
-
-              {moreDropdownOpen && (
-                <div className="absolute top-full left-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-forest/15 py-3 z-50 animate-fadeIn">
-                  <div className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-forest/40 border-b border-forest/5 mb-1">
-                    Expedition and Planning
-                  </div>
-                  {MORE_LINKS.map((item) => {
-                    const Icon = item.icon || Compass;
-                    return (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className="flex items-start space-x-3 px-4 py-2.5 hover:bg-sand/40 transition group"
-                      >
-                        <Icon className="w-4 h-4 text-gold mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
-                        <div>
-                          <div className="text-xs font-bold text-forest group-hover:text-gold transition">
-                            {item.name}
-                          </div>
-                          {item.description && (
-                            <div className="text-[10px] text-forest/60 leading-tight mt-0.5">
-                              {item.description}
-                            </div>
-                          )}
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
           </nav>
 
           {/* Desktop Right Actions */}
           <div className="hidden lg:flex items-center space-x-3">
-            
-
 
             {/* User Account / Auth Dropdown */}
             {isAuthenticated ? (
               <div className="relative" ref={userMenuRef}>
-                <button 
+                <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border border-forest/20 text-forest text-xs font-semibold hover:bg-forest/5 transition bg-white/50"
+                  className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border border-sand/30 text-sand text-xs font-semibold hover:bg-sand/10 transition"
                 >
-                  <div className="w-6 h-6 rounded-full bg-forest text-gold flex items-center justify-center font-serif text-xs font-bold">
+                  <div className="w-6 h-6 rounded-full bg-gold text-forest flex items-center justify-center font-serif text-xs font-bold">
                     {user?.name.charAt(0)}
                   </div>
                   <span className="max-w-[110px] truncate">{user?.name}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-forest/60 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 text-gold transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {userDropdownOpen && (
@@ -235,8 +147,8 @@ export const Navbar: React.FC = () => {
                       <span className="text-[10px] text-forest/60 block truncate">{user?.email}</span>
                     </div>
 
-                    <Link 
-                      to="/account" 
+                    <Link
+                      to="/account"
                       className="flex items-center space-x-2.5 px-4 py-2.5 text-xs font-semibold text-forest hover:bg-sand transition"
                     >
                       <UserIcon className="w-3.5 h-3.5 text-gold" />
@@ -244,8 +156,8 @@ export const Navbar: React.FC = () => {
                     </Link>
 
                     {isAdmin && (
-                      <Link 
-                        to="/admin" 
+                      <Link
+                        to="/admin"
                         className="flex items-center space-x-2.5 px-4 py-2.5 text-xs font-semibold text-forest hover:bg-sand transition"
                       >
                         <Shield className="w-3.5 h-3.5 text-gold" />
@@ -254,7 +166,7 @@ export const Navbar: React.FC = () => {
                     )}
 
                     <div className="border-t border-forest/10 pt-1 mt-1">
-                      <button 
+                      <button
                         onClick={handleSignOut}
                         className="w-full text-left flex items-center space-x-2.5 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 transition"
                       >
@@ -266,20 +178,20 @@ export const Navbar: React.FC = () => {
                 )}
               </div>
             ) : (
-              <Link 
-                to="/login" 
-                className="text-xs font-bold uppercase tracking-wider text-forest hover:text-earth transition px-3 py-1.5"
+              <Link
+                to="/login"
+                className="text-xs font-bold uppercase tracking-wider text-sand hover:text-gold transition px-3 py-1.5"
               >
                 Sign In
               </Link>
             )}
 
             {/* Primary CTA: Book Safari */}
-            <Link 
-              to="/booking" 
-              className="px-5 py-2.5 bg-forest text-sand text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-forest/90 transition shadow-md flex items-center space-x-2 group"
+            <Link
+              to="/booking"
+              className="px-5 py-2.5 bg-gold text-forest text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-gold-light transition shadow-md flex items-center space-x-2 group"
             >
-              <Compass className="w-3.5 h-3.5 text-gold group-hover:rotate-45 transition-transform" />
+              <Compass className="w-3.5 h-3.5 group-hover:rotate-45 transition-transform" />
               <span>Book Safari</span>
             </Link>
 
@@ -287,15 +199,15 @@ export const Navbar: React.FC = () => {
 
           {/* Mobile Menu Action Toggle */}
           <div className="flex items-center space-x-2 lg:hidden">
-            <Link 
-              to="/booking" 
-              className="px-3 py-1.5 bg-forest text-sand text-xs font-bold uppercase tracking-wider rounded-lg shadow-sm"
+            <Link
+              to="/booking"
+              className="px-3 py-1.5 bg-gold text-forest text-xs font-bold uppercase tracking-wider rounded-lg shadow-sm"
             >
               Book
             </Link>
-            <button 
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-forest hover:bg-forest/5 focus:outline-none"
+              className="p-2 rounded-xl text-sand hover:bg-sand/10 focus:outline-none"
               aria-label="Toggle Navigation Drawer"
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-nav-drawer"
@@ -309,59 +221,45 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer (Responsive Overlay) */}
       {mobileMenuOpen && (
-        <div id="mobile-nav-drawer" className="lg:hidden bg-sand border-b border-forest/15 px-4 pt-3 pb-6 shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+        <div id="mobile-nav-drawer" className="lg:hidden bg-forest border-b-2 border-gold/40 px-4 pt-3 pb-6 shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
           <nav className="flex flex-col space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-forest/40 px-3 pt-1 pb-1">
-              Primary Destinations and Wild
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gold/60 px-3 pt-1 pb-1">
+              Explore
             </span>
             {PRIMARY_LINKS.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className="px-3 py-2 rounded-xl text-sm font-semibold text-forest hover:bg-white/60 transition"
+                className="px-3 py-2 rounded-xl text-sm font-semibold text-sand hover:bg-sand/10 transition"
               >
                 {link.name}
               </Link>
             ))}
 
-            <span className="text-[10px] font-bold uppercase tracking-widest text-forest/40 px-3 pt-3 pb-1">
-              Planning and Ethics
-            </span>
-            {MORE_LINKS.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="px-3 py-2 rounded-xl text-sm font-medium text-forest/80 hover:bg-white/60 transition flex items-center justify-between"
-              >
-                <span>{item.name}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-gold" />
-              </Link>
-            ))}
-
             {/* Mobile Auth and Admin Block */}
-            <div className="border-t border-forest/10 pt-3 mt-3 space-y-2">
+            <div className="border-t border-sand/15 pt-3 mt-3 space-y-2">
               {isAdmin && (
-                <Link 
-                  to="/admin" 
-                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-bold text-sand bg-forest"
+                <Link
+                  to="/admin"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-bold text-forest bg-gold"
                 >
-                  <Shield className="w-4 h-4 text-gold" />
+                  <Shield className="w-4 h-4" />
                   <span>Admin Management Console</span>
                 </Link>
               )}
 
               {isAuthenticated ? (
                 <>
-                  <Link 
-                    to="/account" 
-                    className="flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-semibold text-forest bg-white/60"
+                  <Link
+                    to="/account"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-semibold text-sand bg-sand/10"
                   >
                     <UserIcon className="w-4 h-4 text-gold" />
                     <span>My Account ({user?.name})</span>
                   </Link>
-                  <button 
+                  <button
                     onClick={handleSignOut}
-                    className="w-full text-left flex items-center space-x-2 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 rounded-xl"
+                    className="w-full text-left flex items-center space-x-2 px-3 py-2 text-sm font-semibold text-red-300 hover:bg-sand/10 rounded-xl"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Sign Out</span>
@@ -369,15 +267,15 @@ export const Navbar: React.FC = () => {
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-2 pt-1">
-                  <Link 
-                    to="/login" 
-                    className="text-center py-2.5 rounded-xl border border-forest/20 text-xs font-bold uppercase tracking-wider text-forest bg-white"
+                  <Link
+                    to="/login"
+                    className="text-center py-2.5 rounded-xl border border-sand/30 text-xs font-bold uppercase tracking-wider text-sand"
                   >
                     Sign In
                   </Link>
-                  <Link 
-                    to="/register" 
-                    className="text-center py-2.5 rounded-xl bg-forest text-sand text-xs font-bold uppercase tracking-wider"
+                  <Link
+                    to="/register"
+                    className="text-center py-2.5 rounded-xl bg-gold text-forest text-xs font-bold uppercase tracking-wider"
                   >
                     Register
                   </Link>

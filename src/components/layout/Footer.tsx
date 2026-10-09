@@ -32,16 +32,11 @@ export const Footer: React.FC = () => {
           
           {/* Brand Bio */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-11 w-auto object-contain shrink-0" />
-              <div>
-                <span className="font-serif text-xl font-bold tracking-wider text-sand block">
-                  SHUTTER <span className="text-gold font-normal lowercase">and</span> STRIPES
-                </span>
-                <span className="text-[10px] tracking-widest-safari uppercase text-sand/70 block mt-0.5">
-                  Guided By Locals • Inspired By Nature
-                </span>
-              </div>
+            <div className="space-y-2">
+              <img src="/assets/logo/nav-logo.svg" alt="Shutter and Stripes" className="h-14 w-auto object-contain" />
+              <span className="text-[10px] tracking-widest-safari uppercase text-sand/70 block">
+                Guided By Locals • Inspired By Nature
+              </span>
             </div>
 
             <p className="text-sand/80 text-sm leading-relaxed max-w-sm">
@@ -83,7 +78,6 @@ export const Footer: React.FC = () => {
               Explore Platform
             </h4>
             <ul className="space-y-2.5 text-sm text-sand/80">
-              <li><Link to="/safaris" className="hover:text-gold transition-colors">Safari Packages</Link></li>
               <li><Link to="/map" className="hover:text-gold transition-colors">Interactive Reserve Map</Link></li>
               <li><Link to="/compare" className="hover:text-gold transition-colors">Compare Reserves</Link></li>
               <li><Link to="/how-it-works" className="hover:text-gold transition-colors">How Booking Works</Link></li>
@@ -156,6 +150,7 @@ export const Footer: React.FC = () => {
             © {new Date().getFullYear()} SHUTTER AND STRIPES Expeditions Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex space-x-6">
+            <Link to="/track" className="hover:text-gold transition-colors">Track Booking</Link>
             <Link to="/faqs" className="hover:text-gold transition-colors">FAQs</Link>
             <Link to="/contact" className="hover:text-gold transition-colors">Contact Concierge</Link>
             <Link to="/responsible-tourism" className="hover:text-gold transition-colors">Park Guidelines</Link>

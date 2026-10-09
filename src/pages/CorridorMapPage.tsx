@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Compass } from 'lucide-react';
 import { ReserveMap } from '../components/map/ReserveMap';
 import { destinationService } from '../services/api';
@@ -8,6 +8,7 @@ import { MAP_LABEL, stateCode, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE } f
 export const CorridorMapPage: React.FC = () => {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [selectedReserve, setSelectedReserve] = useState<Destination | null>(null);
+  const [activeState, setActiveState] = useState<string>('All');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,13 +29,29 @@ export const CorridorMapPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const states = [...new Set(destinations.map(d => d.state))];
-  const core = destinations.filter(d => isCoreState(d.state));
+  const states = useMemo(
+    () => [...new Set(destinations.map(d => d.state))].sort(
+      (a, b) => Number(isCoreState(b)) - Number(isCoreState(a)) || a.localeCompare(b)
+    ),
+    [destinations]
+  );
+
+  // Drives both the in-map toggle and the quick-jump list, so they never drift apart.
+  const visible = useMemo(
+    () => (activeState === 'All' ? destinations : destinations.filter(d => d.state === activeState)),
+    [destinations, activeState]
+  );
+
+  const selectState = (state: string) => {
+    setActiveState(state);
+    const first = state === 'All' ? destinations[0] : destinations.find(d => d.state === state);
+    if (first) setSelectedReserve(first);
+  };
 
   return (
     <div className="bg-sand min-h-screen pt-28 pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
         <div className="max-w-3xl mb-8">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-semibold uppercase tracking-widest mb-4">
@@ -52,13 +69,13 @@ export const CorridorMapPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Quick Jump - above the map. Native select on all viewports. */}
+        {/* Quick Jump - reserves in the selected map. Native select on all viewports. */}
         <div className="bg-white p-3 sm:p-4 rounded-lg border border-forest/10 shadow-sm mb-4">
           <label
             htmlFor="quick-jump"
             className="text-[10px] uppercase font-bold tracking-wider text-forest/60 block mb-2"
           >
-            Quick Jump · {core.length} core reserves
+            Quick Jump · {visible.length} {activeState === 'All' ? 'reserves' : `${stateCode(activeState)} reserves`}
           </label>
 
           {/* ponytail: native <select> gives a real mobile picker and one-line desktop control, free. */}
@@ -71,7 +88,7 @@ export const CorridorMapPage: React.FC = () => {
             }}
             className="w-full max-w-md bg-sand/50 border border-forest/20 rounded-xl px-3 py-2.5 text-sm text-forest focus:outline-none focus:border-gold"
           >
-            {destinations.map(d => (
+            {visible.map(d => (
               <option key={d._id} value={d.slug}>
                 {d.name} ({stateCode(d.state)})
               </option>
@@ -79,10 +96,12 @@ export const CorridorMapPage: React.FC = () => {
           </select>
         </div>
 
-        {/* Interactive Map */}
+        {/* Interactive Map (state toggle lives in its control bar) */}
         <div className="space-y-4">
           <ReserveMap
             destinations={destinations}
+            activeFilter={activeState}
+            onFilterChange={selectState}
             selectedSlug={selectedReserve?.slug}
             onSelectDestination={(d) => setSelectedReserve(d)}
           />

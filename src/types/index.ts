@@ -113,8 +113,14 @@ export interface Booking {
   specialRequests?: string;
   totalAmount: number;
   packageLabel?: 'Budget' | 'Mid-Range' | 'Luxury';
-  bookingStatus: 'pending' | 'confirmed' | 'payment_pending' | 'paid' | 'cancelled' | 'completed' | 'rejected';
+  bookingStatus: 'pending' | 'under_review' | 'confirmed' | 'alternative_suggested' | 'payment_pending' | 'paid' | 'cancelled' | 'completed' | 'rejected';
   paymentStatus: 'pending' | 'paid' | 'refunded';
+  suggestion?: {
+    destinationName?: string;
+    destinationSlug?: string;
+    packageLabel?: string;
+    message?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -124,7 +130,7 @@ export interface User {
   _id?: string;
   name: string;
   email: string;
-  role: 'super_admin' | 'admin' | 'booking_manager' | 'content_manager' | 'customer';
+  role: 'super_admin' | 'booking_manager' | 'content_manager' | 'customer';
   phone?: string;
   country?: string;
   savedDestinations?: string[];
@@ -149,6 +155,9 @@ export interface JournalArticle {
   category: 'Wildlife' | 'Photography' | 'Safari Guide' | 'Destinations' | 'Responsible Tourism';
   excerpt: string;
   content: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string[];
   coverImage: string;
   author: string;
   readTime: string;

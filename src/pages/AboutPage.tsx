@@ -130,7 +130,7 @@ export const AboutPage: React.FC = () => {
               to="/destinations"
               className="px-6 py-3 bg-forest text-sand rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-forest/90 transition shadow"
             >
-              Explore Destinations
+              Explore Reserves
             </Link>
             <Link
               to="/contact"

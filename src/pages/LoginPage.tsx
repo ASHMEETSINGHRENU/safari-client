@@ -32,7 +32,7 @@ export const LoginPage: React.FC = () => {
       
       // Check if user is admin to route to admin or redirect
       const savedUser = JSON.parse(localStorage.getItem('sns_user') || '{}');
-      if (['super_admin', 'admin', 'booking_manager'].includes(savedUser.role)) {
+      if (savedUser.role && savedUser.role !== 'customer') {
         navigate('/admin');
       } else {
         navigate(redirect);

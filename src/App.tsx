@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { PublicLayout } from './components/layout/PublicLayout';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Pages
 import HomePage from './pages/HomePage';
 import DestinationsPage from './pages/DestinationsPage';
 import DestinationDetailPage from './pages/DestinationDetailPage';
-import SafarisPage from './pages/SafarisPage';
 import ComparePage from './pages/ComparePage';
 import CorridorMapPage from './pages/CorridorMapPage';
 import OurStoryPage from './pages/OurStoryPage';
@@ -23,6 +23,8 @@ import BookingPage from './pages/BookingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CustomerAccountPage from './pages/CustomerAccountPage';
+import TrackBookingPage from './pages/TrackBookingPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Pages (Rendered with dedicated AdminLayout, NO public navbar/footer)
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
@@ -31,6 +33,8 @@ import AdminDestinationsPage from './pages/admin/AdminDestinationsPage';
 import AdminSafarisPage from './pages/admin/AdminSafarisPage';
 import AdminInquiriesPage from './pages/admin/AdminInquiriesPage';
 import AdminOurStoryCMSPage from './pages/admin/AdminOurStoryCMSPage';
+import AdminTeamPage from './pages/admin/AdminTeamPage';
+import AdminTravelersPage from './pages/admin/AdminTravelersPage';
 
 // Scroll to top helper on navigation
 const ScrollToTop: React.FC = () => {
@@ -51,12 +55,12 @@ export const App: React.FC = () => {
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <ErrorBoundary>
         <Routes>
           {/* Consumer Facing Pages (With Public Navbar and Footer) */}
           <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
           <Route path="/destinations" element={<PublicRoute><DestinationsPage /></PublicRoute>} />
           <Route path="/destinations/:slug" element={<PublicRoute><DestinationDetailPage /></PublicRoute>} />
-          <Route path="/safaris" element={<PublicRoute><SafarisPage /></PublicRoute>} />
           <Route path="/compare" element={<PublicRoute><ComparePage /></PublicRoute>} />
           <Route path="/map" element={<PublicRoute><CorridorMapPage /></PublicRoute>} />
           <Route path="/our-story" element={<PublicRoute><OurStoryPage /></PublicRoute>} />
@@ -74,6 +78,7 @@ export const App: React.FC = () => {
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
           <Route path="/account" element={<PublicRoute><CustomerAccountPage /></PublicRoute>} />
+          <Route path="/track" element={<PublicRoute><TrackBookingPage /></PublicRoute>} />
 
           {/* DEDICATED ADMIN PANEL ROUTES (ZERO PUBLIC NAVBAR, ZERO PUBLIC FOOTER) */}
           <Route path="/admin" element={<AdminDashboardPage />} />
@@ -82,10 +87,13 @@ export const App: React.FC = () => {
           <Route path="/admin/safaris" element={<AdminSafarisPage />} />
           <Route path="/admin/inquiries" element={<AdminInquiriesPage />} />
           <Route path="/admin/cms" element={<AdminOurStoryCMSPage />} />
+          <Route path="/admin/team" element={<AdminTeamPage />} />
+          <Route path="/admin/travelers" element={<AdminTravelersPage />} />
 
           {/* Fallback */}
-          <Route path="*" element={<PublicRoute><HomePage /></PublicRoute>} />
+          <Route path="*" element={<PublicRoute><NotFoundPage /></PublicRoute>} />
         </Routes>
+        </ErrorBoundary>
       </BrowserRouter>
     </AuthProvider>
   );

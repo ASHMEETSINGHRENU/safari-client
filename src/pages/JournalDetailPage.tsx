@@ -38,6 +38,32 @@ export const JournalDetailPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, [slug]);
 
+  useEffect(() => {
+    if (!article) return;
+    const prevTitle = document.title;
+    const setMeta = (attr: 'name' | 'property', key: string, content: string) => {
+      let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
+    const title = article.metaTitle || `${article.title} | Shutter and Stripes`;
+    const description = article.metaDescription || article.excerpt;
+    document.title = title;
+    setMeta('name', 'description', description);
+    if (article.keywords?.length) setMeta('name', 'keywords', article.keywords.join(', '));
+    setMeta('property', 'og:title', title);
+    setMeta('property', 'og:description', description);
+    setMeta('property', 'og:type', 'article');
+    if (article.coverImage) setMeta('property', 'og:image', window.location.origin + article.coverImage);
+    return () => {
+      document.title = prevTitle;
+    };
+  }, [article]);
+
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
@@ -139,9 +165,20 @@ export const JournalDetailPage: React.FC = () => {
 
         {/* Main Article Content */}
         <div className="prose prose-lg prose-forest max-w-none text-forest/85 leading-relaxed space-y-6 text-base sm:text-lg font-sans">
-          {article.content.split('\n\n').map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
+          {article.content.split('\n\n').map((block, i) => {
+            const match = /^(#{2,4})\s+(.*)$/.exec(block.trim());
+            if (match) {
+              const level = match[1].length;
+              const Tag = `h${level}` as 'h2' | 'h3' | 'h4';
+              const size = level === 2 ? 'text-2xl sm:text-3xl' : level === 3 ? 'text-xl sm:text-2xl' : 'text-lg';
+              return React.createElement(
+                Tag,
+                { key: i, className: `font-serif font-bold text-forest ${size}` },
+                match[2]
+              );
+            }
+            return <p key={i}>{block.trim()}</p>;
+          })}
         </div>
 
         {/* Author Bio Box */}

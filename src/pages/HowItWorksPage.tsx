@@ -58,6 +58,37 @@ export const HowItWorksPage: React.FC = () => {
           </p>
         </div>
 
+        {/* The 5 Phases of Your Journey */}
+        <div className="bg-forest text-sand p-8 sm:p-12 rounded-3xl mb-16 space-y-8">
+          <div className="max-w-2xl space-y-2">
+            <span className="text-gold text-xs font-bold uppercase tracking-widest block">
+              The Journey, Start to Finish
+            </span>
+            <h2 className="font-serif text-3xl font-bold">
+              The 5 Phases of Your Journey
+            </h2>
+            <p className="text-sand/75 text-sm leading-relaxed">
+              Before a single permit is filed, your expedition is co-designed around you. This is how every Shutter and Stripes journey unfolds.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {[
+              { num: '01', title: 'SPARK', desc: 'You discover the wild through a reel, a referral, or a page. You reach out.' },
+              { num: '02', title: 'CO-CREATION', desc: 'We ask five questions: who is travelling, why they travel, preferred style, season, and pace. Then we design the journey together.' },
+              { num: '03', title: 'SAFE LANDING', desc: 'Permits, transfers, lodge and vehicle are locked. You arrive to a plan that already knows your name.' },
+              { num: '04', title: 'CLASSROOM', desc: 'The forest itself teaches — ecology, behavior, conservation — guided by naturalists who read it fluently.' },
+              { num: '05', title: 'LEGACY', desc: 'You leave with images, understanding, and a contribution: 1% of your booking stays with the community and the forest.' },
+            ].map(step => (
+              <div key={step.num} className="bg-white/5 border border-sand/15 p-5 rounded-xl space-y-2.5 backdrop-blur-sm">
+                <span className="font-serif text-2xl font-bold text-gold/50 block">{step.num}</span>
+                <h3 className="font-serif text-sm font-bold text-sand tracking-wider">{step.title}</h3>
+                <p className="text-xs text-sand/70 leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {steps.map((s, idx) => (

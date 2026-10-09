@@ -14,24 +14,25 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { adminService, bookingService } from '../../services/api';
+import { adminService } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import { Booking } from '../../types';
 
 export const AdminDashboardPage: React.FC = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const canSeeBookings = ['super_admin', 'booking_manager'].includes(user?.role || '');
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
-        const [statsData, bookingsData] = await Promise.all([
-          adminService.getStats(),
-          bookingService.getAllAdmin({ search: '' })
-        ]);
+        const statsData = await adminService.getStats();
         setStats(statsData.stats);
-        setRecentBookings(bookingsData.slice(0, 6));
+        setRecentBookings(statsData.recentBookings || []);
       } catch (err) {
         console.error(err);
       } finally {
@@ -40,6 +41,12 @@ export const AdminDashboardPage: React.FC = () => {
     };
     fetchDashboard();
   }, []);
+
+  const shortcuts = [
+    { to: '/admin/bookings', roles: ['super_admin', 'booking_manager'], title: 'Manage Permits and Bookings', desc: 'Review traveler IDs, confirm payments, update statuses' },
+    { to: '/admin/destinations', roles: ['super_admin', 'content_manager'], title: 'Reserve Capacities and Zones', desc: 'Adjust starting prices, permits availability, and guidelines' },
+    { to: '/admin/cms', roles: ['super_admin', 'content_manager'], title: 'CMS and Brand Story', desc: 'Update editorial statements, ethics charter, and site settings' },
+  ].filter(s => s.roles.includes(user?.role || ''));
 
   return (
     <AdminLayout>
@@ -112,47 +119,25 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* Quick Management Shortcuts */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link
-            to="/admin/bookings"
-            className="bg-white p-6 rounded-2xl border border-forest/10 shadow-sm hover:border-gold/50 transition group flex items-center justify-between"
-          >
-            <div>
-              <h3 className="font-serif text-lg font-bold text-forest group-hover:text-gold transition">
-                Manage Permits and Bookings
-              </h3>
-              <p className="text-xs text-forest/60 mt-1">Review traveler IDs, confirm payments, update statuses</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-forest/40 group-hover:text-gold transition shrink-0 ml-4" />
-          </Link>
-
-          <Link
-            to="/admin/destinations"
-            className="bg-white p-6 rounded-2xl border border-forest/10 shadow-sm hover:border-gold/50 transition group flex items-center justify-between"
-          >
-            <div>
-              <h3 className="font-serif text-lg font-bold text-forest group-hover:text-gold transition">
-                Reserve Capacities and Zones
-              </h3>
-              <p className="text-xs text-forest/60 mt-1">Adjust starting prices, permits availability, and guidelines</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-forest/40 group-hover:text-gold transition shrink-0 ml-4" />
-          </Link>
-
-          <Link
-            to="/admin/cms"
-            className="bg-white p-6 rounded-2xl border border-forest/10 shadow-sm hover:border-gold/50 transition group flex items-center justify-between"
-          >
-            <div>
-              <h3 className="font-serif text-lg font-bold text-forest group-hover:text-gold transition">
-                CMS and Brand Story
-              </h3>
-              <p className="text-xs text-forest/60 mt-1">Update editorial statements, ethics charter, and site settings</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-forest/40 group-hover:text-gold transition shrink-0 ml-4" />
-          </Link>
+          {shortcuts.map(s => (
+            <Link
+              key={s.to}
+              to={s.to}
+              className="bg-white p-6 rounded-2xl border border-forest/10 shadow-sm hover:border-gold/50 transition group flex items-center justify-between"
+            >
+              <div>
+                <h3 className="font-serif text-lg font-bold text-forest group-hover:text-gold transition">
+                  {s.title}
+                </h3>
+                <p className="text-xs text-forest/60 mt-1">{s.desc}</p>
+              </div>
+              <ArrowRight className="w-5 h-5 text-forest/40 group-hover:text-gold transition shrink-0 ml-4" />
+            </Link>
+          ))}
         </div>
 
-        {/* Recent Bookings Feed */}
+        {/* Recent Bookings Feed (booking staff only; the API returns none otherwise) */}
+        {canSeeBookings && (
         <div className="bg-white p-8 rounded-3xl border border-forest/15 shadow-sm space-y-6">
           <div className="flex items-center justify-between border-b border-forest/10 pb-4">
             <div>
@@ -227,6 +212,7 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           )}
         </div>
+        )}
 
       </div>
     </AdminLayout>

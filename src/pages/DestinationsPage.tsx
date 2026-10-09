@@ -13,7 +13,8 @@ import {
   X,
   Calendar,
   Sparkles,
-  TreePine
+  TreePine,
+  MessageSquare
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
@@ -268,7 +269,7 @@ export const DestinationsPage: React.FC = () => {
           </div>
         ) : (
           <div className={viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" 
+            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" 
             : "space-y-6"
           }>
             {filteredDestinations.map(dest => {
@@ -550,8 +551,15 @@ export const DestinationsPage: React.FC = () => {
             <p className="text-sand/80 text-sm leading-relaxed mb-6 font-sans">
               All safari permits issued through Shutter And Stripes comply with the National Tiger Conservation Authority (NTCA) carrying capacities and respective State Forest Department norms. We advocate ethical photography, zero baiting, and complete silence in the park.
             </p>
-            <div className="flex flex-wrap gap-4 text-xs font-semibold">
-              <Link to="/responsible-tourism" className="text-gold hover:underline flex items-center space-x-1">
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                to="/contact?subject=General%20Enquiry%20%E2%80%94%20Other%20Reserves%20%26%20Locations"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-gold text-forest rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gold-light transition shadow-lg"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Can't find your reserve? Send a general enquiry</span>
+              </Link>
+              <Link to="/responsible-tourism" className="text-gold hover:underline flex items-center space-x-1 text-xs font-semibold">
                 <span>Read our Responsible Tourism Charter</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>

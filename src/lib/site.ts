@@ -1,10 +1,13 @@
 import { Destination, Zone } from '../types';
 
-export const MAP_LABEL = 'The Wild Blueprint';
+export const MAP_LABEL = 'The Safari Landscape';
 export const MAP_ROUTE = '/map';
 export const YEARS_OF_EXPERIENCE = 15;
 export const CONTACT_EMAIL = 'concierge@shutterandstripes.com';
-export const FOUNDER_NAME = 'Sachin';
+export const FOUNDER_NAME = 'Sachin Neware';
+
+// Flat upgrade over the guide bundled with every package. Must match server NATURALIST_FEE.
+export const NATURALIST_FEE = 1000;
 
 // States we actively operate in, in priority order. Everything else renders as Pan-India expansion.
 export const CORE_STATES = ['Madhya Pradesh', 'Maharashtra'];

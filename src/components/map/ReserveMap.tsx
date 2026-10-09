@@ -3,27 +3,47 @@ import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Destination } from '../../types';
+import type { FeatureCollection } from 'geojson';
 import { Compass, ArrowRight, Star } from 'lucide-react';
 import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, packageFromOf, inr, CONTACT_EMAIL } from '../../lib/site';
 
 interface ReserveMapProps {
   destinations: Destination[];
+  activeFilter: string;
+  onFilterChange: (state: string) => void;
   selectedSlug?: string;
   onSelectDestination?: (dest: Destination) => void;
 }
 
+// State boundaries are static; fetch once per session and share across mounts.
+let statesGeoPromise: Promise<FeatureCollection> | null = null;
+const loadStatesGeo = (): Promise<FeatureCollection> => {
+  if (!statesGeoPromise) {
+    statesGeoPromise = fetch('/assets/geo/india-states.geojson')
+      .then(res => (res.ok ? res.json() : Promise.reject(new Error(`states geojson ${res.status}`))))
+      .catch(err => {
+        statesGeoPromise = null; // allow a retry on the next mount
+        throw err;
+      });
+  }
+  return statesGeoPromise;
+};
+
 export const ReserveMap: React.FC<ReserveMapProps> = ({ 
   destinations, 
+  activeFilter,
+  onFilterChange,
   selectedSlug, 
   onSelectDestination 
 }) => {
   const [activeDest, setActiveDest] = useState<Destination | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>('All');
+  const [statesGeo, setStatesGeo] = useState<FeatureCollection | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layerRef = useRef<L.LayerGroup | null>(null);
+  const boundaryRef = useRef<L.GeoJSON | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // ponytail: states derived from data, not a hardcoded list. New states appear with zero code change.
+  // Toggle/legend states, core states first. Derived from data, never hardcoded.
   const states = useMemo(
     () => [...new Set(destinations.map(d => d.state))].sort(
       (a, b) => Number(isCoreState(b)) - Number(isCoreState(a)) || a.localeCompare(b)
@@ -38,7 +58,7 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
 
   useEffect(() => {
     if (activeFilter !== 'All' && !states.includes(activeFilter)) {
-      setActiveFilter('All');
+      onFilterChange('All');
     }
   }, [states, activeFilter]);
 
@@ -73,6 +93,49 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
     const t = setTimeout(() => mapRef.current?.invalidateSize(), 120);
     return () => clearTimeout(t);
   }, []);
+
+  // Load the static state-boundary polygons once; a failure just means no borders.
+  useEffect(() => {
+    let cancelled = false;
+    loadStatesGeo()
+      .then(geo => { if (!cancelled) setStatesGeo(geo); })
+      .catch(err => console.error('Failed to load state boundaries', err));
+    return () => { cancelled = true; };
+  }, []);
+
+  // Outline each state currently in view, under the markers, so the two states read apart.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !statesGeo) return;
+
+    const wanted = new Set(filtered.map(d => d.state));
+    const features = statesGeo.features.filter(
+      f => wanted.has((f.properties as { name?: string } | null)?.name ?? '')
+    );
+
+    const layer = L.geoJSON({ type: 'FeatureCollection', features } as FeatureCollection, {
+      interactive: false,
+      style: (feature) => {
+        const name = (feature?.properties as { name?: string } | null)?.name;
+        const core = isCoreState(name);
+        return {
+          color: core ? '#8B5A2B' : '#6B7A5A',
+          weight: 2.5,
+          opacity: 0.85,
+          dashArray: '6 5',
+          fillColor: core ? '#8B5A2B' : '#6B7A5A',
+          fillOpacity: 0.07,
+        };
+      },
+    }).addTo(map);
+    layer.bringToBack();
+    boundaryRef.current = layer;
+
+    return () => {
+      map.removeLayer(layer);
+      if (boundaryRef.current === layer) boundaryRef.current = null;
+    };
+  }, [statesGeo, filtered]);
 
   // Draw markers for whatever is currently visible.
   useEffect(() => {
@@ -156,10 +219,12 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
           </p>
         </div>
 
-        {/* State Filter Pills — derived from data */}
-        <div className="flex flex-wrap items-center bg-forest-deep/80 p-1 rounded-lg border border-sand/15 text-xs">
+        {/* State Toggle — one map per state, plus the whole network. Derived from data. */}
+        <div className="flex flex-wrap items-center bg-forest-deep/80 p-1 rounded-lg border border-sand/15 text-xs" role="tablist" aria-label="Select reserve map">
           <button
-            onClick={() => setActiveFilter('All')}
+            role="tab"
+            aria-selected={activeFilter === 'All'}
+            onClick={() => onFilterChange('All')}
             className={`px-3 py-1.5 rounded-md font-medium transition-all ${
               activeFilter === 'All'
                 ? 'bg-gold text-forest font-bold shadow-sm'
@@ -171,7 +236,9 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
           {states.map(state => (
             <button
               key={state}
-              onClick={() => setActiveFilter(state)}
+              role="tab"
+              aria-selected={activeFilter === state}
+              onClick={() => onFilterChange(state)}
               className={`px-3 py-1.5 rounded-md font-medium transition-all flex items-center gap-1.5 ${
                 activeFilter === state
                   ? 'bg-gold text-forest font-bold shadow-sm'
@@ -192,12 +259,12 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
         <div className="lg:col-span-8 relative border-r border-sand/10">
           <div ref={containerRef} className="w-full h-full min-h-[560px]" />
 
-          {/* Map Legend — generated from the states actually present */}
+          {/* Map Legend — generated from the states actually shown */}
           <div className="absolute bottom-6 left-3 z-[500] bg-forest-deep/90 backdrop-blur-md px-3 py-2 rounded-md border border-sand/15 text-[11px] flex items-center gap-4 text-sand/80 max-w-[calc(100%-1.5rem)] flex-wrap pointer-events-none">
-            {states.map(state => (
+            {[...new Set(filtered.map(d => d.state))].map(state => (
               <div key={state} className="flex items-center gap-1.5">
                 <span className={`w-2.5 h-2.5 rounded-full inline-block ${isCoreState(state) ? 'bg-[#8B5A2B]' : 'bg-[#6B7A5A]'}`} />
-                <span>{state} ({destinations.filter(d => d.state === state).length})</span>
+                <span>{state} ({filtered.filter(d => d.state === state).length})</span>
               </div>
             ))}
           </div>

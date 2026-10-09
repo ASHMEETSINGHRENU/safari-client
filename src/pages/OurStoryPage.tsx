@@ -26,10 +26,10 @@ export const OurStoryPage: React.FC = () => {
             <span>The Shutter And Stripes Ethos</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-6xl text-forest font-bold tracking-tight mb-6 leading-tight">
-            Born in the Dust and Sal Valleys of Central India
+            Guided by Locals. Inspired by Nature.
           </h1>
           <p className="text-forest/80 text-lg sm:text-xl leading-relaxed font-sans max-w-2xl mx-auto">
-            We are not a booking aggregator. Led by {FOUNDER_NAME}, we are wildlife chroniclers, naturalists, and photographers
+            Shutter and Stripes is a wildlife travel company rooted in Moharli, at the edge of Tadoba. Led by {FOUNDER_NAME}, we are naturalists, trackers and photographers
             dedicated to the resident wildlife of Central India&mdash;every tiger, leopard, sloth bear, dhole, and stork
             that lives here year-round, not just the species on a checklist.
           </p>
@@ -66,13 +66,13 @@ export const OurStoryPage: React.FC = () => {
               {FOUNDER_NAME}, Founder and Principal Naturalist
             </h2>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              {YEARS_OF_EXPERIENCE}+ years in the field, {YEARS_OF_EXPERIENCE}+ years of reading forests&mdash;first as a
-              photographer chasing good light, then as a naturalist who understood the light was only the excuse.
+              My connection to the wild stretches back 18 years, to a village called Moharli nestled at the edge of Tadoba. My father was posted there as a forest gatekeeper, and I grew up in the shadow of those woods &mdash; watching the forest department jeeps leave at dawn, breathing in the scent of sal and woodsmoke, and falling asleep to the calls of the jungle beyond our doorstep.
             </p>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              The reserves on this site are the ones {FOUNDER_NAME} has personally walked: the waterholes where old pugmarks
-              overlap, the ridges where leopards move at dusk, the grasslands where sloth bear cubs are born in the heat of May.
-              That fieldwork is what this platform is built on.
+              I remember the first time I truly saw a tiger in the wild. It was the monsoon, the grasslands were lush and green, and the big cat walked across them as if it owned the earth &mdash; because it did. In that moment, something shifted inside me. The forest was no longer just a backdrop; it became a part of who I was.
+            </p>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              For years I chased the perfect frame. Slowly I learned the deeper truth: the jungle rewards respect, not checklists. The real shift, and the founding of Shutter and Stripes, came when I realised the jungle is a classroom, not a checklist &mdash; and the people best qualified to teach in it are the ones who were born beside it.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
@@ -317,6 +317,62 @@ export const OurStoryPage: React.FC = () => {
                 Drivers and guides are paid directly with transparent premiums above statutory base rates.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6b. OUR CORE MISSION */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+        <div className="bg-forest-deep text-sand p-8 sm:p-12 rounded-3xl border border-gold/30 max-w-4xl mx-auto text-center space-y-5">
+          <span className="text-gold text-xs font-bold uppercase tracking-widest block">
+            Our Core Mission
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-sand">
+            The Jungle is a Classroom, Not a Checklist
+          </h2>
+          <p className="text-sand/85 text-base leading-relaxed max-w-2xl mx-auto font-sans">
+            We exist to move safari tourism away from the frenzy of ticking off sightings and toward genuine understanding &mdash; ecology, behavior, conservation, and the human communities that live beside these forests. Every journey we design teaches something, funds something, and leaves the forest quieter than we found it.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 text-center">
+            <div className="p-4 bg-white/5 rounded-2xl border border-sand/15">
+              <span className="block font-serif text-2xl font-bold text-gold">1%</span>
+              <span className="text-[10px] uppercase tracking-wider text-sand/70">of bookings pledged to community and conservation</span>
+            </div>
+            <div className="p-4 bg-white/5 rounded-2xl border border-sand/15">
+              <span className="block font-serif text-2xl font-bold text-gold">{YEARS_OF_EXPERIENCE}+</span>
+              <span className="text-[10px] uppercase tracking-wider text-sand/70">years reading these forests</span>
+            </div>
+            <div className="p-4 bg-white/5 rounded-2xl border border-sand/15">
+              <span className="block font-serif text-2xl font-bold text-gold">100%</span>
+              <span className="text-[10px] uppercase tracking-wider text-sand/70">local guides and naturalists</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6c. FOUNDER'S NOTE */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+        <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-forest/15 shadow-xl p-8 sm:p-12 relative">
+          <Quote className="w-14 h-14 text-gold/25 absolute top-6 right-6" />
+          <span className="text-earth font-bold text-xs uppercase tracking-widest block mb-4">
+            A Note from the Founder &mdash; The Sighting That Changed Everything
+          </span>
+          <div className="space-y-4 text-forest/85 text-base leading-relaxed font-sans">
+            <p>
+              I still remember the first time I saw a royal Bengal tiger in the heart of Tadoba. I was surrounded by towering trees and dozens of breathless travelers, all waiting quietly for a single glimpse. When the tiger finally stepped out of the shadows, I was mesmerized&mdash;not just by the sheer majesty of the apex predator, but by the raw curiosity and electric excitement rippling through the people around me.
+            </p>
+            <p>
+              That afternoon, a simple question took root in my mind: Why are we so deeply drawn to this one animal? The answer changed the trajectory of my life. The tiger is far more than an apex predator or a beautiful photograph. It is our national animal, the ultimate symbol of a healthy forest, and the keystone holding an entire ecosystem together.
+            </p>
+            <p>
+              Showing people a tiger is only the beginning. My true responsibility over the past 15+ years has been to help travelers understand why the tiger needs to be protected, and how its survival is deeply intertwined with every bird, tree, and local village community. This is the very soul of Shutter and Stripes. When you see, understand, and connect with nature, you naturally fight to protect it.
+            </p>
+            <p>
+              Tadoba is my home. Protecting its legacy is who I am. I invite you to step into our classroom, track with our elite local talent, and leave a lasting footprint on conservation.
+            </p>
+            <p className="text-forest font-medium pt-2 border-t border-forest/10">
+              &mdash; {FOUNDER_NAME}, Founder &amp; Naturalist
+            </p>
           </div>
         </div>
       </section>

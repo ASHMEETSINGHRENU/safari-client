@@ -27,6 +27,27 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// A rejected token (expired/rotated) must not leave the app in a half-logged-in
+// state. Clear it and send the user to login once, preserving where they were.
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    const status = error?.response?.status;
+    const url = error?.config?.url || '';
+    const isAuthAttempt = url.includes('/auth/login') || url.includes('/auth/register');
+    const hadToken = !!localStorage.getItem('sns_token');
+    if (status === 401 && hadToken && !isAuthAttempt) {
+      localStorage.removeItem('sns_token');
+      localStorage.removeItem('sns_user');
+      const { pathname, search } = window.location;
+      if (pathname !== '/login') {
+        window.location.assign(`/login?redirect=${encodeURIComponent(pathname + search)}&expired=1`);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Auth Services
 export const authService = {
   login: async (credentials: { email: string; password: string }) => {
@@ -125,6 +146,10 @@ export const bookingService = {
     const res = await api.get<{ success: boolean; booking: Booking }>(`/bookings/ref/${ref}`);
     return res.data.booking;
   },
+  track: async (data: { ref: string; email?: string; phone?: string }) => {
+    const res = await api.post<{ success: boolean; booking: Booking }>('/bookings/track', data);
+    return res.data.booking;
+  },
   cancel: async (id: string) => {
     const res = await api.put(`/bookings/${id}/cancel`);
     return res.data.booking;
@@ -133,7 +158,7 @@ export const bookingService = {
     const res = await api.get<{ success: boolean; count: number; bookings: Booking[] }>('/bookings/admin/all', { params });
     return res.data.bookings;
   },
-  updateStatus: async (id: string, data: { bookingStatus?: string; paymentStatus?: string }) => {
+  updateStatus: async (id: string, data: { bookingStatus?: string; paymentStatus?: string; suggestion?: Booking['suggestion'] | null }) => {
     const res = await api.put(`/bookings/admin/${id}/status`, data);
     return res.data.booking;
   }
@@ -197,11 +222,15 @@ export const adminService = {
     const res = await api.get('/admin/stats');
     return res.data;
   },
-  getUsers: async () => {
-    const res = await api.get('/admin/users');
+  getUsers: async (kind?: 'team' | 'customer') => {
+    const res = await api.get('/admin/users', { params: kind ? { kind } : {} });
     return res.data.users;
   },
-  updateUserRole: async (id: string, role: string, isActive?: boolean) => {
+  createUser: async (data: { name: string; email: string; password: string; role: string; phone?: string; country?: string }) => {
+    const res = await api.post('/admin/users', data);
+    return res.data.user;
+  },
+  updateUserRole: async (id: string, role?: string, isActive?: boolean) => {
     const res = await api.put(`/admin/users/${id}/role`, { role, isActive });
     return res.data.user;
   }

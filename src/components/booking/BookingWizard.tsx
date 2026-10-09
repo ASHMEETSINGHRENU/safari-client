@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import confetti from 'canvas-confetti';
 import { 
-  Clock, Car, Calendar, AlertCircle, CheckCircle2, ArrowLeft, ArrowRight,
-  Download, Printer, Sparkles, ShieldCheck, Users
+  Calendar, AlertCircle, CheckCircle2, ArrowLeft, ArrowRight,
+  Sparkles, ShieldCheck, Users
 } from 'lucide-react';
 import { Destination, Safari, Booking } from '../../types';
 import { destinationService, safariService, bookingService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { inr, tierPrice, packageFromOf } from '../../lib/site';
-// Receipt styles: the bare import applies them to the on-screen permit, the ?inline
-// import hands back the same CSS as a string for the downloaded standalone file.
-import './permit.css';
-import permitStyle from './permit.css?inline';
+import { inr, tierPrice, packageFromOf, NATURALIST_FEE } from '../../lib/site';
 
 const isoOf = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -98,12 +93,23 @@ const SafariCalendar: React.FC<{ value: string; onSelect: (iso: string) => void 
   );
 };
 
+// ponytail: sessionStorage draft so a reload or route bounce doesn't wipe wizard selections.
+const DRAFT_KEY = 'bookingDraft';
+const readDraft = (): any => {
+  try {
+    return JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null');
+  } catch {
+    return null;
+  }
+};
+
 export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initialSafariSlug }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [draft] = useState(readDraft);
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(() => Math.min(draft?.step ?? 1, 4));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
@@ -113,22 +119,25 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
   const [safaris, setSafaris] = useState<Safari[]>([]);
 
   // Booking Form State
-  const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null);
-  const [selectedSafari, setSelectedSafari] = useState<Safari | null>(null);
+  const [selectedDestination, setSelectedDestination] = useState<Destination | null>(draft?.selectedDestination ?? null);
+  const [selectedSafari, setSelectedSafari] = useState<Safari | null>(draft?.selectedSafari ?? null);
   const [safariDate, setSafariDate] = useState<string>(() => {
+    if (draft?.safariDate) return draft.safariDate;
     const d = new Date();
     d.setDate(d.getDate() + 14);
     return d.toISOString().split('T')[0];
   });
-  const [selectedZone, setSelectedZone] = useState<string>('');
-  const [selectedSlot, setSelectedSlot] = useState<string>('Morning');
-  const [selectedVehicle, setSelectedVehicle] = useState<string>('Open 4x4 Safari Jeep');
-  const [adults, setAdults] = useState<number>(2);
-  const [children, setChildren] = useState<number>(0);
-  const [naturalistRequested, setNaturalistRequested] = useState<boolean>(true);
-  const [selectedPackageLabel, setSelectedPackageLabel] = useState<string>('');
-  // Step 2 fires one picker at a time; a field collapses into a chip once confirmed.
-  const [confirmed, setConfirmed] = useState({ date: false, zone: false, slot: false, vehicle: false });
+  const [selectedZone, setSelectedZone] = useState<string>(draft?.selectedZone ?? '');
+  const [selectedVehicle, setSelectedVehicle] = useState<string>(draft?.selectedVehicle ?? 'Open 4x4 Safari Jeep');
+  const [adults, setAdults] = useState<number>(draft?.adults ?? 2);
+  const [children, setChildren] = useState<number>(draft?.children ?? 0);
+  const [naturalistRequested, setNaturalistRequested] = useState<boolean>(draft?.naturalistRequested ?? true);
+  const [selectedPackageLabel, setSelectedPackageLabel] = useState<string>(draft?.selectedPackageLabel ?? '');
+  // Step 2 shows the date picker first; it collapses into a chip once confirmed.
+  const [confirmed, setConfirmed] = useState(() => ({
+    date: false,
+    ...(draft?.confirmed ?? {})
+  }));
   const [attempted, setAttempted] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [customerInfo, setCustomerInfo] = useState({
@@ -152,6 +161,20 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
     );
   }, [adults, children]);
 
+  useEffect(() => {
+    if (confirmedBooking) {
+      sessionStorage.removeItem(DRAFT_KEY);
+      return;
+    }
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+      step, selectedDestination, selectedSafari, safariDate, selectedZone,
+      selectedVehicle, adults, children, naturalistRequested,
+      selectedPackageLabel, confirmed
+    }));
+  }, [confirmedBooking, step, selectedDestination, selectedSafari, safariDate,
+      selectedZone, selectedVehicle, adults, children,
+      naturalistRequested, selectedPackageLabel, confirmed]);
+
   // Load initial destinations and safaris
   useEffect(() => {
     destinationService.getAll().then(data => {
@@ -172,7 +195,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
         const foundSafari = data.find(s => s.slug === initialSafariSlug);
         if (foundSafari) {
           setSelectedSafari(foundSafari);
-          setSelectedSlot(foundSafari.slot);
+          setSelectedVehicle(foundSafari.vehicle || 'Open 4x4 Safari Jeep');
         }
       }
     });
@@ -196,12 +219,16 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
   const selectedPackage =
     packages.find(t => t.label === selectedPackageLabel) ?? packages[0];
   const perPerson = selectedPackage?.min ?? (selectedDestination?.startingPrice ?? 0);
-  const totalAmount = perPerson * Math.max(adults, 1) + Math.round(perPerson * 0.5) * children;
+  const totalAmount =
+    perPerson * Math.max(adults, 1) +
+    Math.round(perPerson * 0.5) * children +
+    (naturalistRequested ? NATURALIST_FEE : 0);
 
   const validateField = (key: string, value: string) => {
     if (key === 'fullName') return value.trim().length >= 3 ? '' : "Enter the traveler's full name (as per ID).";
     if (key === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ? '' : 'Enter a valid email address.';
     if (key === 'phone') return /^\+?\d[\d\s-]{7,14}\d$/.test(value.trim()) ? '' : 'Enter a valid number with country code, e.g. +91 98765 43210.';
+    if (key === 'idNumber') return value.trim().length >= 4 ? '' : "Enter the lead traveler's ID number (as per the document).";
     return '';
   };
   const showError = (key: string) => (attempted || touched[key]) && validateField(key, customerInfo[key]);
@@ -250,7 +277,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
       return;
     }
     if (step === 3) {
-      const invalidLead = ['fullName', 'email', 'phone'].some(k => validateField(k, customerInfo[k]));
+      const invalidLead = ['fullName', 'email', 'phone', 'idNumber'].some(k => validateField(k, customerInfo[k]));
       const invalidGuest = guestDetails.some(g => g.fullName.trim().length < 3 || g.idNumber.trim().length < 4);
       if (invalidLead || invalidGuest) {
         setAttempted(true);
@@ -280,7 +307,6 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
         safari: selectedSafari?._id,
         safariName: selectedSafari?.name || 'Exclusive Wilderness Safari',
         safariDate,
-        slot: `${selectedSlot} Safari`,
         zone: selectedZone || 'Core Sector',
         vehicleType: selectedVehicle,
         guests: { adults, children },
@@ -296,13 +322,6 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
       const res = await bookingService.create(payload);
       setConfirmedBooking(res);
       setStep(5);
-      try {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-      } catch (e) {}
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to submit booking. Please try again.');
     } finally {
@@ -310,35 +329,11 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
     }
   };
 
-  const downloadPermit = () => {
-    const el = document.getElementById('permit-receipt');
-    if (!el || !confirmedBooking) return;
-    const doc = [
-      '<!doctype html><html lang="en"><head><meta charset="utf-8">',
-      `<title>${confirmedBooking.bookingRef} — Safari Permit Cum Receipt</title>`,
-      '<style>body{margin:0;background:#e7e7e7;padding:16px 8px;font-family:Arial,Helvetica,sans-serif}</style>',
-      '<style>',
-      permitStyle,
-      '</style></head><body>',
-      el.outerHTML,
-      '</body></html>'
-    ].join('\n');
-    const blob = new Blob([doc], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${confirmedBooking.bookingRef}-permit.html`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
-
   const stepsList = [
-    { num: 1, title: 'Safari' },
+    { num: 1, title: 'Reserve' },
     { num: 2, title: 'Trip' },
-    { num: 3, title: 'Lead' },
-    { num: 4, title: 'Confirm' },
+    { num: 3, title: 'Details' },
+    { num: 4, title: 'Review' },
   ];
 
   return (
@@ -348,7 +343,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[11px] tracking-widest-safari uppercase text-gold font-bold block">
-              Official Permit Allocation
+              Booking Request
             </span>
             <h2 className="font-serif text-2xl font-bold text-sand mt-0.5">
               Safari Expedition Booking
@@ -410,7 +405,6 @@ onClick={() => {
                       setSelectedDestination(d);
                       setSelectedSafari(null);
                       setSelectedPackageLabel('');
-                      setConfirmed(c => ({ ...c, zone: false, slot: false, vehicle: false }));
                       if (d.zones.length > 0) setSelectedZone(d.zones[0].name);
                     }}
                       className={`p-3 rounded-lg border cursor-pointer transition-all flex items-center gap-3 ${
@@ -462,7 +456,7 @@ onClick={() => {
                       key={s.slug}
                       onClick={() => {
                         setSelectedSafari(s);
-                        setSelectedSlot(s.slot);
+                        setSelectedVehicle(s.vehicle || 'Open 4x4 Safari Jeep');
                       }}
                       className="p-4 rounded-xl border border-forest/20 bg-sand hover:border-gold cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                     >
@@ -550,7 +544,7 @@ onClick={() => {
             <div className="space-y-5">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif text-lg font-bold text-forest">Trip Details</h3>
-              {confirmed.date && confirmed.zone && confirmed.slot && confirmed.vehicle && (
+              {confirmed.date && (
                 <span className="text-[10px] uppercase font-bold text-earth flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Arranged for your safari
                 </span>
@@ -589,167 +583,27 @@ onClick={() => {
               </button>
             )}
 
-            {/* Zone: pick then collapse */}
-            {confirmed.date && !confirmed.zone && (
-              <div>
-                <h4 className="font-bold text-forest text-sm mb-3">Safari Sector / Zone</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {selectedDestination?.zones.map(z => {
-                    const isSelected = selectedZone === z.name;
-                    return (
-                      <div
-                        key={z.name}
-                        onClick={() => { setSelectedZone(z.name); setConfirmed(c => ({ ...c, zone: true })); }}
-                        className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                          isSelected 
-                            ? 'border-forest bg-forest text-sand shadow-md' 
-                            : 'border-forest/20 bg-sand hover:border-gold'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                            z.type === 'core' ? 'bg-amber-600/30 text-amber-900 border border-amber-500/40' : 'bg-emerald-600/30 text-emerald-900 border border-emerald-500/40'
-                          }`}>
-                            {z.type.toUpperCase()} ZONE
-                          </span>
-                          {z.gates && z.gates.length > 0 && (
-                            <span className="text-[10px] opacity-75">{z.gates[0]}</span>
-                          )}
-                        </div>
-                        <h4 className="font-serif text-base font-bold mt-2">{z.name}</h4>
-                        {z.highlight && (
-                          <p className={`text-xs mt-1 ${isSelected ? 'text-sand/80' : 'text-forest/70'}`}>{z.highlight}</p>
-                        )}
-                      </div>
-                    );
-                  })}
+            {/* Sector + vehicle ride along with your safari choice — assigned, not picked */}
+            {confirmed.date && (
+              <div className="bg-sand p-4 rounded-xl border border-forest/20 grid grid-cols-2 gap-4">
+                <div className="min-w-0">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-earth block">Sector / Zone</span>
+                  <span className="font-serif text-sm font-bold block truncate">{selectedZone || selectedDestination?.zones[0]?.name || 'Core Sector'}</span>
+                  <span className="text-[11px] text-forest/70">
+                    {selectedDestination?.zones.find(z => z.name === selectedZone)?.type.toUpperCase() ?? 'CORE'} ZONE · assigned by our team
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-earth block">Vehicle</span>
+                  <span className="font-serif text-sm font-bold block truncate">{selectedVehicle}</span>
+                  <span className="text-[11px] text-forest/70">
+                    {selectedVehicle === 'Open 4x4 Safari Jeep' ? 'Up to 6 guests' : 'Up to 3 photographers'}
+                  </span>
                 </div>
               </div>
             )}
-            {confirmed.date && confirmed.zone && (
-              <button
-                type="button"
-                onClick={() => setConfirmed(c => ({ ...c, zone: false }))}
-                className="w-full flex items-center justify-between gap-3 p-3 rounded-lg border-2 border-forest bg-forest text-sand shadow-md cursor-pointer hover:bg-forest-light transition-all text-left"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-forest-light flex-shrink-0">
-                    {selectedZone}
-                  </span>
-                  <span className="font-serif text-sm font-bold block truncate">
-                    {selectedDestination?.zones.find(z => z.name === selectedZone)?.type.toUpperCase()} ZONE
-                  </span>
-                </div>
-                <span className="text-[10px] uppercase font-bold text-gold border border-gold/40 px-2.5 py-1 rounded-lg flex-shrink-0">Change</span>
-              </button>
-            )}
 
-            {/* Slot: pick then collapse */}
-            {confirmed.date && confirmed.zone && !confirmed.slot && (
-              <div>
-                <h4 className="font-bold text-forest text-sm mb-3">Safari Timing / Slot</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
-                  {[
-                    { slot: 'Morning', hours: '06:00 AM – 10:00 AM', desc: 'First tracks, golden dawn mist, high predator activity.' },
-                    { slot: 'Afternoon', hours: '02:30 PM – 06:30 PM', desc: 'Waterhole vigilance, rim lighting, evening territorial patrols.' },
-                  ].map(item => {
-                    const isSelected = selectedSlot === item.slot;
-                    return (
-                      <div
-                        key={item.slot}
-                        onClick={() => { setSelectedSlot(item.slot); setConfirmed(c => ({ ...c, slot: true })); }}
-                        className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                          isSelected 
-                            ? 'border-forest bg-forest text-sand shadow-md' 
-                            : 'border-forest/20 bg-sand hover:border-gold'
-                        }`}
-                      >
-                        <Clock className={`w-5 h-5 ${isSelected ? 'text-gold' : 'text-earth'}`} />
-                        <h4 className="font-serif text-base font-bold mt-2">{item.slot} Safari</h4>
-                        <span className="text-xs font-semibold block text-gold mt-0.5">{item.hours}</span>
-                        <p className={`text-xs mt-1 ${isSelected ? 'text-sand/80' : 'text-forest/70'}`}>{item.desc}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            {confirmed.date && confirmed.zone && confirmed.slot && (
-              <button
-                type="button"
-                onClick={() => setConfirmed(c => ({ ...c, slot: false }))}
-                className="w-full flex items-center justify-between gap-3 p-3 rounded-lg border-2 border-forest bg-forest text-sand shadow-md cursor-pointer hover:bg-forest-light transition-all text-left"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="w-10 h-10 rounded-md bg-forest-light flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-gold" />
-                  </span>
-                  <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-gold flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Safari Timing
-                    </span>
-                    <span className="font-serif text-sm font-bold block truncate">{selectedSlot} Safari</span>
-                  </div>
-                </div>
-                <span className="text-[10px] uppercase font-bold text-gold border border-gold/40 px-2.5 py-1 rounded-lg flex-shrink-0">Change</span>
-              </button>
-            )}
-
-            {/* Vehicle: pick then collapse */}
-            {confirmed.date && confirmed.zone && confirmed.slot && !confirmed.vehicle && (
-              <div>
-                <h4 className="font-bold text-forest text-sm mb-3">Vehicle</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[
-                    { name: 'Open 4x4 Safari Jeep', capacity: 'Up to 6 guests', desc: 'The gold standard of Indian jungle safaris. Open top, rugged suspension, exceptional 360-degree photography angles.' },
-                    { name: 'Modified Photography Safari Vehicle', capacity: 'Up to 3 photographers', desc: 'Customized safari vehicle with beanbag railings, inverter charging ports, and low-angle vantage setups.' }
-                  ].map(v => {
-                    const isSelected = selectedVehicle === v.name;
-                    return (
-                      <div
-                        key={v.name}
-                        onClick={() => { setSelectedVehicle(v.name); setConfirmed(c => ({ ...c, vehicle: true })); }}
-                        className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                          isSelected 
-                            ? 'border-forest bg-forest text-sand shadow-md' 
-                            : 'border-forest/20 bg-sand hover:border-gold'
-                        }`}
-                      >
-                        <Car className={`w-5 h-5 ${isSelected ? 'text-gold' : 'text-earth'}`} />
-                        <h4 className="font-serif text-base font-bold mt-2">{v.name}</h4>
-                        <span className="text-xs font-semibold text-gold block">{v.capacity}</span>
-                        <p className={`text-xs mt-1 ${isSelected ? 'text-sand/80' : 'text-forest/70'}`}>{v.desc}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            {confirmed.date && confirmed.zone && confirmed.slot && confirmed.vehicle && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setConfirmed(c => ({ ...c, vehicle: false }))}
-                  className="w-full flex items-center justify-between gap-3 p-3 rounded-lg border-2 border-forest bg-forest text-sand shadow-md cursor-pointer hover:bg-forest-light transition-all text-left"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="w-10 h-10 rounded-md bg-forest-light flex items-center justify-center flex-shrink-0">
-                      <Car className="w-5 h-5 text-gold" />
-                    </span>
-                    <div className="min-w-0">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-gold flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Vehicle
-                      </span>
-                      <span className="font-serif text-sm font-bold block truncate">{selectedVehicle}</span>
-                      <span className="text-[11px] block text-sand/80">
-                        {selectedVehicle === 'Open 4x4 Safari Jeep' ? 'Up to 6 guests' : 'Up to 3 photographers'}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-[10px] uppercase font-bold text-gold border border-gold/40 px-2.5 py-1 rounded-lg flex-shrink-0">Change</span>
-                </button>
-
-                {/* Guests + naturalist — final, stays open */}
+            {/* Guests + naturalist — the only remaining inputs on this step */}
                 <div className="bg-sand p-6 rounded-xl border border-forest/20 space-y-6 max-w-lg">
                   <h4 className="font-bold text-forest text-sm">Guests &amp; Naturalist</h4>
                   <div className="flex items-center justify-between">
@@ -801,8 +655,6 @@ onClick={() => {
                     />
                   </div>
                 </div>
-              </>
-            )}
             </div>
 
             {/* Running booking summary — what's locked in so far */}
@@ -856,9 +708,8 @@ onClick={() => {
               {confirmed.date && (
                 <div className="text-xs text-sand/80 space-y-1.5 border-t border-gold/20 pt-3">
                   <span className="flex justify-between gap-2"><span className="text-sand/60">Date</span><span className="text-right">{new Date(safariDate + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></span>
-                  {confirmed.zone && <span className="flex justify-between gap-2"><span className="text-sand/60">Zone</span><span className="text-right">{selectedZone}</span></span>}
-                  {confirmed.slot && <span className="flex justify-between gap-2"><span className="text-sand/60">Timing</span><span className="text-right">{selectedSlot} Safari</span></span>}
-                  {confirmed.vehicle && <span className="flex justify-between gap-2"><span className="text-sand/60">Vehicle</span><span className="text-right">{selectedVehicle}</span></span>}
+                  <span className="flex justify-between gap-2"><span className="text-sand/60">Zone</span><span className="text-right">{selectedZone || selectedDestination?.zones[0]?.name || 'Core Sector'}</span></span>
+                  <span className="flex justify-between gap-2"><span className="text-sand/60">Vehicle</span><span className="text-right">{selectedVehicle}</span></span>
                 </div>
               )}
             </aside>
@@ -938,14 +789,16 @@ onClick={() => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-forest mb-1">ID DOCUMENT NUMBER</label>
+                <label className="block text-xs font-bold text-forest mb-1">ID DOCUMENT NUMBER <span className="text-red-600">*</span></label>
                 <input
                   type="text"
                   value={customerInfo.idNumber}
                   onChange={(e) => setCustomerInfo({ ...customerInfo, idNumber: sanitizeInput('idNumber', e.target.value) })}
+                  onBlur={() => setTouched(t => ({ ...t, idNumber: true }))}
                   placeholder="e.g. XXXX-XXXX-4819"
-                  className="w-full p-2.5 rounded border border-forest/30 bg-sand-light text-xs text-forest focus:outline-none"
+                  className={inputCls('idNumber')}
                 />
+                {fieldError('idNumber')}
               </div>
 
               <div className="sm:col-span-2">
@@ -1061,12 +914,8 @@ onClick={() => {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-gold/70 block">Timing</span>
-                    <span className="text-sm font-semibold block">{selectedSlot} Safari</span>
-                  </div>
-                  <div>
                     <span className="text-[10px] uppercase font-bold tracking-wider text-gold/70 block">Zone</span>
-                    <span className="text-sm font-semibold block text-earth">{selectedZone}</span>
+                    <span className="text-sm font-semibold block text-earth">{selectedZone || selectedDestination?.zones[0]?.name || 'Core Sector'}</span>
                   </div>
                   <div>
                     <span className="text-[10px] uppercase font-bold tracking-wider text-gold/70 block">Vehicle</span>
@@ -1146,150 +995,66 @@ onClick={() => {
 
         {/* STEP 5: CONFIRMATION / PERMIT */}
         {step === 5 && confirmedBooking && (
-          <div className="text-center py-6 space-y-5 animate-fadeIn">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mx-auto border-2 border-emerald-600 print:hidden">
-              <CheckCircle2 className="w-10 h-10" />
+          <div className="text-center py-8 space-y-5 animate-fadeIn">
+            <div className="w-16 h-16 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto border-2 border-amber-600">
+              <ShieldCheck className="w-10 h-10" />
             </div>
-            <div className="print:hidden">
+            <div>
               <span className="text-xs uppercase tracking-widest-safari text-earth font-bold block">
-                Expedition Confirmed
+                Request Received
               </span>
               <h3 className="font-serif text-2xl font-bold text-forest mt-1">
-                Your Safari is Reserved!
+                Your Booking Is Under Review
               </h3>
-              <p className="text-xs text-forest/70 max-w-md mx-auto mt-1">
-                Official Forest Permit voucher has been dispatched to <strong>{confirmedBooking.customerInfo.email}</strong>.
+              <p className="text-xs text-forest/70 max-w-md mx-auto mt-2">
+                Our team is checking availability and will call you on <strong>{confirmedBooking.customerInfo.phone}</strong> within 24 hours
+                to confirm your safari. Nothing has been charged yet.
               </p>
             </div>
 
-            {(() => {
-              const guests = confirmedBooking.guestDetails?.length ? confirmedBooking.guestDetails : guestDetails;
-              const travelers = [
-                {
-                  fullName: confirmedBooking.customerInfo.fullName,
-                  idType: confirmedBooking.customerInfo.idType || 'Aadhaar Card',
-                  idNumber: confirmedBooking.customerInfo.idNumber,
-                  lead: true
-                },
-                ...guests.map(g => ({ fullName: g.fullName, idType: g.idType, idNumber: g.idNumber, lead: false }))
-              ];
-              const dateLabel = (() => {
-                const d = new Date(`${confirmedBooking.safariDate}T00:00:00`);
-                return isNaN(d.getTime())
-                  ? confirmedBooking.safariDate
-                  : d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-              })();
-              const issued = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-              const totalTravelers = Math.max(confirmedBooking.guests.adults, 1) + confirmedBooking.guests.children;
-              return (
-                <div id="permit-receipt" className="rc-sheet">
-                  <header className="rc-head">
-                    <div className="rc-head-row">
-                      <div>
-                        <span className="rc-brand-name">SHUTTER AND STRIPES</span>
-                        <span className="rc-brand-sub">Expeditions Pvt. Ltd. — Guided By Locals, Inspired By Nature</span>
-                      </div>
-                      <div className="rc-ref-block">
-                        <span className="rc-ref">{confirmedBooking.bookingRef}</span>
-                        <span className="rc-ref-label">Permit cum Receipt</span>
-                      </div>
-                    </div>
-                    <div className="rc-head-meta">
-                      <span><strong>Reserve:</strong> {confirmedBooking.destinationName}</span>
-                      <span><strong>Safari:</strong> {confirmedBooking.safariName}</span>
-                      <span><strong>Package:</strong> {confirmedBooking.packageLabel || 'All-Inclusive'}</span>
-                      <span><strong>Status:</strong> CONFIRMED / PAID</span>
-                    </div>
-                  </header>
+            <div className="max-w-md mx-auto text-left rounded-xl border border-forest/20 bg-sand p-5 space-y-2.5 text-xs text-forest">
+              <div className="flex justify-between gap-2">
+                <span className="text-forest/60 font-semibold">Request Ref</span>
+                <span className="font-bold text-earth">{confirmedBooking.bookingRef}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-forest/60 font-semibold">Reserve</span>
+                <span className="font-bold text-right">{confirmedBooking.destinationName}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-forest/60 font-semibold">Safari</span>
+                <span className="font-bold text-right">{confirmedBooking.safariName}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-forest/60 font-semibold">Date</span>
+                <span className="font-bold text-right">
+                  {new Date(confirmedBooking.safariDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-forest/60 font-semibold">Package</span>
+                <span className="font-bold text-right">{confirmedBooking.packageLabel || 'All-Inclusive'}</span>
+              </div>
+              <div className="flex justify-between gap-2 border-t border-forest/15 pt-2.5">
+                <span className="text-forest/60 font-semibold">Indicative Total</span>
+                <span className="font-serif font-bold text-gold">₹{confirmedBooking.totalAmount.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
 
-                  <div className="rc-grid">
-                    {[
-                      ['Safari Date', dateLabel],
-                      ['Slot', confirmedBooking.slot],
-                      ['Zone', confirmedBooking.zone],
-                      ['Vehicle', confirmedBooking.vehicleType],
-                      ['Travelers', `${Math.max(confirmedBooking.guests.adults, 1)} adult${confirmedBooking.guests.adults === 1 ? '' : 's'}${confirmedBooking.guests.children > 0 ? ` + ${confirmedBooking.guests.children} child${confirmedBooking.guests.children === 1 ? '' : 'ren'}` : ''}`]
-                    ].map(([label, value]) => (
-                      <div key={label}>
-                        <span className="rc-label">{label}</span>
-                        <span className="rc-value">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="rc-body">
-                    <span className="rc-label">Travelers &amp; Government ID Details (as per gate check-in)</span>
-                    <table className="rc-table">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Traveler</th>
-                          <th>ID Type</th>
-                          <th>ID Number</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {travelers.map((t, i) => (
-                          <tr key={i}>
-                            <td>{i + 1}</td>
-                            <td className="rc-traveler">
-                              {t.fullName}
-                              {t.lead && <span className="rc-lead"> (Lead Traveler)</span>}
-                            </td>
-                            <td>{t.idType}</td>
-                            <td className="rc-mono">{t.idNumber}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="rc-charge">
-                    <p className="rc-charge-note">
-                      All-inclusive settlement for {totalTravelers} traveler{totalTravelers === 1 ? '' : 's'} on the{' '}
-                      {confirmedBooking.packageLabel || 'All-Inclusive'} plan — accommodation, all safari drives, reserve permits,
-                      transport{confirmedBooking.naturalistRequested ? ' and Senior Forest Naturalist guide' : ''}.
-                    </p>
-                    <div className="rc-charge-total">
-                      <span className="rc-label">Total Paid</span>
-                      <span className="rc-charge-amt">₹{confirmedBooking.totalAmount.toLocaleString('en-IN')}</span>
-                    </div>
-                  </div>
-
-                  <footer className="rc-foot">
-                    <p>
-                      Issued on {issued}. This permit-cum-receipt is your valid e-voucher for the forest entry gate.
-                      Carry the original Government IDs listed above; the gate will verify every traveler against this receipt.
-                    </p>
-                    <div className="rc-foot-row">
-                      <span className="rc-everify">SNS Everify · {confirmedBooking.bookingRef}</span>
-                      <span className="rc-sign">Authorized Staff Signature</span>
-                    </div>
-                  </footer>
-                </div>
-              );
-            })()}
-
-            <div className="flex items-center justify-center gap-3 pt-3 print:hidden">
-              <button 
-                onClick={() => navigate('/account')}
+            <div className="flex items-center justify-center gap-3 pt-1">
+              <button
+                onClick={() =>
+                  navigate(user ? '/account' : `/track?ref=${encodeURIComponent(confirmedBooking.bookingRef)}`)
+                }
                 className="px-5 py-2.5 bg-forest text-sand text-xs font-semibold rounded hover:bg-forest-light transition-colors"
               >
-                View in My Account
+                {user ? 'View in My Account' : 'Track Your Request'}
               </button>
               <button
-                onClick={downloadPermit}
-                className="px-4 py-2.5 bg-forest text-sand text-xs font-semibold rounded hover:bg-forest-light transition-colors flex items-center gap-1.5 shadow-md"
+                onClick={() => navigate('/destinations')}
+                className="px-4 py-2.5 bg-sand border border-forest/30 text-forest text-xs font-semibold rounded hover:bg-gold transition-colors"
               >
-                <Download className="w-3.5 h-3.5" />
-                Download Permit
-              </button>
-              <button 
-                onClick={() => window.print()}
-                className="px-4 py-2.5 bg-sand border border-forest/30 text-forest text-xs font-semibold rounded hover:bg-gold transition-colors flex items-center gap-1.5"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                Print Permit Slip
+                Explore Reserves
               </button>
             </div>
           </div>
@@ -1328,7 +1093,7 @@ onClick={() => {
               className="px-8 py-3 bg-gold text-forest text-sm font-bold rounded hover:bg-gold-light transition-all flex items-center gap-2 shadow-lg"
             >
               <Sparkles className="w-4 h-4" />
-              <span>{loading ? 'Confirming with Reserve Gate...' : 'Confirm and Issue Permit'}</span>
+              <span>{loading ? 'Submitting your request...' : 'Submit Booking Request'}</span>
             </button>
           )}
         </div>

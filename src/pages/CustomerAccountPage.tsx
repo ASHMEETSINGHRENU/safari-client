@@ -204,6 +204,8 @@ export const CustomerAccountPage: React.FC = () => {
                             ? 'bg-emerald-600 text-white'
                             : b.bookingStatus === 'cancelled'
                             ? 'bg-red-600 text-white'
+                            : b.bookingStatus === 'alternative_suggested'
+                            ? 'bg-blue-600 text-white'
                             : 'bg-amber-600 text-white'
                         }`}>
                           {b.bookingStatus.replace('_', ' ')}
@@ -240,6 +242,23 @@ export const CustomerAccountPage: React.FC = () => {
                           <span className="font-semibold text-forest">{b.guests.adults} Adults {b.guests.children > 0 && `• ${b.guests.children} Children`}</span>
                         </div>
                       </div>
+
+                      {b.suggestion?.destinationSlug && (
+                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-xs space-y-1">
+                          <strong className="block text-blue-900">Our team suggested an alternative</strong>
+                          <span className="text-blue-900/80">
+                            {b.suggestion.destinationName}
+                            {b.suggestion.packageLabel ? ` · ${b.suggestion.packageLabel}` : ''} — your requested date isn't available.
+                          </span>
+                          {b.suggestion.message && <p className="italic text-blue-900/80">{b.suggestion.message}</p>}
+                          <Link
+                            to={`/booking?destination=${b.suggestion.destinationSlug}`}
+                            className="inline-block mt-1 px-3 py-1.5 bg-forest text-sand rounded-lg font-semibold hover:bg-forest/90 transition"
+                          >
+                            Book This Instead
+                          </Link>
+                        </div>
+                      )}
                     </div>
 
                     <div className="lg:text-right shrink-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-forest/10 flex lg:flex-col items-center lg:items-end justify-between">
@@ -249,13 +268,15 @@ export const CustomerAccountPage: React.FC = () => {
                       </div>
                       
                       <div className="flex items-center space-x-2 mt-4">
-                        <button
-                          onClick={() => setSelectedBookingForVoucher(b)}
-                          className="px-4 py-2 bg-sand border border-forest/20 text-forest rounded-xl text-xs font-semibold uppercase tracking-wider hover:bg-forest hover:text-sand transition flex items-center space-x-1"
-                        >
-                          <FileText className="w-3.5 h-3.5" />
-                          <span>Voucher</span>
-                        </button>
+                        {(b.bookingStatus === 'confirmed' || b.bookingStatus === 'paid' || b.bookingStatus === 'completed') && (
+                          <button
+                            onClick={() => setSelectedBookingForVoucher(b)}
+                            className="px-4 py-2 bg-sand border border-forest/20 text-forest rounded-xl text-xs font-semibold uppercase tracking-wider hover:bg-forest hover:text-sand transition flex items-center space-x-1"
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                            <span>Voucher</span>
+                          </button>
+                        )}
                         {b.bookingStatus !== 'cancelled' && (
                           <button
                             onClick={() => handleCancelBooking(b._id)}
@@ -359,7 +380,7 @@ export const CustomerAccountPage: React.FC = () => {
         {/* Voucher Modal */}
         {selectedBookingForVoucher && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white max-w-2xl w-full rounded-3xl overflow-hidden shadow-2xl border border-forest/20 p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div id="permit-receipt" className="bg-white max-w-2xl w-full rounded-3xl overflow-hidden shadow-2xl border border-forest/20 p-8 space-y-6 max-h-[90vh] overflow-y-auto">
               
               <div className="flex items-center justify-between border-b border-forest/10 pb-4">
                 <div className="flex items-center space-x-3">
@@ -371,7 +392,7 @@ export const CustomerAccountPage: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setSelectedBookingForVoucher(null)}
-                  className="p-1 rounded-full text-forest/50 hover:text-forest"
+                  className="p-1 rounded-full text-forest/50 hover:text-forest print:hidden"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -421,7 +442,7 @@ export const CustomerAccountPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-forest/10">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-forest/10 print:hidden">
                 <button
                   onClick={printVoucher}
                   className="px-5 py-2.5 bg-forest text-sand rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-forest/90 transition shadow flex items-center space-x-2"
