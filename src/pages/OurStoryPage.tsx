@@ -155,7 +155,7 @@ export const OurStoryPage: React.FC = () => {
 
       {/* 3. THE PHILOSOPHY OF THE STRIPED MONARCH */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
-        <div className="max-w-3xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="space-y-6">
             <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest">
               <TreePine className="w-4 h-4 text-gold" />
@@ -170,6 +170,15 @@ export const OurStoryPage: React.FC = () => {
             <p className="text-forest/80 text-base leading-relaxed font-sans">
               We do not treat the jungle as an amusement park. We measure a safari’s success not by the velocity of a chase, but by the understanding gained: the acoustic language of the deer's alarm call, the scent marks left upon ancient trunks, and the delicate equilibrium sustained by top predators.
             </p>
+          </div>
+          <div className="flex justify-center lg:justify-end lg:pr-12">
+            <div className="bg-forest rounded-3xl border border-gold/30 shadow-xl px-8 py-10 sm:px-12 sm:py-14 w-full max-w-xl">
+              <img
+                src="/assets/logo/nav-logo.svg"
+                alt="Shutter and Stripes Emblem"
+                className="w-full h-auto object-contain"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -279,8 +288,8 @@ export const OurStoryPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 h-96">
             <img
-              src="/assets/img/Gallary/IMG_5238.webp"
-              alt="Local Naturalist in Forest"
+              src="/assets/img/Gallary/Paw-print.webp"
+              alt="Pugmarks on the forest trail"
               className="w-full h-full object-cover"
             />
           </div>
