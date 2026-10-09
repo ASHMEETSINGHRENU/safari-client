@@ -39,7 +39,7 @@ export const AboutPage: React.FC = () => {
             </div>
             <h3 className="font-serif text-2xl font-bold text-forest">100% Legitimate Forest Permits</h3>
             <p className="text-forest/70 text-sm leading-relaxed">
-              We work strictly through official State Forest Department gateways and NTCA allocation mechanisms. Every entry permit bears your verified identity document.
+              We work strictly through official State Forest Department channels and NTCA allocation mechanisms. Every entry permit bears your verified identity document.
             </p>
           </div>
 
@@ -91,7 +91,7 @@ export const AboutPage: React.FC = () => {
 
             <div className="rounded-2xl overflow-hidden shadow-2xl border border-sand/20 h-80 sm:h-96">
               <img
-                src="/assets/img/safari-trail-mist.jpg"
+                src="/assets/img/Gallary/IMG_5233.webp"
                 alt="Central Indian Safari Habitat"
                 className="w-full h-full object-cover brightness-[1.03] contrast-[1.02]"
               />

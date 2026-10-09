@@ -21,7 +21,7 @@ export const HowItWorksPage: React.FC = () => {
     {
       num: '03',
       title: 'Official Department Permit Issuance',
-      desc: 'Our team secures official state forest department quota permits for your chosen gate and zone, locking in your vehicle allotment and official entry pass.'
+      desc: 'Our team secures official state forest department quota permits for your chosen zone, locking in your vehicle allotment and official entry pass.'
     },
     {
       num: '04',
@@ -30,8 +30,8 @@ export const HowItWorksPage: React.FC = () => {
     },
     {
       num: '05',
-      title: 'Gate Check-in and Forest Entry',
-      desc: 'On safari morning, your driver arrives at your lodge 30 minutes prior to gate opening. Present your original ID at the forest checkpoint, and enter as the dawn mist clears.'
+      title: 'Forest Check-in and Entry',
+      desc: 'On safari morning, your driver arrives at your lodge 30 minutes prior to opening. Present your original ID at the forest checkpoint, and enter as the dawn mist clears.'
     },
     {
       num: '06',
@@ -127,11 +127,11 @@ export const HowItWorksPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm text-forest/80 leading-relaxed font-sans">
             <div className="space-y-2">
               <strong className="text-forest block font-semibold">1. Original ID is Mandatory:</strong>
-              The name and document number on your booking permit must strictly match your physical ID card carried during the safari. Gate officers will reject discrepancies.
+              The name and document number on your booking permit must strictly match your physical ID card carried during the safari. Forest officers will reject discrepancies.
             </div>
             <div className="space-y-2">
               <strong className="text-forest block font-semibold">2. Zone Lock-in:</strong>
-              Once issued, safari permits cannot be altered to a different zone or gate. We advise consulting our naturalists before confirming core versus buffer preferences.
+              Once issued, safari permits cannot be altered to a different zone. We advise consulting our naturalists before confirming core versus buffer preferences.
             </div>
             <div className="space-y-2">
               <strong className="text-forest block font-semibold">3. Non-Transferable:</strong>

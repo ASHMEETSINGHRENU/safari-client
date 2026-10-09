@@ -5,6 +5,7 @@ export const MAP_ROUTE = '/map';
 export const YEARS_OF_EXPERIENCE = 15;
 export const CONTACT_EMAIL = 'concierge@shutterandstripes.com';
 export const FOUNDER_NAME = 'Sachin Neware';
+export const COFOUNDER_NAME = 'Urmila Suvarna';
 
 // Flat upgrade over the guide bundled with every package. Must match server NATURALIST_FEE.
 export const NATURALIST_FEE = 1000;
@@ -33,6 +34,20 @@ export const stateBadgeClass = (state?: string): string => {
   if (state === 'Madhya Pradesh') return 'bg-forest';
   if (state === 'Maharashtra') return 'bg-earth';
   return 'bg-slate-700';
+};
+
+/** Designation of a protected area, used to colour-code the map. */
+export type ReserveKind = 'Tiger Reserve' | 'Wildlife Sanctuary';
+
+// ponytail: two buckets only — sanctuaries vs everything else (tiger reserves,
+// national parks and conservation reserves all count as "tiger reserve" country).
+export const reserveKind = (name?: string): ReserveKind =>
+  /Sanctuary/i.test(name ?? '') ? 'Wildlife Sanctuary' : 'Tiger Reserve';
+
+/** Marker fill per designation — sanctuaries and reserves read apart. */
+export const RESERVE_KIND_COLOR: Record<ReserveKind, string> = {
+  'Tiger Reserve': '#D4834A',
+  'Wildlife Sanctuary': '#6B7A5A',
 };
 
 /** A zone is "prime" only when explicitly curated, never inferred from other copy. */

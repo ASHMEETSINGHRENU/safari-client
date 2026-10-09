@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { Destination } from '../../types';
 import type { FeatureCollection } from 'geojson';
 import { Compass, ArrowRight, Star } from 'lucide-react';
-import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, packageFromOf, inr, CONTACT_EMAIL } from '../../lib/site';
+import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, packageFromOf, inr, CONTACT_EMAIL, reserveKind, RESERVE_KIND_COLOR } from '../../lib/site';
 
 interface ReserveMapProps {
   destinations: Destination[];
@@ -115,18 +115,14 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
 
     const layer = L.geoJSON({ type: 'FeatureCollection', features } as FeatureCollection, {
       interactive: false,
-      style: (feature) => {
-        const name = (feature?.properties as { name?: string } | null)?.name;
-        const core = isCoreState(name);
-        return {
-          color: core ? '#8B5A2B' : '#6B7A5A',
-          weight: 2.5,
-          opacity: 0.85,
-          dashArray: '6 5',
-          fillColor: core ? '#8B5A2B' : '#6B7A5A',
-          fillOpacity: 0.07,
-        };
-      },
+      style: () => ({
+        color: '#8A8478',
+        weight: 1.5,
+        opacity: 0.7,
+        dashArray: '6 5',
+        fillColor: '#8A8478',
+        fillOpacity: 0.05,
+      }),
     }).addTo(map);
     layer.bringToBack();
     boundaryRef.current = layer;
@@ -148,18 +144,18 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
     for (const dest of filtered) {
       const { lat, lng } = dest.coordinates;
       const isSelected = activeDest?.slug === dest.slug;
-      const core = isCoreState(dest.state);
+      const kind = reserveKind(dest.name);
 
       const marker = L.circleMarker([lat, lng], {
         radius: isSelected ? 12 : 8,
         color: '#202918',
         weight: 2,
-        fillColor: isSelected ? '#D4A35B' : core ? '#8B5A2B' : '#6B7A5A',
+        fillColor: isSelected ? '#D4A35B' : RESERVE_KIND_COLOR[kind],
         fillOpacity: 0.95,
       }).addTo(layer);
 
       marker.bindTooltip(
-        `<strong>${dest.name}</strong><br/><span style="font-size:11px;opacity:.75">${dest.state}</span>`,
+        `<strong>${dest.name}</strong><br/><span style="font-size:11px;opacity:.75">${kind} · ${dest.state}</span>`,
         { direction: 'top', offset: [0, -6] }
       );
 
@@ -215,7 +211,7 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
             {MAP_LABEL}
           </h3>
           <p className="text-xs text-sand/70">
-            Click any reserve marker to view territory details, prime zones, gates, and rates.
+            Click any reserve marker to view territory details, prime zones, and rates.
           </p>
         </div>
 
@@ -259,12 +255,12 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
         <div className="lg:col-span-8 relative border-r border-sand/10">
           <div ref={containerRef} className="w-full h-full min-h-[560px]" />
 
-          {/* Map Legend — generated from the states actually shown */}
+          {/* Map Legend — designation colour key, generated from the markers actually shown */}
           <div className="absolute bottom-6 left-3 z-[500] bg-forest-deep/90 backdrop-blur-md px-3 py-2 rounded-md border border-sand/15 text-[11px] flex items-center gap-4 text-sand/80 max-w-[calc(100%-1.5rem)] flex-wrap pointer-events-none">
-            {[...new Set(filtered.map(d => d.state))].map(state => (
-              <div key={state} className="flex items-center gap-1.5">
-                <span className={`w-2.5 h-2.5 rounded-full inline-block ${isCoreState(state) ? 'bg-[#8B5A2B]' : 'bg-[#6B7A5A]'}`} />
-                <span>{state} ({filtered.filter(d => d.state === state).length})</span>
+            {[...new Set(filtered.map(d => reserveKind(d.name)))].map(kind => (
+              <div key={kind} className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: RESERVE_KIND_COLOR[kind] }} />
+                <span>{kind} ({filtered.filter(d => reserveKind(d.name) === kind).length})</span>
               </div>
             ))}
           </div>
@@ -285,6 +281,14 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                 <div className="absolute top-3 left-3">
                   <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-forest-deep/85 text-sand">
                     {activeDest.state} ({stateCode(activeDest.state)})
+                  </span>
+                </div>
+                <div className="absolute top-3 right-3">
+                  <span
+                    className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase text-forest"
+                    style={{ backgroundColor: RESERVE_KIND_COLOR[reserveKind(activeDest.name)] }}
+                  >
+                    {reserveKind(activeDest.name)}
                   </span>
                 </div>
                 <div className="absolute bottom-3 left-3 right-3">
@@ -318,7 +322,7 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                 {activeDest.shortDesc}
               </p>
 
-              {/* Prime Zones and Gates */}
+              {/* Prime Zones */}
               {primeZones.length > 0 && (
                 <div className="space-y-1.5 text-xs">
                   <span className="text-[10px] text-gold uppercase font-bold tracking-wider flex items-center gap-1">
@@ -328,9 +332,6 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                     {primeZones.slice(0, 4).map(z => (
                       <div key={z.name} className="bg-forest-deep/50 px-2.5 py-1.5 rounded border border-sand/10">
                         <span className="text-sand font-medium">{z.name}</span>
-                        <span className="text-sand/60 text-[10px] block">
-                          Gates: {z.gates.join(', ') || 'On request'}
-                        </span>
                       </div>
                     ))}
                   </div>

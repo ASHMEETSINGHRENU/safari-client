@@ -1,7 +1,6 @@
 export interface Zone {
   name: string;
   type: 'core' | 'buffer';
-  gates: string[];
   vehicleQuotaPerDay?: number;
   description?: string;
   highlight?: string;

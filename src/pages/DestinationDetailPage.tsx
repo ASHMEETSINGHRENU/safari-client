@@ -207,7 +207,7 @@ export const DestinationDetailPage: React.FC = () => {
                     : 'text-forest/60 hover:text-forest'
                 }`}
               >
-                Zones and Gates ({primeZones.length || destination.zones.length})
+                Prime Zones ({primeZones.length || destination.zones.length})
               </button>
               <button
                 onClick={() => setActiveTab('safaris')}
@@ -311,17 +311,17 @@ export const DestinationDetailPage: React.FC = () => {
               </div>
             )}
 
-            {/* TAB: ZONES and GATES — prime first */}
+            {/* TAB: ZONES — prime first */}
             {activeTab === 'zones' && (
               <div className="space-y-6 animate-fadeIn">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="font-serif text-2xl font-bold text-forest flex items-center gap-2">
                       <Star className="w-5 h-5 text-gold" />
-                      Prime Zones and Gates
+                      Prime Zones
                     </h3>
                     <p className="text-forest/70 text-xs mt-1">
-                      The zones we rate highest for sightings, each with independent gates, vehicle limits, and territorial boundaries.
+                      The zones we rate highest for sightings, each with vehicle limits and territorial boundaries.
                     </p>
                   </div>
 
@@ -392,21 +392,6 @@ export const DestinationDetailPage: React.FC = () => {
                         </p>
                       )}
 
-                      <div className="pt-3 border-t border-forest/10 flex flex-wrap items-center gap-2">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-forest/60">
-                          Accessible Gates:
-                        </span>
-                        {zone.gates.length > 0 ? zone.gates.map((g, gIdx) => (
-                          <span 
-                            key={gIdx}
-                            className="px-2.5 py-1 bg-sand rounded-lg text-xs font-medium text-forest border border-forest/10"
-                          >
-                            {g} Gate
-                          </span>
-                        )) : (
-                          <span className="text-xs text-forest/50 italic">On request</span>
-                        )}
-                      </div>
                     </div>
                   ))}
                 </div>

@@ -208,9 +208,9 @@ export const ComparePage: React.FC = () => {
                   ))}
                 </tr>
 
-                {/* Zones Count and Gates */}
+                {/* Zones Count */}
                 <tr>
-                  <td className="p-5 font-bold text-forest bg-sand/10">Zones and Gates</td>
+                  <td className="p-5 font-bold text-forest bg-sand/10">Zones</td>
                   {comparedDestinations.map(d => (
                     <td key={d._id} className="p-5 space-y-2">
                       <div className="font-semibold text-forest">

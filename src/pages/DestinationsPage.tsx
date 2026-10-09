@@ -112,14 +112,14 @@ export const DestinationsPage: React.FC = () => {
         <div className="max-w-4xl">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-semibold uppercase tracking-widest mb-4">
             <Compass className="w-3.5 h-3.5 text-gold" />
-            <span>The Central Indian and Sahyadri Wild</span>
+            <span>The Central India and Beyond</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-forest font-bold tracking-tight mb-4">
-            Protected Reserves and Wildlife Sanctuaries
+            Tiger Reserves and Wildlife Sanctuaries
           </h1>
           <p className="text-forest/80 text-lg leading-relaxed font-sans max-w-3xl">
             {total || 'Our'} distinct ecosystems{expanding ? ' across India' : ' across Madhya Pradesh and Maharashtra'}&mdash;from the sal valleys of Kanha and the crags of Bandhavgarh, to the bamboo glades of Tadoba and the mist of Melghat.
-            {' '}Each one mapped by our naturalists over {YEARS_OF_EXPERIENCE}+ years of field work. Explore natural history, prime zones and gates, and package rates with no middleman.
+            {' '}Each one mapped by our naturalists over {YEARS_OF_EXPERIENCE}+ years of field work. Explore natural history, prime zones, and package rates with no middleman.
           </p>
         </div>
 
@@ -180,7 +180,7 @@ export const DestinationsPage: React.FC = () => {
             <Search className="w-4 h-4 text-forest/50 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search by reserve name, gate, or wildlife..."
+              placeholder="Search by reserve name or wildlife..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-sand/40 border border-forest/15 rounded-xl text-sm text-forest placeholder:text-forest/40 focus:outline-none focus:ring-2 focus:ring-forest/30"

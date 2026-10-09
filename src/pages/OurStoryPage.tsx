@@ -3,16 +3,11 @@ import { Link } from 'react-router-dom';
 import { 
   Compass, 
   Camera, 
-  ShieldCheck, 
   TreePine, 
-  Heart, 
   Users, 
-  Sparkles, 
-  ArrowRight,
-  Eye,
-  Quote
+  ArrowRight
 } from 'lucide-react';
-import { FOUNDER_NAME, YEARS_OF_EXPERIENCE } from '../lib/site';
+import { FOUNDER_NAME, COFOUNDER_NAME, YEARS_OF_EXPERIENCE } from '../lib/site';
 
 export const OurStoryPage: React.FC = () => {
   return (
@@ -26,7 +21,7 @@ export const OurStoryPage: React.FC = () => {
             <span>The Shutter And Stripes Ethos</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-6xl text-forest font-bold tracking-tight mb-6 leading-tight">
-            Guided by Locals. Inspired by Nature.
+            Inspired by Nature.<br /> Guided by Locals.
           </h1>
           <p className="text-forest/80 text-lg sm:text-xl leading-relaxed font-sans max-w-2xl mx-auto">
             Shutter and Stripes is a wildlife travel company rooted in Moharli, at the edge of Tadoba. Led by {FOUNDER_NAME}, we are naturalists, trackers and photographers
@@ -38,7 +33,7 @@ export const OurStoryPage: React.FC = () => {
         {/* Hero Full-width Vignette */}
         <div className="mt-12 rounded-3xl overflow-hidden border border-forest/15 shadow-2xl relative h-[500px]">
           <img
-            src="/assets/img/bengal-tiger-portrait.jpg"
+            src="/assets/img/Hero/hero-1.webp"
             alt="Bengal Tiger in Central India"
             className="w-full h-full object-cover brightness-[1.03] contrast-[1.02]"
           />
@@ -66,13 +61,16 @@ export const OurStoryPage: React.FC = () => {
               {FOUNDER_NAME}, Founder and Principal Naturalist
             </h2>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              My connection to the wild stretches back 18 years, to a village called Moharli nestled at the edge of Tadoba. My father was posted there as a forest gatekeeper, and I grew up in the shadow of those woods &mdash; watching the forest department jeeps leave at dawn, breathing in the scent of sal and woodsmoke, and falling asleep to the calls of the jungle beyond our doorstep.
+              I still remember the first time I saw a royal Bengal tiger in the heart of Tadoba. I was surrounded by towering trees and dozens of breathless travelers, all waiting quietly for a single glimpse. When the tiger finally stepped out of the shadows, I was mesmerized&mdash;not just by the sheer majesty of the apex predator, but by the raw curiosity and electric excitement rippling through the people around me.
             </p>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              I remember the first time I truly saw a tiger in the wild. It was the monsoon, the grasslands were lush and green, and the big cat walked across them as if it owned the earth &mdash; because it did. In that moment, something shifted inside me. The forest was no longer just a backdrop; it became a part of who I was.
+              That afternoon, a simple question took root in my mind: Why are we so deeply drawn to this one animal? The answer changed the trajectory of my life. The tiger is far more than an apex predator or a beautiful photograph. It is our national animal, the ultimate symbol of a healthy forest, and the keystone holding an entire ecosystem together.
             </p>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              For years I chased the perfect frame. Slowly I learned the deeper truth: the jungle rewards respect, not checklists. The real shift, and the founding of Shutter and Stripes, came when I realised the jungle is a classroom, not a checklist &mdash; and the people best qualified to teach in it are the ones who were born beside it.
+              Showing people a tiger is only the beginning. My true responsibility over the past 15+ years has been to help travelers understand why the tiger needs to be protected, and how its survival is deeply intertwined with every bird, tree, and local village community. This is the very soul of Shutter and Stripes. When you see, understand, and connect with nature, you naturally fight to protect it.
+            </p>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              Tadoba is my home. Protecting its legacy is who I am. I invite you to step into our classroom, track with our elite local talent, and leave a lasting footprint on conservation.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
@@ -90,19 +88,74 @@ export const OurStoryPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 h-[420px]">
+          <div className="order-first lg:order-none rounded-3xl overflow-hidden shadow-xl border border-forest/15 aspect-square w-full">
             <img
-              src="/assets/img/tadoba-str-guide.jpg"
-              alt={`${FOUNDER_NAME} in the field`}
+              src="/assets/img/Founders/founder.webp"
+              alt={`${FOUNDER_NAME}, Founder and Principal Naturalist`}
               className="w-full h-full object-cover"
             />
           </div>
         </div>
       </section>
 
-      {/* 3. THE PHILOSOPHY OF THE STRIPED MONARCH */}
+      {/* 2b. THE CO-FOUNDER */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 aspect-square w-full">
+            <img
+              src="/assets/img/Founders/co-founder.png"
+              alt={`${COFOUNDER_NAME}, Co-Founder`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <div className="space-y-6">
+            <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest">
+              <Users className="w-4 h-4 text-gold" />
+              <span>A Note from the Co-Founder</span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl text-forest font-bold leading-tight">
+              {COFOUNDER_NAME}, Co-Founder
+            </h2>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              Growing up in Mumbai's concrete jungle, I was always drawn to the wild. Over 13 years exploring wildlife across India and the world &mdash; forests, grasslands, wetlands and mountains &mdash; I came to understand the delicate balance of ecosystems and the people who live closest to them.
+            </p>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              After nearly two decades in the corporate world, I followed a long-held dream: to connect people with nature while creating real opportunities for local communities. That dream became Shutter and Stripes.
+            </p>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              I believe the true custodians of our wild spaces are the communities on the edges of the forest. Through our 1% Conservation Pledge, a portion of our revenue supports conservation and community-led projects &mdash; because conservation only succeeds when communities prosper alongside nature.
+            </p>
+            <p className="text-forest/80 text-base leading-relaxed font-sans">
+              In a world shaped by technology, nature remains irreplaceable &mdash; and so does the wisdom of the local naturalists, trackers and guides who read pugmarks and bird calls through years in the field. The jungle is a living classroom, best experienced through the eyes of those who call it home. As co-founder, I hope our journeys inspire exploration, support conservation, and deepen our connection with the natural world. Thank you for being part of this journey.
+            </p>
+            <p className="text-forest font-medium">
+              &mdash; {COFOUNDER_NAME}, Co-Founder
+            </p>
+            <p className="text-earth text-xs font-bold uppercase tracking-widest">
+              Inspired by Nature, Guided by Locals
+            </p>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
+                <span className="block font-serif text-2xl font-bold text-forest">13+</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Years in the Wild</span>
+              </div>
+              <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
+                <span className="block font-serif text-2xl font-bold text-forest">20</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Years in Corporate</span>
+              </div>
+              <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
+                <span className="block font-serif text-2xl font-bold text-forest">1%</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Conservation Pledge</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. THE PHILOSOPHY OF THE STRIPED MONARCH */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+        <div className="max-w-3xl">
           <div className="space-y-6">
             <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest">
               <TreePine className="w-4 h-4 text-gold" />
@@ -117,20 +170,6 @@ export const OurStoryPage: React.FC = () => {
             <p className="text-forest/80 text-base leading-relaxed font-sans">
               We do not treat the jungle as an amusement park. We measure a safari’s success not by the velocity of a chase, but by the understanding gained: the acoustic language of the deer's alarm call, the scent marks left upon ancient trunks, and the delicate equilibrium sustained by top predators.
             </p>
-          </div>
-
-          <div className="bg-white p-8 sm:p-10 rounded-3xl border border-forest/15 shadow-xl relative">
-            <Quote className="w-12 h-12 text-gold/30 absolute top-6 right-6" />
-            <h3 className="font-serif text-2xl font-bold text-forest mb-4">
-              What We Never Guarantee
-            </h3>
-            <p className="text-forest/80 text-sm leading-relaxed mb-6 font-sans">
-              We will never guarantee a tiger sighting. The wilderness is untamed and sovereign. What we do guarantee is deep naturalist expertise, ethical positioning, official Forest Department compliance, and an experience that honors your time and the jungle's sanctity.
-            </p>
-            <div className="p-4 bg-sand rounded-2xl border border-forest/10 flex items-center space-x-3 text-xs font-semibold text-forest">
-              <ShieldCheck className="w-5 h-5 text-forest shrink-0" />
-              <span>Strict compliance with NTCA (National Tiger Conservation Authority) norms.</span>
-            </div>
           </div>
         </div>
       </section>
@@ -172,7 +211,7 @@ export const OurStoryPage: React.FC = () => {
               <span className="text-gold font-serif text-3xl font-bold block mb-2">03</span>
               <h3 className="font-serif text-xl font-bold mb-3">Patience Over Pursuit</h3>
               <p className="text-sand/70 text-xs sm:text-sm leading-relaxed">
-                Rather than burning petrol racing between gates, we study territorial movements, station ourselves silently by water bodies, and let the wild emerge naturally.
+                Rather than burning petrol racing between zones, we study territorial movements, station ourselves silently by water bodies, and let the wild emerge naturally.
               </p>
             </div>
           </div>
@@ -219,13 +258,13 @@ export const OurStoryPage: React.FC = () => {
               <span className="px-3 py-1 bg-earth text-sand text-xs font-bold rounded-full uppercase tracking-wider">
                 Maharashtra
               </span>
-              <h3 className="font-serif text-2xl font-bold text-forest">The Sahyadri and Vidarbha Bastions</h3>
+              <h3 className="font-serif text-2xl font-bold text-forest">The Vidarbha Bastions</h3>
             </div>
             <p className="text-forest/70 text-sm leading-relaxed mb-6">
-              From Tadoba's legendary dry deciduous valleys to the mist of Melghat and the biodiversity of Sahyadri. A dynamic terrain of community reserves and buffer stewardship.
+              From Tadoba's legendary dry deciduous valleys to the mist of Melghat and the biodiversity of the Western Ghats. A dynamic terrain of community reserves and buffer stewardship.
             </p>
             <div className="flex flex-wrap gap-2 text-xs">
-              {['Tadoba', 'Pench (MH)', 'Melghat', 'Navegaon-Nagzira', 'Sahyadri', 'Bor', 'Umred Karhandla'].map((name, i) => (
+              {['Tadoba', 'Pench (MH)', 'Melghat', 'Navegaon-Nagzira', 'Bor', 'Umred Karhandla'].map((name, i) => (
                 <span key={i} className="px-3 py-1 bg-sand rounded-lg text-forest font-semibold border border-forest/10">
                   {name}
                 </span>
@@ -240,7 +279,7 @@ export const OurStoryPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 h-96">
             <img
-              src="/assets/img/tadoba-str-guide.jpg"
+              src="/assets/img/Gallary/IMG_5238.webp"
               alt="Local Naturalist in Forest"
               className="w-full h-full object-cover"
             />
@@ -345,64 +384,6 @@ export const OurStoryPage: React.FC = () => {
             <div className="p-4 bg-white/5 rounded-2xl border border-sand/15">
               <span className="block font-serif text-2xl font-bold text-gold">100%</span>
               <span className="text-[10px] uppercase tracking-wider text-sand/70">local guides and naturalists</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6c. FOUNDER'S NOTE */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
-        <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-forest/15 shadow-xl p-8 sm:p-12 relative">
-          <Quote className="w-14 h-14 text-gold/25 absolute top-6 right-6" />
-          <span className="text-earth font-bold text-xs uppercase tracking-widest block mb-4">
-            A Note from the Founder &mdash; The Sighting That Changed Everything
-          </span>
-          <div className="space-y-4 text-forest/85 text-base leading-relaxed font-sans">
-            <p>
-              I still remember the first time I saw a royal Bengal tiger in the heart of Tadoba. I was surrounded by towering trees and dozens of breathless travelers, all waiting quietly for a single glimpse. When the tiger finally stepped out of the shadows, I was mesmerized&mdash;not just by the sheer majesty of the apex predator, but by the raw curiosity and electric excitement rippling through the people around me.
-            </p>
-            <p>
-              That afternoon, a simple question took root in my mind: Why are we so deeply drawn to this one animal? The answer changed the trajectory of my life. The tiger is far more than an apex predator or a beautiful photograph. It is our national animal, the ultimate symbol of a healthy forest, and the keystone holding an entire ecosystem together.
-            </p>
-            <p>
-              Showing people a tiger is only the beginning. My true responsibility over the past 15+ years has been to help travelers understand why the tiger needs to be protected, and how its survival is deeply intertwined with every bird, tree, and local village community. This is the very soul of Shutter and Stripes. When you see, understand, and connect with nature, you naturally fight to protect it.
-            </p>
-            <p>
-              Tadoba is my home. Protecting its legacy is who I am. I invite you to step into our classroom, track with our elite local talent, and leave a lasting footprint on conservation.
-            </p>
-            <p className="text-forest font-medium pt-2 border-t border-forest/10">
-              &mdash; {FOUNDER_NAME}, Founder &amp; Naturalist
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 7 and 8. CALL TO EXPEDITION */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-forest text-sand p-10 sm:p-16 rounded-3xl relative overflow-hidden text-center max-w-4xl mx-auto">
-          <div className="relative z-10 space-y-6">
-            <span className="text-gold text-xs font-bold uppercase tracking-widest">
-              Join the Expedition
-            </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight">
-              Ready to Experience the Forest as It Was Meant to Be?
-            </h2>
-            <p className="text-sand/80 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-              Explore our destinations, inspect permit availability, or consult with our lead naturalists for a tailored multi-reserve safari.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Link
-                to="/destinations"
-                className="w-full sm:w-auto px-8 py-3.5 bg-gold text-forest rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-gold/90 transition shadow-lg"
-              >
-                Discover Our Reserves
-              </Link>
-              <Link
-                to="/booking"
-                className="w-full sm:w-auto px-8 py-3.5 border border-sand/30 text-sand rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-white/10 transition"
-              >
-                Open Booking Wizard
-              </Link>
             </div>
           </div>
         </div>

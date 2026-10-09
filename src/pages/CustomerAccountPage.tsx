@@ -301,7 +301,7 @@ export const CustomerAccountPage: React.FC = () => {
               Identity and Contact Details
             </h3>
             <p className="text-forest/60 text-xs mb-6">
-              Ensure your name matches your government identification exactly for smooth gate verification.
+              Ensure your name matches your government identification exactly for smooth forest verification.
             </p>
 
             {profileMsg && (
@@ -432,12 +432,12 @@ export const CustomerAccountPage: React.FC = () => {
                 </div>
 
                 <div className="p-4 bg-forest/5 rounded-xl border border-forest/10 space-y-1 text-[11px]">
-                  <strong className="text-forest block">Mandatory Gate Check Protocol:</strong>
+                  <strong className="text-forest block">Mandatory Forest Check Protocol:</strong>
                   <p>
-                    1. Carry the original physical ID ({selectedBookingForVoucher.customerInfo.idType}) recorded above. Digital copies or screenshots are not recognized at forest gates.
+                    1. Carry the original physical ID ({selectedBookingForVoucher.customerInfo.idType}) recorded above. Digital copies or screenshots are not recognized at forest checkpoints.
                   </p>
                   <p>
-                    2. Arrive at the entry gate 30 minutes before official dawn/dusk gate opening.
+                    2. Arrive at the forest entry 30 minutes before official dawn/dusk opening.
                   </p>
                 </div>
               </div>

@@ -66,7 +66,7 @@ export const ContactPage: React.FC = () => {
             Connect With Our Naturalist Desk
           </h1>
           <p className="text-forest/80 text-base sm:text-lg leading-relaxed font-sans">
-            Whether you require assistance with multi-reserve itineraries, private photography open gypsies, or NTCA gate permit clarifications, our team is stationed on the ground in Jabalpur and Nagpur.
+            Whether you require assistance with multi-reserve itineraries, private photography open gypsies, or NTCA permit clarifications, our team is stationed on the ground in Jabalpur and Nagpur.
           </p>
         </div>
 
@@ -85,7 +85,7 @@ export const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-forest block font-semibold">Central Hub (MP):</strong>
-                    <span>Civil Lines, Jabalpur, Madhya Pradesh 482001 (Gateway to Kanha, Bandhavgarh, Panna)</span>
+                    <span>Civil Lines, Jabalpur, Madhya Pradesh 482001 (Base for Kanha, Bandhavgarh, Panna)</span>
                   </div>
                 </div>
 
@@ -95,7 +95,7 @@ export const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-forest block font-semibold">Western Hub (MH):</strong>
-                    <span>Wardha Road, Nagpur, Maharashtra 440015 (Gateway to Tadoba, Pench MH, Melghat)</span>
+                    <span>Wardha Road, Nagpur, Maharashtra 440015 (Base for Tadoba, Pench MH, Melghat)</span>
                   </div>
                 </div>
 

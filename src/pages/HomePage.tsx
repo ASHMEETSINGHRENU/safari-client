@@ -2,12 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, MapPin, BookOpen, 
-  Search, Users, Award, HeartHandshake, Eye, Sparkles
+  Search, Users, Award, HeartHandshake, Eye, Sparkles, Check
 } from 'lucide-react';
 import { Destination, GalleryItem } from '../types';
 import { destinationService, cmsService } from '../services/api';
 import { SplashScreen, SPLASH_SEEN_KEY } from '../components/SplashScreen';
 import { stateCode, YEARS_OF_EXPERIENCE, inr, packageFromOf } from '../lib/site';
+
+// lucide dropped brand icons; inline the mark once and reuse it on the tour cards.
+const InstagramIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </svg>
+);
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -71,16 +78,78 @@ export const HomePage: React.FC = () => {
 
   // Hand-picked spotlight order + marketing copy for the homepage rail.
   const featuredDestinations = [
-    { slug: 'tadoba-andhari', name: 'Tadoba-Andhari (Chandrapur)', tagline: 'The Sighting Capital' },
-    { slug: 'pench-mh', name: 'Pench Maharashtra (Nagpur)', tagline: 'The Kipling Corridor' },
-    { slug: 'melghat', name: 'Melghat (Amravati)', tagline: 'The Satpura Fortress' },
-    { slug: 'navegaon-nagzira', name: 'Navegaon-Nagzira (Gondia/Bhandara)', tagline: 'The Central Core Hub' },
+    { slug: 'tadoba-andhari', name: 'Tadoba-Andhari', tagline: 'The Sighting Capital' },
+    { slug: 'pench-mh', name: 'Pench', tagline: 'The Kipling Corridor' },
+    { slug: 'kanha', name: 'Kanha', tagline: 'The Sal Forest Kingdom' },
+    { slug: 'bandhavgarh', name: 'Bandhavgarh', tagline: 'The Fort of Tigers' },
   ]
     .map(f => {
       const d = destinations.find(x => x.slug === f.slug);
       return d ? { ...d, name: f.name, tagline: f.tagline } : null;
     })
     .filter((d): d is NonNullable<typeof d> => d !== null);
+
+  // Fixed-date group departures (from Upcoming Tours). Posters live in /assets/img/tours/;
+  // each card links to its Instagram post and to the booking flow via `dest`.
+  const UPCOMING_TOURS = [
+    {
+      slug: 'tadoba-andhari',
+      dest: 'tadoba-andhari',
+      title: 'Tadoba-Andhari Tiger Reserve',
+      tagline: 'The Tigress Trails & Valentine Canopy Escape',
+      highlights: ['2 Nights / 3 Days', '4 Safaris (Core & Buffer)', 'AC transfers from Nagpur', 'Max 6 pax', 'All Meals'],
+      dates: [
+        { label: '15–17 Jan', note: 'The Tigress Trails · Women-Only' },
+        { label: '22–24 Jan' },
+        { label: '29–31 Jan' },
+        { label: '5–7 Feb' },
+        { label: '12–14 Feb', note: 'The Valentine Canopy Escape · Luxury stay' },
+        { label: '19–21 Feb' },
+      ],
+      poster: '/assets/img/tours/tadoba-andhari.jpg',
+      instagram: 'https://www.instagram.com/',
+    },
+    {
+      slug: 'pench-mh',
+      dest: 'pench-mh',
+      title: 'Pench Tiger Reserve — Maharashtra',
+      tagline: 'The Kipling Corridor',
+      highlights: ['2 Nights / 3 Days', '4 Safaris (Core & Buffer)', 'Transfers from Nagpur', 'Max 6 pax', 'All Meals'],
+      dates: [
+        { label: '13–15 Nov' },
+        { label: '20–22 Nov' },
+        { label: '27–29 Nov' },
+      ],
+      poster: '/assets/img/tours/pench-mh.jpg',
+      instagram: 'https://www.instagram.com/',
+    },
+    {
+      slug: 'umred-karhandla',
+      dest: 'umred-karhandla',
+      title: 'Umred-Karhandla Wildlife Sanctuary',
+      tagline: 'The Tigress Trails · Women-Only Departure',
+      highlights: ['2 Nights / 3 Days', '4 Safaris (Core & Buffer)', 'Transfers from Nagpur', 'Max 6 pax', 'All Meals'],
+      dates: [
+        { label: '23–25 Dec', note: 'The Tigress Trails · Women-Only' },
+        { label: '2–4 Jan 2026' },
+        { label: '8–10 Jan 2026' },
+      ],
+      poster: '/assets/img/tours/umred-karhandla.jpg',
+      instagram: 'https://www.instagram.com/',
+    },
+    {
+      slug: 'tadoba-full-day',
+      dest: 'tadoba-andhari',
+      title: 'Tadoba-Andhari — Full Day Safari',
+      tagline: 'Dawn to dusk in the core and buffer',
+      highlights: ['Full Day Safari (Core & Buffer)', 'Group of 3–4 people', 'All Meals & Transportation', 'Well-guided jungle tours', 'Accommodation'],
+      dates: [
+        { label: 'Jan – Mar 2027' },
+      ],
+      poster: '/assets/img/tours/tadoba-full-day.jpg',
+      instagram: 'https://www.instagram.com/',
+    },
+  ];
 
   return (
     <div className="bg-sand text-forest min-h-screen">
@@ -95,7 +164,7 @@ export const HomePage: React.FC = () => {
       )}
       
       {/* 01. HERO IMAGE SLIDER */}
-      <section className="relative flex items-end sm:items-center justify-center overflow-hidden min-h-[88vh] sm:min-h-[520px] sm:aspect-video">
+      <section className="relative flex items-end sm:items-center justify-center overflow-hidden w-full min-h-[88vh] sm:min-h-[520px] sm:aspect-video">
         {/* Full-bleed crossfade slider, 4s interval */}
         <div className="absolute inset-0 z-0">
           {HERO_SLIDES.map((src, i) => (
@@ -327,6 +396,116 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* 04c. UPCOMING TOURS */}
+      <section className="py-20 bg-forest-deep text-sand border-y border-gold/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+            <div>
+              <span className="text-[11px] tracking-widest-safari uppercase text-gold font-bold block">
+                The Safari Calendar · Limited Seats
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-sand mt-1">
+                Upcoming Tours
+              </h2>
+              <p className="text-xs text-sand/70 leading-relaxed mt-2 max-w-xl">
+                Fixed-date group departures and themed escapes &mdash; small groups, confirmed permits, and every seat booked with the forest department in advance.
+              </p>
+            </div>
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs font-bold uppercase tracking-wider text-gold hover:text-gold-light flex items-center gap-1.5 shrink-0"
+            >
+              <InstagramIcon className="w-4 h-4" />
+              <span>Follow the Tours</span>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {UPCOMING_TOURS.map(tour => (
+              <article
+                key={tour.slug}
+                className="bg-forest rounded-2xl overflow-hidden border border-sand/15 shadow-lg flex flex-col hover:border-gold/50 transition-colors"
+              >
+                {/* Poster — drop the image in /assets/img/tours/; tapping opens the Instagram post */}
+                <a
+                  href={tour.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`View ${tour.title} on Instagram`}
+                  className="relative block aspect-[3/4] overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-forest-muted to-forest-deep" />
+                  <img
+                    src={tour.poster}
+                    alt={`${tour.title} poster`}
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-transparent to-transparent" />
+                  <span className="absolute top-3 left-3 bg-gold text-forest text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow">
+                    Upcoming Tour
+                  </span>
+                  <span className="absolute top-3 right-3 bg-black/55 backdrop-blur-sm text-sand p-1.5 rounded-full border border-white/20">
+                    <InstagramIcon className="w-3.5 h-3.5" />
+                  </span>
+                  <div className="absolute bottom-0 inset-x-0 p-4">
+                    <h3 className="font-serif text-lg font-bold text-sand leading-snug">{tour.title}</h3>
+                    <p className="text-[11px] text-gold uppercase tracking-wider font-semibold mt-0.5">{tour.tagline}</p>
+                  </div>
+                </a>
+
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <ul className="space-y-1.5">
+                    {tour.highlights.map(h => (
+                      <li key={h} className="flex items-start gap-2 text-[11px] text-sand/80 leading-snug">
+                        <Check className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] text-sand/50 uppercase font-bold tracking-wider block">Departure Dates</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {tour.dates.map(d => (
+                        <span
+                          key={d.label}
+                          title={d.note}
+                          className="text-[10px] font-medium text-sand bg-forest-deep/70 border border-sand/15 rounded px-2 py-1"
+                        >
+                          {d.label}{d.note ? ' ★' : ''}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1">
+                    <Link
+                      to={`/booking?destination=${tour.dest}`}
+                      className="flex-1 text-center py-2.5 px-3 bg-gold text-forest font-bold rounded text-xs hover:bg-gold-light transition-colors flex items-center justify-center gap-1.5"
+                    >
+                      <span>Reserve Seat</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                    <a
+                      href={tour.instagram}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="View this tour on Instagram"
+                      className="p-2.5 bg-forest-deep border border-sand/20 text-sand rounded hover:text-gold hover:border-gold/50 transition-colors"
+                    >
+                      <InstagramIcon className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 04b. WHY TRAVEL WITH US */}
       <section className="py-20 bg-sand-warm border-y border-forest/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -335,7 +514,7 @@ export const HomePage: React.FC = () => {
               Why Travel With Us
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
-              SIX REASONS TO TRAVEL WITH US
+              What Sets Us Apart
             </h2>
             <p className="text-xs text-forest/70 leading-relaxed">
               The jungle is a classroom, not a checklist. Everything we do is built on local mastery, respect, and ecological familiarity.
@@ -374,7 +553,7 @@ export const HomePage: React.FC = () => {
               How It Works
             </h2>
             <p className="text-xs text-sand/70">
-              A seamless, transparent pathway from discovery to the morning gate briefing.
+              A seamless, transparent pathway from discovery to the morning forest briefing.
             </p>
           </div>
 
@@ -384,7 +563,7 @@ export const HomePage: React.FC = () => {
               { num: '02', title: 'CHOOSE', desc: 'Compare morning vs. afternoon slots, private photography setups, and experienced local naturalists.' },
               { num: '03', title: 'PLAN', desc: 'Select preferred dates, verify core vs. buffer quota, and configure your vehicle and guest count.' },
               { num: '04', title: 'BOOK', desc: 'Submit traveler government ID proof for official Forest Department permit allocation.' },
-              { num: '05', title: 'EXPERIENCE', desc: 'Arrive at the reserve gate for your dawn briefing as the first rays break through the sal trees.' }
+              { num: '05', title: 'EXPERIENCE', desc: 'Arrive for your dawn briefing at the reserve as the first rays break through the sal trees.' }
             ].map((step, idx) => (
               <div key={step.num} className="bg-forest-deep p-6 rounded-xl border border-sand/15 relative space-y-3">
                 <span className="font-serif text-3xl font-bold text-gold/40 block">
@@ -394,71 +573,6 @@ export const HomePage: React.FC = () => {
                 <p className="text-xs text-sand/75 leading-relaxed">{step.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 06. OUR STORY HOMEPAGE PREVIEW */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-sand-warm rounded-2xl border border-forest/20 overflow-hidden grid grid-cols-1 lg:grid-cols-12 shadow-xl">
-          <div className="lg:col-span-6 relative min-h-[420px]">
-            <img 
-              src="/assets/img/tadoba-guide-briefing.jpg" 
-              alt="Naturalist in Tadoba with bird field guide"
-              className="w-full h-full object-cover brightness-[1.02]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"></div>
-            <div className="absolute bottom-4 left-4 right-4 bg-forest/90 backdrop-blur-md p-3.5 rounded-xl text-xs text-sand border border-sand/20 shadow-lg">
-              <span className="text-gold font-bold block text-xs uppercase">Field Guiding Master</span>
-              Generations of indigenous forest instincts passed down on the trails of Vidarbha.
-            </div>
-          </div>
-
-          <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between space-y-6">
-            <div className="space-y-4 flex flex-col flex-1">
-              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest-safari text-earth-dark">
-                <HeartHandshake className="w-4 h-4" />
-                <span>The Story of Shutter and Stripes</span>
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest leading-tight">
-                Where Photography Meets Forest Wisdom
-              </h2>
-              <p className="font-serif italic text-earth-dark text-base sm:text-lg">
-                Inspired by Nature · Guided by Locals
-              </p>
-              <p className="text-xs sm:text-sm text-forest/95 leading-relaxed">
-                Shutter and Stripes was founded on a simple truth: that genuine wildlife encounters require stillness, respect, and deep ecological familiarity.
-              </p>
-<div className="flex-1 flex items-center justify-center">
-                <div className="px-8 py-6 bg-forest-deep rounded-xl border border-gold/30 shadow-md">
-                  <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-42 w-auto object-contain" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-3.5 bg-sand rounded-xl border border-forest/10 shadow-sm">
-                  <strong className="text-xs font-serif text-forest block">SHUTTER</strong>
-                  <span className="text-xs sm:text-sm text-forest/90">Observing without disturbing; patient framing of wildlife behavior.</span>
-                </div>
-                <div className="p-3.5 bg-sand rounded-xl border border-forest/10 shadow-sm">
-                  <strong className="text-xs font-serif text-forest block">STRIPES</strong>
-                  <span className="text-xs sm:text-sm text-forest/90">The living pulse of the Royal Bengal Tiger and Central India's forests.</span>
-                </div>
-              </div>
-              <div className="p-4 bg-forest-deep rounded-xl border border-gold/30 shadow-sm text-center">
-                  <strong className="text-xs sm:text-sm font-serif text-gold block uppercase tracking-wider">The 1% Community Pledge</strong>
-                  <span className="text-xs sm:text-sm text-sand block">1% of all bookings is contributed to the welfare of the local community and nature preservation.</span>
-                </div>
-            </div>
-
-            <div>
-              <Link 
-                to="/our-story"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-forest text-sand text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-forest-light transition-all shadow-md"
-              >
-                <span>Discover Our Story</span>
-                <ArrowRight className="w-3.5 h-3.5 text-gold" />
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -510,7 +624,7 @@ export const HomePage: React.FC = () => {
       <section className="py-24 bg-forest text-sand relative overflow-hidden border-t-2 border-gold/40">
         <div className="absolute inset-0 z-0">
           <img 
-            src="/assets/img/forest-canopy-sunbeams.jpg" 
+            src="/assets/img/Hero/hero-3.webp" 
             alt="Forest Canopy Wilderness" 
             className="w-full h-full object-cover brightness-[0.25] contrast-[1.05]" 
           />

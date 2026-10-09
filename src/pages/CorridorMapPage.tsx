@@ -62,7 +62,7 @@ export const CorridorMapPage: React.FC = () => {
             {MAP_LABEL}
           </h1>
           <p className="text-forest/80 text-sm sm:text-base leading-relaxed font-sans">
-            A topographic view of {destinations.length || 'our'} reserves across the Satpura&ndash;Maikal range, the Vindhyas, and the Sahyadris&mdash;mapped from {YEARS_OF_EXPERIENCE}+ years on the ground.
+            A topographic view of {destinations.length || 'our'} reserves across the Satpura&ndash;Maikal range, the Vindhyas, and the Western Ghats&mdash;mapped from {YEARS_OF_EXPERIENCE}+ years on the ground.
             {states.length > CORE_STATES.length
               ? ' Our network now spans multiple Indian states and is growing.'
               : ' Core operations in Madhya Pradesh and Maharashtra, expanding Pan-India.'}
@@ -106,7 +106,7 @@ export const CorridorMapPage: React.FC = () => {
             onSelectDestination={(d) => setSelectedReserve(d)}
           />
           <p className="px-1 text-forest/60 text-[11px] italic">
-            *Pench (MP) and Pench (MH) maintain independent gates and state forest jurisdictions.
+            *Pench (MP) and Pench (MH) maintain independent forest jurisdictions.
           </p>
         </div>
 

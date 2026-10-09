@@ -74,7 +74,7 @@ export const AdminSafarisPage: React.FC = () => {
                 Safari Packages and Vehicle Allocations
               </h2>
               <p className="text-forest/60 text-xs">
-                Manage 42 active safari vehicle allotments, gate slots, and pricing across MP and MH
+                Manage 42 active safari vehicle allotments, slots, and pricing across MP and MH
               </p>
             </div>
 

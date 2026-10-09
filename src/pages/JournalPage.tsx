@@ -65,7 +65,7 @@ export const JournalPage: React.FC = () => {
             The Shutter And Stripes Wildlife Journal
           </h1>
           <p className="text-forest/80 text-base sm:text-lg leading-relaxed font-sans">
-            In-depth guides to tiger tracking, ethical wildlife camera technique, seasonal park gate logistics, and conservation field reports from Madhya Pradesh and Maharashtra.
+            In-depth guides to tiger tracking, ethical wildlife camera technique, seasonal park entry logistics, and conservation field reports from Madhya Pradesh and Maharashtra.
           </p>
         </div>
 

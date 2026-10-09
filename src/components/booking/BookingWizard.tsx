@@ -465,13 +465,11 @@ onClick={() => {
                           <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-forest/10 text-forest">
                             {s.safariType}
                           </span>
-                          <span className="text-xs opacity-75">{s.duration}</span>
                         </div>
                         <h4 className="font-serif text-base font-bold mt-1">{s.name}</h4>
                         <p className="text-xs mt-1 max-w-lg text-forest/70">{s.description}</p>
                       </div>
                       <div className="sm:text-right sm:self-center">
-                        <span className="text-xs opacity-75 block">{s.duration}</span>
                         <span className="text-[11px] opacity-70 block mt-0.5">Priced by package below</span>
                       </div>
                     </div>
@@ -720,7 +718,7 @@ onClick={() => {
         {step === 3 && (
           <div className="space-y-4 animate-fadeIn">
             <h3 className="font-serif text-lg font-bold text-forest">Lead Traveler and Government ID Details</h3>
-            <p className="text-xs text-forest/70">State Forest Department rules mandate original photo IDs at the entry gate.</p>
+            <p className="text-xs text-forest/70">State Forest Department rules mandate original photo IDs at the forest entry.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-sand p-6 rounded-xl border border-forest/20">
               <div>
                 <label className="block text-xs font-bold text-forest mb-1">FULL NAME (AS PER ID) *</label>
@@ -816,11 +814,11 @@ onClick={() => {
             {guestDetails.length > 0 && (
               <div className="mt-5">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-forest block">OTHER TRAVELERS (ID REQUIRED AT GATE)</span>
+                  <span className="text-xs font-bold text-forest block">OTHER TRAVELERS (ID REQUIRED AT ENTRY)</span>
                   <Users className="w-4 h-4 text-forest/50" />
                 </div>
                 <p className="text-[11px] text-forest/70 mb-3">
-                  Forest Department rules mandate original photo IDs at the entry gate for every traveler.
+                  Forest Department rules mandate original photo IDs at the forest entry for every traveler.
                 </p>
                 <div className="space-y-3">
                   {guestDetails.map((g, i) => {
