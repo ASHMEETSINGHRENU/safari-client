@@ -16,18 +16,7 @@ import { GalleryItem } from '../types';
 export const GalleryPage: React.FC = () => {
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedAnimal, setSelectedAnimal] = useState<string>('All');
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null);
-
-  const categories = [
-    'All',
-    'Tiger',
-    'Leopard',
-    'Elephant',
-    'Birds',
-    'Safari Life',
-    'Forest Landscape'
-  ];
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -44,10 +33,7 @@ export const GalleryPage: React.FC = () => {
     fetchGallery();
   }, []);
 
-  const filtered = gallery.filter(item => {
-    if (selectedAnimal === 'All') return true;
-    return item.animal.toLowerCase() === selectedAnimal.toLowerCase();
-  });
+  const filtered = gallery;
 
   return (
     <div className="bg-sand min-h-screen pt-28 pb-20">
@@ -67,23 +53,6 @@ export const GalleryPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-4 mb-10 border-b border-forest/10">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setSelectedAnimal(cat)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap ${
-                selectedAnimal === cat
-                  ? 'bg-forest text-sand shadow-sm'
-                  : 'bg-white/80 text-forest/70 hover:text-forest hover:bg-white border border-forest/10'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
         {/* Masonry / Grid */}
         {loading ? (
           <div className="py-24 text-center">
@@ -95,7 +64,7 @@ export const GalleryPage: React.FC = () => {
             <p className="text-forest/70 text-sm">No photos found in this category.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filtered.map(item => (
               <div 
                 key={item._id}

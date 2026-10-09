@@ -31,7 +31,7 @@ export interface Destination {
     x: number;
     y: number;
   };
-  startingPrice: number;
+  startingPrice: number | null;
   packages?: Array<{
     label: 'Budget' | 'Mid-Range' | 'Luxury';
     min: number;

@@ -28,6 +28,7 @@ export const HomePage: React.FC = () => {
     '/assets/img/Hero/hero-5.webp',
     '/assets/img/Hero/hero-7.webp',
     '/assets/img/Hero/hero-8.webp',
+    '/assets/img/Hero/hero-9.webp',
   ];
   const [heroIndex, setHeroIndex] = useState(0);
 
@@ -83,7 +84,7 @@ export const HomePage: React.FC = () => {
       )}
       
       {/* 01. HERO IMAGE SLIDER */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden pt-20">
+      <section className="relative flex items-end sm:items-center justify-center overflow-hidden min-h-[88vh] sm:min-h-[520px] sm:aspect-video">
         {/* Full-bleed crossfade slider, 4s interval */}
         <div className="absolute inset-0 z-0">
           {HERO_SLIDES.map((src, i) => (
@@ -109,7 +110,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Slide indicators (Bottom Right) */}
-        <div className="absolute bottom-16 right-6 sm:right-10 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-md px-3.5 py-2 rounded-full border border-sand/30 shadow-xl">
+        <div className="absolute bottom-16 right-6 sm:right-10 z-20 hidden sm:flex items-center gap-2 bg-black/50 backdrop-blur-md px-3.5 py-2 rounded-full border border-sand/30 shadow-xl">
           {HERO_SLIDES.map((src, i) => (
             <button
               key={src}
@@ -124,14 +125,14 @@ export const HomePage: React.FC = () => {
           ))}
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-sand w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-14 sm:py-24 text-sand w-full">
           <div className="max-w-2xl space-y-6">
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
+            <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               GUIDED BY LOCALES. <br />
               <span className="italic font-normal text-gold drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">INSPIRED BY NATURE.</span>
             </h1>
 
-            <p className="text-sm sm:text-base text-sand font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+            <p className="text-xs sm:text-base text-sand font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
               Step into the wild with people who know it from the inside. Immersive, expert-led wildlife journeys across the forests of Maharashtra and Madhya Pradesh.
             </p>
 

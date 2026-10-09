@@ -1,7 +1,28 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Compass, Mail, Phone, MapPin, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Compass, Mail, Phone, MapPin, ArrowRight, ShieldCheck, ChevronDown } from 'lucide-react';
 import { cmsService } from '../../services/api';
+
+// Collapsed to an accordion on mobile so the footer stays short; always open from lg up.
+const FooterColumn: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-sand/15 lg:border-none">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between py-4 lg:py-0 lg:mb-4 lg:cursor-default lg:pointer-events-none"
+      >
+        <h4 className="font-serif text-base font-semibold text-gold uppercase tracking-wider text-xs">{title}</h4>
+        <ChevronDown className={`w-4 h-4 text-gold transition-transform lg:hidden ${open ? 'rotate-180' : ''}`} />
+      </button>
+      <ul className={`${open ? 'block' : 'hidden'} lg:block space-y-2 text-[13px] text-sand/80 pb-4 lg:pb-0`}>
+        {children}
+      </ul>
+    </div>
+  );
+};
 
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -26,20 +47,17 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-forest text-sand pt-16 pb-10 border-t-2 border-gold/40">
+    <footer className="bg-forest text-sand pt-12 pb-8 border-t-2 border-gold/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-sand/15">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-x-10 gap-y-6 lg:gap-y-8 pb-8 border-b border-sand/15">
           
           {/* Brand Bio */}
           <div className="lg:col-span-2 space-y-4">
             <div className="space-y-2">
-              <img src="/assets/logo/nav-logo.svg" alt="Shutter and Stripes" className="h-14 w-auto object-contain" />
-              <span className="text-[10px] tracking-widest-safari uppercase text-sand/70 block">
-                Guided By Locals • Inspired By Nature
-              </span>
+              <img src="/assets/logo/nav-logo.svg" alt="Shutter and Stripes" className="h-16 w-auto object-contain" />
             </div>
 
-            <p className="text-sand/80 text-sm leading-relaxed max-w-sm">
+            <p className="text-sand/80 text-[13px] leading-relaxed max-w-sm">
               Dedicated to ethical, low-impact wildlife expeditions across the legendary tiger heartlands of Madhya Pradesh and Maharashtra. Championing local naturalist mastery and responsible conservation photography.
             </p>
 
@@ -57,36 +75,26 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Column 1: Destinations */}
-          <div>
-            <h4 className="font-serif text-base font-semibold text-gold mb-4 uppercase tracking-wider text-xs">
-              Reserves and Parks
-            </h4>
-            <ul className="space-y-2.5 text-sm text-sand/80">
-              <li><Link to="/destinations/tadoba-andhari" className="hover:text-gold transition-colors">Tadoba-Andhari (MH)</Link></li>
-              <li><Link to="/destinations/bandhavgarh" className="hover:text-gold transition-colors">Bandhavgarh (MP)</Link></li>
-              <li><Link to="/destinations/kanha" className="hover:text-gold transition-colors">Kanha National Park (MP)</Link></li>
-              <li><Link to="/destinations/pench-mp" className="hover:text-gold transition-colors">Pench (Madhya Pradesh)</Link></li>
-              <li><Link to="/destinations/pench-mh" className="hover:text-gold transition-colors">Pench (Maharashtra)</Link></li>
-              <li><Link to="/destinations/satpura" className="hover:text-gold transition-colors">Satpura Wilderness (MP)</Link></li>
-              <li><Link to="/destinations" className="text-gold hover:underline flex items-center gap-1 text-xs pt-1">View All Reserves →</Link></li>
-            </ul>
-          </div>
+          <FooterColumn title="Reserves and Parks">
+            <li><Link to="/destinations/tadoba-andhari" className="hover:text-gold transition-colors">Tadoba-Andhari (MH)</Link></li>
+            <li><Link to="/destinations/bandhavgarh" className="hover:text-gold transition-colors">Bandhavgarh (MP)</Link></li>
+            <li><Link to="/destinations/kanha" className="hover:text-gold transition-colors">Kanha National Park (MP)</Link></li>
+            <li><Link to="/destinations/pench-mp" className="hover:text-gold transition-colors">Pench (Madhya Pradesh)</Link></li>
+            <li><Link to="/destinations/pench-mh" className="hover:text-gold transition-colors">Pench (Maharashtra)</Link></li>
+            <li><Link to="/destinations/satpura" className="hover:text-gold transition-colors">Satpura Wilderness (MP)</Link></li>
+            <li><Link to="/destinations" className="text-gold hover:underline flex items-center gap-1 text-xs pt-1">View All Reserves →</Link></li>
+          </FooterColumn>
 
           {/* Column 2: Navigation and Discovery */}
-          <div>
-            <h4 className="font-serif text-base font-semibold text-gold mb-4 uppercase tracking-wider text-xs">
-              Explore Platform
-            </h4>
-            <ul className="space-y-2.5 text-sm text-sand/80">
-              <li><Link to="/map" className="hover:text-gold transition-colors">Interactive Reserve Map</Link></li>
-              <li><Link to="/compare" className="hover:text-gold transition-colors">Compare Reserves</Link></li>
-              <li><Link to="/how-it-works" className="hover:text-gold transition-colors">How Booking Works</Link></li>
-              <li><Link to="/our-story" className="hover:text-gold transition-colors">Our Story and Philosophy</Link></li>
-              <li><Link to="/journal" className="hover:text-gold transition-colors">Wildlife Journal</Link></li>
-              <li><Link to="/gallery" className="hover:text-gold transition-colors">Photography Showcase</Link></li>
-              <li><Link to="/responsible-tourism" className="hover:text-gold transition-colors">Ethical Tourism Rules</Link></li>
-            </ul>
-          </div>
+          <FooterColumn title="Explore Platform">
+            <li><Link to="/map" className="hover:text-gold transition-colors">Interactive Reserve Map</Link></li>
+            <li><Link to="/compare" className="hover:text-gold transition-colors">Compare Reserves</Link></li>
+            <li><Link to="/how-it-works" className="hover:text-gold transition-colors">How Booking Works</Link></li>
+            <li><Link to="/our-story" className="hover:text-gold transition-colors">Our Story and Philosophy</Link></li>
+            <li><Link to="/journal" className="hover:text-gold transition-colors">Wildlife Journal</Link></li>
+            <li><Link to="/gallery" className="hover:text-gold transition-colors">Photography Showcase</Link></li>
+            <li><Link to="/responsible-tourism" className="hover:text-gold transition-colors">Ethical Tourism Rules</Link></li>
+          </FooterColumn>
 
           {/* Column 3: Newsletter and Inquiries */}
           <div>
@@ -145,7 +153,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-sand/60 gap-4">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-sand/60 gap-4">
           <p>
             © {new Date().getFullYear()} SHUTTER AND STRIPES Expeditions Pvt. Ltd. All rights reserved.
           </p>
