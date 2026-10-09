@@ -31,7 +31,7 @@ export const ResponsibleTourismPage: React.FC = () => {
           </p>
         </div>
 
-        {/* 4 Core Pillars */}
+        {/* 3 Core Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
           
           <div className="bg-white p-8 sm:p-10 rounded-3xl border border-forest/15 shadow-sm space-y-4">
@@ -108,32 +108,6 @@ export const ResponsibleTourismPage: React.FC = () => {
               <li className="flex items-center space-x-2">
                 <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
                 <span>Mandatory vehicle litter bag for immediate pack-in, pack-out.</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="bg-white p-8 sm:p-10 rounded-3xl border border-forest/15 shadow-sm space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-forest/10 text-forest flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6 text-gold" />
-            </div>
-            <h2 className="font-serif text-2xl font-bold text-forest">
-              4. NTCA and Forest Department Alignment
-            </h2>
-            <p className="text-forest/70 text-sm leading-relaxed">
-              We respect carrying capacity quotas established by the National Tiger Conservation Authority. We do not lobby for unauthorized extra vehicle permits into fragile core zones.
-            </p>
-            <ul className="space-y-2 text-xs text-forest/80 pt-2">
-              <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
-                <span>Equal promotion of buffer zones to relieve pressure on core habitats.</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
-                <span>Strict adherence to 20 km/h forest speed restrictions.</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
-                <span>Immediate reporting of injured wildlife or snare traps to rangers.</span>
               </li>
             </ul>
           </div>
