@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Compass, ArrowRight, MapPin, BookOpen, 
+  ArrowRight, MapPin, BookOpen, 
   Search, Users, Award, HeartHandshake, Eye, Sparkles
 } from 'lucide-react';
 import { Destination, GalleryItem } from '../types';
@@ -126,11 +126,6 @@ export const HomePage: React.FC = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-sand w-full">
           <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-gold/50 text-gold text-xs font-bold tracking-widest-safari uppercase shadow-lg">
-              <Compass className="w-3.5 h-3.5" />
-              <span>Madhya Pradesh &amp; Maharashtra &middot; {YEARS_OF_EXPERIENCE}+ Years in the Field</span>
-            </div>
-
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               GUIDED BY LOCALES. <br />
               <span className="italic font-normal text-gold drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">INSPIRED BY NATURE.</span>
