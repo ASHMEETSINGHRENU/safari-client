@@ -69,7 +69,18 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const featuredDestinations = destinations.slice(0, 4);
+  // Hand-picked spotlight order + marketing copy for the homepage rail.
+  const featuredDestinations = [
+    { slug: 'tadoba-andhari', name: 'Tadoba-Andhari (Chandrapur)', tagline: 'The Sighting Capital' },
+    { slug: 'pench-mh', name: 'Pench Maharashtra (Nagpur)', tagline: 'The Kipling Corridor' },
+    { slug: 'melghat', name: 'Melghat (Amravati)', tagline: 'The Satpura Fortress' },
+    { slug: 'navegaon-nagzira', name: 'Navegaon-Nagzira (Gondia/Bhandara)', tagline: 'The Central Core Hub' },
+  ]
+    .map(f => {
+      const d = destinations.find(x => x.slug === f.slug);
+      return d ? { ...d, name: f.name, tagline: f.tagline } : null;
+    })
+    .filter((d): d is NonNullable<typeof d> => d !== null);
 
   return (
     <div className="bg-sand text-forest min-h-screen">
