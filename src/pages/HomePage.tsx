@@ -431,33 +431,18 @@ export const HomePage: React.FC = () => {
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-transparent to-transparent" />
                   <span className="absolute top-3 left-3 bg-gold text-forest text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow">
                     Upcoming Tour
                   </span>
                   <span className="absolute top-3 right-3 bg-black/55 backdrop-blur-sm text-sand p-1.5 rounded-full border border-white/20">
                     <InstagramIcon className="w-3.5 h-3.5" />
                   </span>
-                  <div className="absolute bottom-0 inset-x-0 p-4">
-                    <h3 className="font-serif text-lg font-bold text-sand leading-snug">{tour.title}</h3>
-                    <p className="text-[11px] text-gold uppercase tracking-wider font-semibold mt-0.5">{tour.tagline}</p>
-                  </div>
                 </a>
 
                 <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <span className="text-[10px] text-sand/50 uppercase font-bold tracking-wider block">Departure Dates</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {tour.dates.map(d => (
-                        <span
-                          key={d.label}
-                          title={d.note}
-                          className="text-[10px] font-medium text-sand bg-forest-deep/70 border border-sand/15 rounded px-2 py-1"
-                        >
-                          {d.label}{d.note ? ' ★' : ''}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="space-y-1">
+                    <h3 className="font-serif text-lg font-bold text-sand leading-snug">{tour.title}</h3>
+                    <p className="text-[11px] text-gold uppercase tracking-wider font-semibold">{tour.tagline}</p>
                   </div>
 
                   <div className="flex items-center gap-2 pt-1">

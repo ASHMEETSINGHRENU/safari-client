@@ -229,7 +229,7 @@ export const OurStoryPage: React.FC = () => {
 
       {/* 5. THE BASTIONS OF CENTRAL INDIA */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
-        <div className="max-w-3xl mb-12">
+        <div className="mb-12">
           <div className="inline-flex items-center space-x-2 text-earth font-bold text-xs uppercase tracking-widest mb-3">
             <TreePine className="w-4 h-4 text-gold" />
             <span>Section V — Geography and Focus</span>
@@ -239,6 +239,9 @@ export const OurStoryPage: React.FC = () => {
           </h2>
           <p className="text-forest/80 text-base leading-relaxed font-sans">
             Central India and the northern Western Ghats hold the most vital gene pool of Panthera tigris tigris in the world. By hyper-focusing on our core reserves in Madhya Pradesh and Maharashtra&mdash;and adding new regions as we do the same fieldwork&mdash;we maintain intimate relationships with local forest rangers, village eco-development committees, and certified naturalists.
+          </p>
+          <p className="text-forest/80 text-base leading-relaxed font-sans mt-4">
+            Central India&mdash;specifically Madhya Pradesh and Maharashtra&mdash;is the world's top landscape for wild Bengal tiger tracking. By pairing ground-level research with real-time intelligence from local naturalists and tribal trackers, we bypass generic tourist routes to optimize gate selection, timing, and waterhole activity. Our central focus enables seamless multi-park expeditions across Pench, Kanha, and Tadoba via major hubs like Nagpur and Jabalpur.
           </p>
         </div>
 
