@@ -97,13 +97,13 @@ export const Navbar: React.FC = () => {
           {/* Desktop Right Actions */}
           <div className="hidden lg:flex items-center space-x-3">
 
-            {/* Primary CTA: Book Safari */}
+            {/* Primary CTA: Track Your Booking */}
             <Link
-              to="/booking"
+              to="/track"
               className="px-5 py-2.5 bg-gold text-forest text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-gold-light transition shadow-md flex items-center space-x-2 group"
             >
               <Compass className="w-3.5 h-3.5 group-hover:rotate-45 transition-transform" />
-              <span>Book Safari</span>
+              <span>Track Your Booking</span>
             </Link>
 
           </div>
@@ -111,10 +111,10 @@ export const Navbar: React.FC = () => {
           {/* Mobile Menu Action Toggle */}
           <div className="flex items-center space-x-2 lg:hidden">
             <Link
-              to="/booking"
+              to="/track"
               className="px-3 py-1.5 bg-gold text-forest text-xs font-bold uppercase tracking-wider rounded-lg shadow-sm"
             >
-              Book
+              Track
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
