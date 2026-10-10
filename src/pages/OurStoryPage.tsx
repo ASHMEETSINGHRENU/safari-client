@@ -254,7 +254,7 @@ export const OurStoryPage: React.FC = () => {
               Home to nearly 800 wild tigers across Kanha's sprawling grasslands, Bandhavgarh's fortress cliffs, Pench's teak hills, and Panna's remarkable conservation revival.
             </p>
             <div className="flex flex-wrap gap-2 text-xs">
-              {['Kanha', 'Bandhavgarh', 'Pench (MP)', 'Satpura', 'Panna', 'Sanjay Dubri', 'Madhav'].map((name, i) => (
+              {['Kanha', 'Bandhavgarh', 'Pench (MP)', 'Satpura', 'Panna', 'Sanjay Dubri', 'Kheoni'].map((name, i) => (
                 <span key={i} className="px-3 py-1 bg-sand rounded-lg text-forest font-semibold border border-forest/10">
                   {name}
                 </span>
@@ -333,12 +333,12 @@ export const OurStoryPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white p-6 rounded-2xl border border-forest/10 space-y-2">
               <span className="font-serif text-2xl font-bold text-forest block">20m</span>
-              <h4 className="font-bold text-forest text-sm">Minimum Stand-off</h4>
+              <h4 className="font-bold text-forest text-sm">Respectful Distance</h4>
               <p className="text-forest/70 text-xs leading-relaxed">
-                Vehicles must maintain at least 20 meters from any moving predator without blocking paths.
+                Vehicles always maintain a respectful distance from any moving predator, without blocking its path.
               </p>
             </div>
 
@@ -355,14 +355,6 @@ export const OurStoryPage: React.FC = () => {
               <h4 className="font-bold text-forest text-sm">Zero Plastic Left</h4>
               <p className="text-forest/70 text-xs leading-relaxed">
                 All vehicles carry metal flasks. Single-use plastics are strictly prohibited inside reserves.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-forest/10 space-y-2">
-              <span className="font-serif text-2xl font-bold text-forest block">Fair</span>
-              <h4 className="font-bold text-forest text-sm">Direct Driver Wages</h4>
-              <p className="text-forest/70 text-xs leading-relaxed">
-                Drivers and guides are paid directly with transparent premiums above statutory base rates.
               </p>
             </div>
           </div>

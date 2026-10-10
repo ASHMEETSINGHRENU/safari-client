@@ -161,9 +161,6 @@ export const DestinationDetailPage: React.FC = () => {
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white shadow-md ${stateBadgeClass(destination.state)}`}>
                   {destination.state}
                 </span>
-                <span className="px-3 py-1 rounded-full bg-gold/90 text-forest text-xs font-bold uppercase tracking-wider shadow">
-                  {destination.availability}
-                </span>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-forest sm:text-white font-bold mb-2 sm:mb-3 tracking-tight sm:drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 {destination.name}
@@ -463,11 +460,6 @@ export const DestinationDetailPage: React.FC = () => {
               </div>
 
               <div className="space-y-4 text-xs">
-                <div className="bg-sand p-3.5 rounded-xl border border-forest/10 flex items-center justify-between">
-                  <span className="text-forest/70 font-medium">Availability:</span>
-                  <span className="font-bold text-forest uppercase">{destination.availability}</span>
-                </div>
-
                 <div className="bg-sand-light p-3.5 rounded-xl border border-gold/40">
                   <span className="text-forest/70 font-medium block text-[11px] uppercase tracking-wider">Packages From</span>
                   <span className="font-serif font-bold text-forest text-xl">{inr(packageFromOf(destination))}</span>

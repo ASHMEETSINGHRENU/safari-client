@@ -97,7 +97,7 @@ export const Footer: React.FC = () => {
               Wildlife Gazette
             </h4>
             <p className="text-xs text-sand/70 leading-relaxed">
-              Seasonal tracking notes, permit opening alerts, and conservation updates delivered monthly.
+              Seasonal tracking notes and conservation updates delivered monthly.
             </p>
             {subscribed ? (
               <div className="bg-sand/10 border border-gold/40 text-gold text-xs p-3 rounded flex items-center gap-2">

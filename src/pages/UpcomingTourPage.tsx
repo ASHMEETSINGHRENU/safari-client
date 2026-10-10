@@ -17,7 +17,7 @@ export const UpcomingTourPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const tour = getUpcomingTour(slug);
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', preferredDates: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -167,7 +167,7 @@ export const UpcomingTourPage: React.FC = () => {
                   <button
                     onClick={() => {
                       setSubmitted(false);
-                      setForm({ name: '', email: '', phone: '', message: '' });
+                      setForm({ name: '', email: '', phone: '', preferredDates: '', message: '' });
                     }}
                     className="px-6 py-2.5 bg-forest text-sand rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-forest/90 transition"
                   >
@@ -230,6 +230,24 @@ export const UpcomingTourPage: React.FC = () => {
                       placeholder="+91 98765 43210"
                       className={inputClass}
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
+                      Preferred Departure Date
+                    </label>
+                    <select
+                      value={form.preferredDates}
+                      onChange={e => setForm({ ...form, preferredDates: e.target.value })}
+                      className={inputClass}
+                    >
+                      <option value="">Flexible / Not sure yet</option>
+                      {tour.dates.map(d => (
+                        <option key={d.label} value={d.label}>
+                          {d.label}{d.note ? ' ★' : ''}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>

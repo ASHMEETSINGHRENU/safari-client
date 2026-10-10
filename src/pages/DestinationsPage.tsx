@@ -31,7 +31,6 @@ export const DestinationsPage: React.FC = () => {
   const stateParam = searchParams.get('state') || 'All';
   const [selectedState, setSelectedState] = useState<string>(stateParam);
   const [searchQuery, setSearchQuery] = useState('');
-  const [availabilityFilter, setAvailabilityFilter] = useState('All');
   const [viewMode, setViewMode] = useState<'grid' | 'detailed'>('grid');
 
   // Comparison tray state
@@ -87,8 +86,7 @@ export const DestinationsPage: React.FC = () => {
       dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       dest.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
       dest.wildlifeHighlights.some(w => w.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesAvailability = availabilityFilter === 'All' || dest.availability === availabilityFilter;
-    return matchesState && matchesSearch && matchesAvailability;
+    return matchesState && matchesSearch;
   });
 
   // ponytail: states derived from data, core states first. New states need zero code change.
@@ -197,19 +195,8 @@ export const DestinationsPage: React.FC = () => {
               )}
             </div>
 
-            {/* Availability and View Mode */}
+            {/* View Mode */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              <select
-                value={availabilityFilter}
-                onChange={(e) => setAvailabilityFilter(e.target.value)}
-                className="px-2 sm:px-3 py-2 bg-sand/40 border border-forest/15 rounded-xl text-[11px] sm:text-xs font-medium text-forest focus:outline-none focus:ring-2 focus:ring-forest/30 shrink-0"
-              >
-                <option value="All">All Availability</option>
-                <option value="AVAILABLE">Available</option>
-                <option value="FEW PERMITS">Few Permits</option>
-                <option value="LIMITED">Limited</option>
-              </select>
-
               <div className="flex items-center space-x-1 bg-sand/60 p-1 rounded-xl border border-forest/10 shrink-0">
                 <button
                   onClick={() => setViewMode('grid')}
@@ -263,7 +250,6 @@ export const DestinationsPage: React.FC = () => {
               onClick={() => {
                 setSelectedState('All');
                 setSearchQuery('');
-                setAvailabilityFilter('All');
               }}
               className="px-6 py-2.5 bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition"
             >
@@ -296,13 +282,6 @@ export const DestinationsPage: React.FC = () => {
                           stateBadgeClass(dest.state)
                         }`}>
                           {dest.state}
-                        </span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          dest.availability === 'AVAILABLE' 
-                            ? 'bg-emerald-600 text-white' 
-                            : 'bg-amber-600 text-white'
-                        }`}>
-                          {dest.availability}
                         </span>
                       </div>
                     </div>
@@ -411,13 +390,6 @@ export const DestinationsPage: React.FC = () => {
                         stateBadgeClass(dest.state)
                       }`}>
                         {dest.state}
-                      </span>
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider self-start shadow-sm ${
-                        dest.availability === 'AVAILABLE' 
-                          ? 'bg-emerald-600 text-white' 
-                          : 'bg-amber-600 text-white'
-                      }`}>
-                        {dest.availability}
                       </span>
                     </div>
 

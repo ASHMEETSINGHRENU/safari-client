@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { 
   Camera, 
   Filter, 
-  MapPin, 
   Eye, 
   Sparkles, 
   Compass, 
@@ -83,30 +82,6 @@ export const GalleryPage: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02] contrast-[1.02]"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-85 group-hover:opacity-75 transition-opacity" />
-
-                {/* Top Badge */}
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 rounded-full bg-sand/95 backdrop-blur-md text-forest text-[10px] font-bold uppercase tracking-wider shadow">
-                    {item.animal}
-                  </span>
-                </div>
-
-                {/* Bottom Details */}
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <h3 className="font-serif text-xl font-bold mb-1 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                    {item.title}
-                  </h3>
-                  <div className="flex items-center justify-between text-xs text-sand/90 drop-shadow">
-                    <span className="flex items-center space-x-1">
-                      <MapPin className="w-3.5 h-3.5 text-gold" />
-                      <span>{item.destinationName || 'Central India'}</span>
-                    </span>
-                    <span className="text-[11px] text-gold font-medium">
-                      {item.photographer || 'SNS Expedition Team'}
-                    </span>
-                  </div>
-                </div>
               </div>
             ))}
           />

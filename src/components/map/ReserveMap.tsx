@@ -302,7 +302,7 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
               </div>
 
               {/* Reserve Quick Metrics */}
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-forest-deep/60 p-2.5 rounded border border-sand/10">
                   <span className="text-sand/60 block text-[10px]">HEADLINE SPECIES</span>
                   <strong className="text-gold font-serif">{activeDest.headlineSpecies || activeDest.tigerCount}</strong>
@@ -310,10 +310,6 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                 <div className="bg-forest-deep/60 p-2.5 rounded border border-sand/10">
                   <span className="text-sand/60 block text-[10px]">TERRITORY</span>
                   <strong className="text-gold font-serif">{activeDest.areaSqKm} km²</strong>
-                </div>
-                <div className="bg-forest-deep/60 p-2.5 rounded border border-sand/10">
-                  <span className="text-sand/60 block text-[10px]">PERMIT STATUS</span>
-                  <strong className="text-emerald-400">{activeDest.availability}</strong>
                 </div>
               </div>
 

@@ -358,9 +358,6 @@ export const HomePage: React.FC = () => {
                     <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-sand text-[10px] font-bold px-2.5 py-1 rounded-md border border-white/20 shadow">
                       {d.state}
                     </div>
-                    <div className="absolute bottom-3 right-3 bg-sand/95 backdrop-blur-sm text-forest text-[10px] font-bold px-2.5 py-1 rounded-md shadow">
-                      {d.availability}
-                    </div>
                   </div>
                   <div className="p-5 space-y-2">
                     <span className="text-[10px] text-earth uppercase font-semibold tracking-wider block">
@@ -600,14 +597,6 @@ export const HomePage: React.FC = () => {
                   alt={item.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
-                <div className="absolute bottom-3.5 left-3.5 right-3.5 text-sand space-y-0.5">
-                  <span className="text-[10px] text-gold uppercase tracking-wider font-bold block drop-shadow">
-                    {item.animal} • {item.destinationName}
-                  </span>
-                  <h4 className="font-serif text-sm font-bold truncate text-white drop-shadow">{item.title}</h4>
-                  <span className="text-[10px] text-sand/80 block drop-shadow">{item.photographer}</span>
-                </div>
               </button>
             ))}
             </Marquee>
