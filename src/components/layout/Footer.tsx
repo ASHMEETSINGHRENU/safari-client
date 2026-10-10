@@ -153,6 +153,7 @@ export const Footer: React.FC = () => {
             <Link to="/track" className={linkClass}>Track Booking</Link>
             <Link to="/contact" className={linkClass}>Contact</Link>
             <Link to="/faqs" className={linkClass}>FAQs</Link>
+            <span className="text-sand/50">Made by <span className="text-gold font-semibold">Digital Buddiess</span></span>
           </div>
         </div>
       </div>

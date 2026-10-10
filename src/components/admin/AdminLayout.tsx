@@ -77,7 +77,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       {/* Mobile Top Header */}
       <div className="md:hidden bg-forest text-sand px-4 py-3 flex items-center justify-between shadow-md z-30">
         <div className="flex items-center space-x-2">
-          <img src="/assets/logo/logo.png" alt="Shutter And Stripes" className="h-7 w-auto object-contain rounded bg-sand-warm px-1.5 py-1" />
+          <img src="/assets/logo/nav-logo.svg" alt="Shutter And Stripes" className="h-7 w-auto object-contain rounded bg-sand-warm px-1.5 py-1" />
           <span className="font-serif font-bold text-sm tracking-wide">ADMIN CONSOLE</span>
         </div>
         <button
@@ -99,7 +99,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           <div className="p-6 border-b border-sand/10">
             <Link to="/admin" className="flex items-center space-x-3 group">
               <img 
-                src="/assets/logo/logo.png" 
+                src="/assets/logo/nav-logo.svg" 
                 alt="Shutter And Stripes Logo" 
                 className="h-9 w-auto object-contain rounded bg-sand-warm px-2 py-1.5 group-hover:scale-105 transition-transform"
               />

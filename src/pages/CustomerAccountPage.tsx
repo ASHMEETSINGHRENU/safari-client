@@ -393,7 +393,7 @@ export const CustomerAccountPage: React.FC = () => {
               
               <div className="flex items-center justify-between border-b border-forest/10 pb-4">
                 <div className="flex items-center space-x-3">
-                  <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-10 w-auto" />
+                  <img src="/assets/logo/nav-logo.svg" alt="Shutter and Stripes" className="h-10 w-auto" />
                   <div>
                     <h4 className="font-serif font-bold text-forest text-lg">Official Permit Voucher</h4>
                     <span className="font-mono text-xs text-forest/60">Ref: {selectedBookingForVoucher.bookingRef}</span>
