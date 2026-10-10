@@ -50,8 +50,10 @@ export const HomePage: React.FC = () => {
   // Mobile curated collection: only perfectly-centered, uncropped subjects that look stunning in portrait full-screen
   const HERO_SLIDES_MOBILE = [
     '/assets/img/Hero/hero-1.webp',
+    '/assets/img/Hero/hero-6.webp',
     '/assets/img/Hero/hero-8.webp',
     '/assets/img/Hero/hero-9.webp',
+    '/assets/img/Hero/hero-10.webp',
   ];
 
   const [isMobile, setIsMobile] = useState(() => 
@@ -400,9 +402,7 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
             <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noreferrer"
+              href="/upcoming-tours"
               className="text-xs font-bold uppercase tracking-wider text-gold hover:text-gold-light flex items-center gap-1.5 shrink-0"
             >
               <InstagramIcon className="w-4 h-4" />
