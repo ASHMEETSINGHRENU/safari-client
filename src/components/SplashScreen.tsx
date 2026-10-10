@@ -47,7 +47,7 @@ export const SplashScreen: React.FC<{
         fading ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      <img src="/assets/logo/logo.png" alt="Shutter and Stripes" className="h-16 w-auto object-contain" />
+      <img src="/assets/logo/nav-logo.svg" alt="Shutter and Stripes" className="h-16 w-auto object-contain" />
       <p className="mt-5 font-serif text-lg sm:text-xl font-bold tracking-wider text-sand">
         SHUTTER AND STRIPES
       </p>
