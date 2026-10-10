@@ -148,13 +148,29 @@ export const JournalDetailPage: React.FC = () => {
         </div>
 
         {/* Cover Photo */}
-        <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 mb-10 h-72 sm:h-96">
-          <img
-            src={article.coverImage}
-            alt={article.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <figure className="mb-10">
+          <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 h-72 sm:h-96">
+            <img
+              src={article.coverImage}
+              alt={article.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {article.coverImageCredit && (
+            <figcaption className="mt-2 text-right text-[11px] text-forest/50">
+              {article.coverImageCredit.split(/(\[[^\]]+\]\([^)]+\))/).map((part, i) => {
+                const m = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(part);
+                return m ? (
+                  <a key={i} href={m[2]} target="_blank" rel="noreferrer" className="underline hover:text-forest">
+                    {m[1]}
+                  </a>
+                ) : (
+                  part
+                );
+              })}
+            </figcaption>
+          )}
+        </figure>
 
         {/* Lead Excerpt */}
         <div className="border-l-4 border-gold pl-6 py-2 mb-10">

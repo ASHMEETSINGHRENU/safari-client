@@ -158,6 +158,7 @@ export interface JournalArticle {
   metaDescription?: string;
   keywords?: string[];
   coverImage: string;
+  coverImageCredit?: string;
   author: string;
   readTime: string;
   destinationTag?: string;
