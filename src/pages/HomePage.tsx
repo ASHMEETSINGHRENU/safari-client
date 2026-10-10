@@ -236,7 +236,7 @@ export const HomePage: React.FC = () => {
                 to="/booking" 
                 className="px-6 py-3.5 bg-gold text-forest font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gold-light transition-all shadow-xl flex items-center gap-2"
               >
-                <span>Plan Your Journey</span>
+                <span>Customize Your Journey</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link 
