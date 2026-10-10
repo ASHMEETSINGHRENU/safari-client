@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { 
   ArrowRight, MapPin, BookOpen, 
-  Search, Users, Award, HeartHandshake, Eye, Sparkles, Calendar
+  Users, Award, HeartHandshake, Eye, Sparkles, Calendar,
+  X, Send, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { Destination, GalleryItem } from '../types';
 import { destinationService, cmsService } from '../services/api';
@@ -24,8 +25,10 @@ const Marquee: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </div>
 );
 
+const fmtQuoteDate = (iso: string) =>
+  iso ? new Date(iso + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+
 export const HomePage: React.FC = () => {
-  const navigate = useNavigate();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [activeGallery, setActiveGallery] = useState<GalleryItem | null>(null);
@@ -99,15 +102,54 @@ export const HomePage: React.FC = () => {
   const [searchState, setSearchState] = useState('');
   const [searchDestination, setSearchDestination] = useState('');
   const [searchDate, setSearchDate] = useState('');
+  const [searchEndDate, setSearchEndDate] = useState('');
   const [searchGuests, setSearchGuests] = useState('2');
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarFor, setCalendarFor] = useState<'start' | 'end' | null>(null);
+
+  // "Get Quote" — direct enquiry: the finder feeds a contact modal, whose submit
+  // posts to the existing inquiry API rather than routing to the booking wizard.
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [quoteSent, setQuoteSent] = useState(false);
+  const [quoteSubmitting, setQuoteSubmitting] = useState(false);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteContact, setQuoteContact] = useState({ name: '', email: '', phone: '' });
+
+  const quoteDestinationName =
+    destinations.find(d => d.slug === searchDestination)?.name || '';
+  const quoteDates = [fmtQuoteDate(searchDate), fmtQuoteDate(searchEndDate)].filter(Boolean).join(' – ');
+  const quoteGuests = searchGuests === '6' ? 'Private Safari Jeep (6 guests)' : `${searchGuests} guest${searchGuests === '1' ? '' : 's'}`;
+
+  const openQuote = () => { setQuoteSent(false); setQuoteError(null); setQuoteOpen(true); };
+  const closeQuote = () => setQuoteOpen(false);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchDestination) {
-      navigate(`/booking?destination=${searchDestination}`);
-    } else {
-      navigate(searchState ? `/destinations?state=${searchState}` : '/destinations');
+    openQuote();
+  };
+
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { name, email, phone } = quoteContact;
+    if (name.trim().length < 3) return setQuoteError("Enter your full name.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setQuoteError('Enter a valid email address.');
+    if (phone.replace(/\D/g, '').length < 10) return setQuoteError('Enter a valid phone number.');
+    setQuoteSubmitting(true);
+    setQuoteError(null);
+    try {
+      await cmsService.submitInquiry({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        destination: quoteDestinationName || 'Any / Unsure',
+        preferredDates: quoteDates,
+        guests: Number(searchGuests),
+        message: `Quote request — Reserve: ${quoteDestinationName || 'Any / Unsure'}; Dates: ${quoteDates || 'flexible'}; Guests: ${quoteGuests}.`,
+      });
+      setQuoteSent(true);
+    } catch (err: any) {
+      setQuoteError(err?.response?.data?.message || 'Could not send your request. Please try again.');
+    } finally {
+      setQuoteSubmitting(false);
     }
   };
 
@@ -213,7 +255,7 @@ export const HomePage: React.FC = () => {
       <section className="relative z-20 mt-4 sm:-mt-12 max-w-6xl mx-auto px-4 sm:px-6">
         <form 
           onSubmit={handleSearchSubmit}
-          className="bg-forest text-sand p-4 sm:p-6 rounded-2xl shadow-2xl border border-gold/30 grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 items-end"
+          className="bg-forest text-sand p-4 sm:p-6 rounded-2xl shadow-2xl border border-gold/30 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 items-end"
         >
           {/* State */}
           <div>
@@ -253,35 +295,70 @@ export const HomePage: React.FC = () => {
             </select>
           </div>
 
-          {/* Date */}
+          {/* Start Date */}
           <div className="relative">
             <label className="block text-[10px] uppercase font-bold tracking-widest-safari text-gold mb-1.5">
-              Expedition Date
+              Start Date
             </label>
             <button
               type="button"
-              onClick={() => setShowCalendar(o => !o)}
+              onClick={() => setCalendarFor(f => (f === 'start' ? null : 'start'))}
               className="w-full bg-forest-deep border border-sand/20 rounded-lg p-2.5 text-xs text-left focus:outline-none focus:border-gold flex items-center justify-between gap-2"
             >
               <span className={searchDate ? 'text-sand' : 'text-sand/50'}>
-                {searchDate
-                  ? new Date(searchDate + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                  : 'Select date'}
+                {searchDate ? fmtQuoteDate(searchDate) : 'Select date'}
               </span>
               <Calendar className="w-3.5 h-3.5 text-gold shrink-0" />
             </button>
-            {showCalendar && (
+            {calendarFor === 'start' && (
               <>
                 <button
                   type="button"
                   aria-label="Close calendar"
-                  onClick={() => setShowCalendar(false)}
+                  onClick={() => setCalendarFor(null)}
                   className="fixed inset-0 z-30 cursor-default"
                 />
                 <div className="absolute z-40 mt-2 left-0 w-[19rem] max-w-[calc(100vw-2rem)]">
                   <SafariCalendar
                     value={searchDate}
-                    onSelect={(iso) => { setSearchDate(iso); setShowCalendar(false); }}
+                    onSelect={(iso) => { setSearchDate(iso); setSearchEndDate(prev => (prev && prev < iso ? '' : prev)); setCalendarFor(null); }}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* End Date */}
+          <div className="relative">
+            <label className="block text-[10px] uppercase font-bold tracking-widest-safari text-gold mb-1.5">
+              End Date
+            </label>
+            <button
+              type="button"
+              onClick={() => setCalendarFor(f => (f === 'end' ? null : 'end'))}
+              className="w-full bg-forest-deep border border-sand/20 rounded-lg p-2.5 text-xs text-left focus:outline-none focus:border-gold flex items-center justify-between gap-2"
+            >
+              <span className={searchEndDate ? 'text-sand' : 'text-sand/50'}>
+                {searchEndDate ? fmtQuoteDate(searchEndDate) : 'Select date'}
+              </span>
+              <Calendar className="w-3.5 h-3.5 text-gold shrink-0" />
+            </button>
+            {calendarFor === 'end' && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Close calendar"
+                  onClick={() => setCalendarFor(null)}
+                  className="fixed inset-0 z-30 cursor-default"
+                />
+                <div className="absolute z-40 mt-2 right-0 w-[19rem] max-w-[calc(100vw-2rem)]">
+                  <SafariCalendar
+                    value={searchEndDate}
+                    onSelect={(iso) => {
+                      if (searchDate && iso < searchDate) { setSearchEndDate(searchDate); setSearchDate(iso); }
+                      else setSearchEndDate(iso);
+                      setCalendarFor(null);
+                    }}
                   />
                 </div>
               </>
@@ -311,8 +388,8 @@ export const HomePage: React.FC = () => {
               type="submit"
               className="w-full py-3 bg-gold text-forest font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-gold-light transition-all flex items-center justify-center gap-1.5 shadow-md"
             >
-              <Search className="w-3.5 h-3.5" />
-              <span>Find My Package</span>
+              <Send className="w-3.5 h-3.5" />
+              <span>Get Quote</span>
             </button>
           </div>
         </form>
@@ -626,6 +703,119 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* GET QUOTE ENQUIRY MODAL */}
+      {quoteOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-forest/60 backdrop-blur-sm"
+          onClick={closeQuote}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="quote-title"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-lg bg-sand text-forest rounded-2xl border border-gold/40 shadow-2xl overflow-hidden"
+          >
+            {quoteSent ? (
+              <div className="p-8 text-center space-y-4">
+                <div className="w-14 h-14 rounded-full bg-forest text-gold flex items-center justify-center mx-auto shadow-md">
+                  <CheckCircle2 className="w-7 h-7" />
+                </div>
+                <h3 id="quote-title" className="font-serif text-2xl font-bold text-forest">Request Sent</h3>
+                <p className="text-forest/80 text-sm max-w-sm mx-auto leading-relaxed">
+                  Your request is sent — a representative will contact you shortly.
+                </p>
+                <p className="text-forest/60 text-xs max-w-sm mx-auto leading-relaxed">
+                  We'll prepare a specialized quote tailored to your {quoteDates ? 'dates' : 'safari'}
+                  {quoteDestinationName ? ` at ${quoteDestinationName}` : ''}.
+                </p>
+                <button
+                  type="button"
+                  onClick={closeQuote}
+                  className="mt-2 px-6 py-2.5 bg-forest text-sand rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-forest-light transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleQuoteSubmit} className="p-6 sm:p-7 space-y-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 id="quote-title" className="font-serif text-2xl font-bold text-forest">Get A Specialized Quote</h3>
+                    <p className="text-forest/60 text-xs mt-1">Share your contact details and we'll send a quote tailored to your safari.</p>
+                  </div>
+                  <button
+                    type="button"
+                    aria-label="Close"
+                    onClick={closeQuote}
+                    className="p-1.5 rounded-lg text-forest/50 hover:bg-forest/10 hover:text-forest transition"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="bg-forest text-sand rounded-xl p-4 text-xs space-y-1.5">
+                  <div className="flex justify-between gap-4"><span className="text-sand/60">Reserve</span><span className="font-semibold text-right">{quoteDestinationName || 'Any / Unsure'}</span></div>
+                  <div className="flex justify-between gap-4"><span className="text-sand/60">Dates</span><span className="font-semibold text-right">{quoteDates || 'Flexible'}</span></div>
+                  <div className="flex justify-between gap-4"><span className="text-sand/60">Guests</span><span className="font-semibold text-right">{quoteGuests}</span></div>
+                </div>
+
+                {quoteError && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{quoteError}</span>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    required
+                    value={quoteContact.name}
+                    onChange={(e) => setQuoteContact({ ...quoteContact, name: e.target.value })}
+                    placeholder="Full name"
+                    className="w-full px-4 py-3 bg-sand-warm border border-forest/15 rounded-xl text-xs text-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input
+                      type="email"
+                      required
+                      value={quoteContact.email}
+                      onChange={(e) => setQuoteContact({ ...quoteContact, email: e.target.value })}
+                      placeholder="Email address"
+                      className="w-full px-4 py-3 bg-sand-warm border border-forest/15 rounded-xl text-xs text-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
+                    />
+                    <input
+                      type="tel"
+                      required
+                      value={quoteContact.phone}
+                      onChange={(e) => setQuoteContact({ ...quoteContact, phone: e.target.value })}
+                      placeholder="Phone number"
+                      className="w-full px-4 py-3 bg-sand-warm border border-forest/15 rounded-xl text-xs text-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={quoteSubmitting}
+                  className="w-full py-3.5 bg-forest text-sand rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-forest-light transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {quoteSubmitting ? (
+                    <div className="w-4 h-4 border-2 border-sand border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 text-gold" />
+                      <span>Send Request</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   );
