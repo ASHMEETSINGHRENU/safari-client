@@ -8,13 +8,11 @@ import {
   Share2,
   ChevronDown,
   Star,
-  TreePine,
-  Mail
+  TreePine
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
-import { stateBadgeClass, stateCode, isPrimeZone, inr, packageFromOf, packagesOf, durationText, enquiryMailto } from '../lib/site';
-import PackageTiers from '../components/packages/PackageTiers';
+import { stateBadgeClass, stateCode, isPrimeZone } from '../lib/site';
 
 export const DestinationDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -152,9 +150,6 @@ export const DestinationDetailPage: React.FC = () => {
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white shadow-md ${stateBadgeClass(destination.state)}`}>
                   {destination.state}
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white shadow-md bg-black/55 backdrop-blur-md border border-white/25">
-                  {durationText(destination.packageDuration)}
-                </span>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-forest sm:text-white font-bold mb-2 sm:mb-3 tracking-tight sm:drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 {destination.name}
@@ -165,7 +160,7 @@ export const DestinationDetailPage: React.FC = () => {
             </div>
 
             {/* Quick Metrics Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white sm:bg-black/55 backdrop-blur-md p-4 rounded-2xl border border-forest/10 sm:border-sand/20 max-w-4xl shadow-lg sm:shadow-2xl">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-white sm:bg-black/55 backdrop-blur-md p-4 rounded-2xl border border-forest/10 sm:border-sand/20 max-w-4xl shadow-lg sm:shadow-2xl">
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-forest/50 sm:text-sand/70 block">Core &amp; Buffer Area</span>
                 <span className="font-serif text-lg font-bold text-forest sm:text-sand">{destination.areaSqKm} km²</span>
@@ -179,10 +174,6 @@ export const DestinationDetailPage: React.FC = () => {
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-forest/50 sm:text-sand/70 block">Prime Season</span>
                 <span className="font-serif text-lg font-bold text-forest sm:text-sand truncate block">{destination.bestTimeToVisit}</span>
-              </div>
-              <div>
-                <span className="text-[10px] uppercase tracking-wider text-forest/50 sm:text-sand/70 block">Package From</span>
-                <span className="font-serif text-lg font-bold text-forest sm:text-sand">{inr(packageFromOf(destination))}</span>
               </div>
             </div>
           </div>
@@ -227,25 +218,6 @@ export const DestinationDetailPage: React.FC = () => {
                   ))}
                 </ul>
               </div>
-
-              {/* Gallery */}
-              {destination.galleryImages && destination.galleryImages.length > 0 && (
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-forest mb-3">Reserve Gallery</h3>
-                  <div className="grid grid-cols-3 gap-3">
-                    {destination.galleryImages.map((img, idx) => (
-                      <div key={idx} className="h-24 sm:h-40 rounded-2xl overflow-hidden border border-forest/15 shadow-md group">
-                        <img
-                          src={img}
-                          alt={`${destination.name} gallery ${idx + 1}`}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-[1.02]"
-                          loading="lazy"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Prime Zones */}
               <div className="space-y-4 pt-2">
@@ -313,18 +285,23 @@ export const DestinationDetailPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Whole Packages */}
-              {packagesOf(destination).length > 0 && (
-                <div className="space-y-4 pt-2 animate-fadeIn">
-                  <div>
-                    <h3 className="font-serif text-lg font-bold text-forest">Whole Packages</h3>
-                    <p className="text-forest/60 text-xs mt-0.5">
-                      Park permits, safari vehicle, guide and applicable forest dues bundled in — nothing charged separately on the day.
-                    </p>
-                  </div>
-                  <PackageTiers destination={destination} />
-                </div>
-              )}
+            {/* What's included */}
+            <div className="space-y-4 pt-2 animate-fadeIn">
+              <div>
+                <h3 className="font-serif text-lg font-bold text-forest">What's Included</h3>
+                <p className="text-forest/60 text-xs mt-0.5">
+                  Every journey is arranged end to end — park permits, safari vehicle, naturalist guide and applicable forest dues. Share your dates and we'll craft a tailored itinerary and quote.
+                </p>
+              </div>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-forest/80">
+                {['Park permits & entry fees', 'Exclusive safari vehicle', 'Naturalist guide', 'Forest & buffer-zone dues', 'Permit verification & reservations', 'Tailored itinerary planning'].map((item) => (
+                  <li key={item} className="flex gap-2">
+                    <span aria-hidden className="text-gold shrink-0">&#10003;</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
               {/* FAQs */}
               <div className="space-y-3 pt-2">
@@ -375,17 +352,6 @@ export const DestinationDetailPage: React.FC = () => {
               </div>
 
               <div className="space-y-4 text-xs">
-                <div className="bg-sand-light p-3.5 rounded-xl border border-gold/40">
-                  <span className="text-forest/70 font-medium block text-[11px] uppercase tracking-wider">Packages From</span>
-                  <span className="font-serif font-bold text-forest text-xl">{inr(packageFromOf(destination))}</span>
-                  <span className="text-forest/50 text-[10px] block">Per person, all-inclusive</span>
-                </div>
-
-                <div className="bg-sand p-3.5 rounded-xl border border-forest/10 flex items-center justify-between">
-                  <span className="text-forest/70 font-medium">Standard Trip:</span>
-                  <span className="font-bold text-forest">{durationText(destination.packageDuration)}</span>
-                </div>
-
                 <div className="bg-sand p-3.5 rounded-xl border border-forest/10 flex items-center justify-between">
                   <span className="text-forest/70 font-medium">Forest Territory:</span>
                   <span className="font-bold text-forest">{destination.state} ({stateCode(destination.state)})</span>
@@ -397,29 +363,12 @@ export const DestinationDetailPage: React.FC = () => {
                   to={`/booking?destination=${destination.slug}`}
                   className="w-full py-3.5 bg-forest text-sand rounded-xl font-bold uppercase tracking-wider text-xs flex items-center justify-center space-x-2 hover:bg-forest/90 transition shadow-lg"
                 >
-                  <span>Start Booking Wizard</span>
+                  <span>Plan Your Journey</span>
                   <ArrowRight className="w-4 h-4 text-gold" />
                 </Link>
                 <p className="text-center text-[10px] text-forest/50 mt-2">
                   No payment charged during initial verification.
                 </p>
-              </div>
-
-              {/* Quick Inquiry CTA — package enquiries handled by email per MOM */}
-              <div className="pt-4 border-t border-forest/10">
-                <p className="text-xs text-forest/70 mb-3">
-                  Need a customized multi-park safari or photography vehicle with bean bags?
-                </p>
-                <a
-                  href={enquiryMailto(
-                    `Package Enquiry — ${destination.name}`,
-                    `Reserve: ${destination.name} (${destination.state})\n\nI'd like to discuss:\n`
-                  )}
-                  className="w-full py-2.5 border border-forest/30 text-forest rounded-xl font-semibold uppercase tracking-wider text-xs flex items-center justify-center gap-2 hover:bg-forest hover:text-sand transition"
-                >
-                  <Mail className="w-3.5 h-3.5 text-gold" />
-                  Email a Package Enquiry
-                </a>
               </div>
 
               {/* Guaranteed Protection Note */}

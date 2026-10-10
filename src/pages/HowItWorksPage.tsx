@@ -146,16 +146,16 @@ export const HowItWorksPage: React.FC = () => {
 
         {/* CTA */}
         <div className="text-center max-w-xl mx-auto space-y-4">
-          <h3 className="font-serif text-3xl font-bold text-forest">Begin Your Safari Application</h3>
+          <h3 className="font-serif text-3xl font-bold text-forest">Begin Your Safari Journey</h3>
           <p className="text-forest/70 text-sm">
-            Launch our interactive booking wizard to secure your permits with zero upfront payment stress.
+            Tell us where and when you'd like to travel. We'll arrange the permits and send a personalised quote &mdash; no fixed packages, no upfront payment.
           </p>
           <div className="pt-2">
             <Link
               to="/booking"
               className="px-8 py-3.5 bg-forest text-sand rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-forest/90 transition shadow-lg inline-flex items-center space-x-2"
             >
-              <span>Launch Booking Wizard</span>
+              <span>Plan Your Journey</span>
               <ArrowRight className="w-4 h-4 text-gold" />
             </Link>
           </div>

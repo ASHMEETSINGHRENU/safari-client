@@ -84,10 +84,10 @@ export const tripDuration = (packageDuration?: string): { days: number; nights: 
   return m ? { days: Number(m[1]), nights: Number(m[2]) } : { days: 3, nights: 2 };
 };
 
-/** Clean "3 Days / 2 Nights" label for cards and summaries (drops any add-on notes). */
+/** Clean "2 Nights / 3 Days" label for cards and summaries (drops any add-on notes). */
 export const durationText = (packageDuration?: string): string => {
   const { days, nights } = tripDuration(packageDuration);
-  return `${days} Day${days === 1 ? '' : 's'} / ${nights} Night${nights === 1 ? '' : 's'}`;
+  return `${nights} Night${nights === 1 ? '' : 's'} / ${days} Day${days === 1 ? '' : 's'}`;
 };
 
 /** Inclusive last day of the trip (YYYY-MM-DD) for a reserve's standard duration. */

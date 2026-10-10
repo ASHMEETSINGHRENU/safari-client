@@ -114,7 +114,7 @@ export const UpcomingTourPage: React.FC = () => {
               <div>
                 <h2 className="font-serif text-xl font-bold text-forest mb-3 flex items-center gap-2">
                   <Compass className="w-5 h-5 text-gold" />
-                  <span>Package Includes</span>
+                  <span>What's Included</span>
                 </h2>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {tour.highlights.map(h => (

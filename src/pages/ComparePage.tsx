@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { stateCode, stateBadgeClass, inr, packageFromOf, durationText } from '../lib/site';
+import { stateCode, stateBadgeClass } from '../lib/site';
 import { 
   Scale, 
   Plus, 
@@ -229,17 +229,6 @@ export const ComparePage: React.FC = () => {
                   ))}
                 </tr>
 
-                {/* Standard Duration */}
-                <tr>
-                  <td className="p-5 font-bold text-forest bg-sand/10">Standard Duration</td>
-                  {comparedDestinations.map(d => (
-                    <td key={d._id} className="p-5">
-                      <div className="font-semibold text-forest">{durationText(d.packageDuration)}</div>
-                      <div className="text-[10px] text-forest/50">Standard itinerary length per reserve</div>
-                    </td>
-                  ))}
-                </tr>
-
                 {/* Key Wildlife */}
                 <tr>
                   <td className="p-5 font-bold text-forest bg-sand/10">Fauna Highlights</td>
@@ -263,21 +252,6 @@ export const ComparePage: React.FC = () => {
                     <td key={d._id} className="p-5 space-y-1.5 text-xs">
                       <div><strong className="text-forest">Air:</strong> {d.howToReach.air}</div>
                       <div><strong className="text-forest">Rail:</strong> {d.howToReach.rail}</div>
-                    </td>
-                  ))}
-                </tr>
-
-                {/* Package Tariff */}
-                <tr>
-                  <td className="p-5 font-bold text-forest bg-sand/10">Packages From</td>
-                  {comparedDestinations.map(d => (
-                    <td key={d._id} className="p-5">
-                      <span className="font-serif font-bold text-xl text-forest block">
-                        {inr(packageFromOf(d))}
-                      </span>
-                      <span className="text-[10px] text-forest/50">
-                        per person, all-inclusive. Permits, vehicle and guide included.
-                      </span>
                     </td>
                   ))}
                 </tr>

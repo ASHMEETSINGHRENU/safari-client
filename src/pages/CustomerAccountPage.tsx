@@ -272,8 +272,8 @@ export const CustomerAccountPage: React.FC = () => {
 
                     <div className="lg:text-right shrink-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-forest/10 flex lg:flex-col items-center lg:items-end justify-between">
                       <div>
-                        <span className="text-[10px] uppercase tracking-wider text-forest/50 block">Total Tariff</span>
-                        <span className="font-serif text-2xl font-bold text-forest">₹{b.totalAmount.toLocaleString('en-IN')}</span>
+                        <span className="text-[10px] uppercase tracking-wider text-forest/50 block">Status</span>
+                        <span className="font-serif text-lg font-bold text-forest capitalize">{b.bookingStatus}</span>
                       </div>
                       
                       <div className="flex items-center space-x-2 mt-4">

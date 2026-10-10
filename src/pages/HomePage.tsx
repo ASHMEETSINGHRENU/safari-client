@@ -9,7 +9,7 @@ import { Destination, GalleryItem } from '../types';
 import { destinationService, cmsService } from '../services/api';
 import { SplashScreen, SPLASH_SEEN_KEY } from '../components/SplashScreen';
 import { SafariCalendar } from '../components/SafariCalendar';
-import { stateCode, YEARS_OF_EXPERIENCE, durationText, inr, packageFromOf } from '../lib/site';
+import { stateCode, YEARS_OF_EXPERIENCE } from '../lib/site';
 import { UPCOMING_TOURS } from '../lib/upcomingTours';
 import InstagramIcon from '../components/InstagramIcon';
 import { Carousel } from '../components/Carousel';
@@ -236,7 +236,7 @@ export const HomePage: React.FC = () => {
                 to="/booking" 
                 className="px-6 py-3.5 bg-gold text-forest font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gold-light transition-all shadow-xl flex items-center gap-2"
               >
-                <span>Explore Packages</span>
+                <span>Plan Your Journey</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link 
@@ -426,12 +426,11 @@ export const HomePage: React.FC = () => {
             trackClassName="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:overflow-visible sm:snap-none"
           >
             {featuredDestinations.map(d => (
-              <Link
+              <div
                 key={d.slug}
-                to={`/destinations/${d.slug}`}
                 className="snap-start shrink-0 w-[85%] sm:w-auto bg-sand rounded-xl overflow-hidden border border-forest/20 shadow-md group flex flex-col justify-between hover:shadow-xl transition-all"
               >
-                <div>
+                <Link to={`/destinations/${d.slug}`} className="block">
                   <div className="relative h-56 overflow-hidden">
                     <img 
                       src={d.heroImage} 
@@ -442,11 +441,8 @@ export const HomePage: React.FC = () => {
                     <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-sand text-[10px] font-bold px-2.5 py-1 rounded-md border border-white/20 shadow">
                       {d.state}
                     </div>
-                    <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-sand text-[10px] font-bold px-2.5 py-1 rounded-md border border-white/20 shadow">
-                      {durationText(d.packageDuration)}
-                    </div>
                   </div>
-                  <div className="p-5 space-y-2">
+                  <div className="p-5 pb-3 space-y-2">
                     <span className="text-[10px] text-earth uppercase font-semibold tracking-wider block">
                       {d.tagline}
                     </span>
@@ -454,18 +450,23 @@ export const HomePage: React.FC = () => {
                       {d.name}
                     </h3>
                   </div>
-                </div>
+                </Link>
 
-                <div className="p-5 pt-0 border-t border-forest/10 mt-3 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-forest/60 block">Packages From</span>
-                    <span className="font-serif text-base font-bold text-forest">{inr(packageFromOf(d))}</span>
-                  </div>
-                  <span className="p-2 bg-forest text-sand rounded group-hover:bg-gold group-hover:text-forest transition-colors">
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
+                <div className="p-5 pt-0 mt-3 border-t border-forest/10 flex gap-2">
+                  <Link
+                    to={`/destinations/${d.slug}`}
+                    className="flex-1 py-2.5 text-center border border-forest/30 text-forest rounded-lg text-[11px] uppercase font-bold tracking-wider hover:bg-forest hover:text-sand transition"
+                  >
+                    View Details
+                  </Link>
+                  <Link
+                    to={`/booking?destination=${d.slug}`}
+                    className="flex-1 py-2.5 text-center bg-forest text-sand rounded-lg text-[11px] uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow"
+                  >
+                    Book Safari
+                  </Link>
                 </div>
-              </Link>
+              </div>
             ))}
           </Carousel>
         </div>
@@ -693,7 +694,7 @@ export const HomePage: React.FC = () => {
             The Forests of Central India Await.
           </h2>
           <p className="text-xs sm:text-sm text-sand/90 max-w-xl mx-auto leading-relaxed drop-shadow">
-            Reserve official Forest Department permits across Bandhavgarh, Kanha, Tadoba, Pench, and beyond with transparent pricing and specialist naturalists.
+            Reserve official Forest Department permits across Bandhavgarh, Kanha, Tadoba, Pench, and beyond with specialist naturalists.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link 

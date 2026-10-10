@@ -6,7 +6,6 @@ import {
   Search, 
   Filter, 
   Layers, 
-  ArrowRight, 
   SlidersHorizontal,
   Scale,
   X,
@@ -18,8 +17,7 @@ import {
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
-import { stateBadgeClass, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE, packageFromOf, durationText, inr } from '../lib/site';
-import PackageTiers from '../components/packages/PackageTiers';
+import { stateBadgeClass, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE } from '../lib/site';
 import { useToast } from '../components/common/Toast';
 
 // ponytail: 8 per page = two rows of 4 on desktop.
@@ -145,7 +143,7 @@ export const DestinationsPage: React.FC = () => {
           </h1>
           <p className="text-forest/80 text-lg leading-relaxed font-sans max-w-3xl">
             {total || 'Our'} distinct ecosystems{expanding ? ' across India' : ' across Madhya Pradesh and Maharashtra'}&mdash;from the sal valleys of Kanha and the crags of Bandhavgarh, to the bamboo glades of Tadoba and the mist of Melghat.
-            {' '}Each one mapped by our naturalists over {YEARS_OF_EXPERIENCE}+ years of field work. Explore natural history, prime zones, and package rates with no middleman.
+            {' '}Each one mapped by our naturalists over {YEARS_OF_EXPERIENCE}+ years of field work. Explore natural history, prime zones, and tailored journeys with no middleman.
           </p>
         </div>
 
@@ -312,9 +310,6 @@ export const DestinationsPage: React.FC = () => {
                         }`}>
                           {dest.state}
                         </span>
-                        <span className="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-sand bg-black/55 backdrop-blur-md border border-white/20 shadow">
-                          {durationText(dest.packageDuration)}
-                        </span>
                       </div>
                     </div>
 
@@ -374,26 +369,19 @@ export const DestinationsPage: React.FC = () => {
                       </div>
 
                       <div className="pt-4 border-t border-forest/10">
-                        <PackageTiers destination={dest} variant="card" />
-                        <div className="flex items-end justify-between gap-3 mt-4">
-                          <div>
-                            <span className="text-[11px] text-forest/60 uppercase tracking-wider block">Packages From</span>
-                            <span className="font-serif text-xl font-bold text-forest">{inr(packageFromOf(dest))}</span>
-                          </div>
-                          <div className="flex space-x-3">
-                            <Link
-                              to={`/destinations/${dest.slug}`}
-                              className="px-4 py-2 border border-forest/30 text-forest rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest hover:text-sand transition"
-                            >
-                              View Destination
-                            </Link>
-                            <Link
-                              to={`/booking?destination=${dest.slug}`}
-                              className="px-5 py-2 bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow"
-                            >
-                              Book Safari
-                            </Link>
-                          </div>
+                        <div className="flex gap-3">
+                          <Link
+                            to={`/destinations/${dest.slug}`}
+                            className="flex-1 py-3 text-center border border-forest/30 text-forest rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest hover:text-sand transition"
+                          >
+                            View Destination
+                          </Link>
+                          <Link
+                            to={`/booking?destination=${dest.slug}`}
+                            className="flex-1 py-3 text-center bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow"
+                          >
+                            Book Safari
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -422,9 +410,6 @@ export const DestinationsPage: React.FC = () => {
                         stateBadgeClass(dest.state)
                       }`}>
                         {dest.state}
-                      </span>
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-sand bg-black/55 backdrop-blur-md border border-white/20 shadow-md">
-                        {durationText(dest.packageDuration)}
                       </span>
                     </div>
 
@@ -489,26 +474,19 @@ export const DestinationsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-forest/10 flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] text-forest/50 uppercase tracking-wider block">Packages From</span>
-                        <span className="font-serif text-lg font-bold text-forest">{inr(packageFromOf(dest))}</span>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Link
-                          to={`/destinations/${dest.slug}`}
-                          className="p-2.5 rounded-xl border border-forest/20 text-forest hover:bg-forest hover:text-sand transition"
-                          title="View Details"
-                        >
-                          <ArrowRight className="w-4 h-4" />
-                        </Link>
-                        <Link
-                          to={`/booking?destination=${dest.slug}`}
-                          className="px-3.5 py-2 bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow"
-                        >
-                          Book
-                        </Link>
-                      </div>
+                    <div className="pt-4 border-t border-forest/10 flex gap-2">
+                      <Link
+                        to={`/destinations/${dest.slug}`}
+                        className="flex-1 py-3 text-center border border-forest/30 text-forest rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest hover:text-sand transition"
+                      >
+                        View Destination
+                      </Link>
+                      <Link
+                        to={`/booking?destination=${dest.slug}`}
+                        className="flex-1 py-3 text-center bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow"
+                      >
+                        Book Safari
+                      </Link>
                     </div>
                   </div>
                 </div>

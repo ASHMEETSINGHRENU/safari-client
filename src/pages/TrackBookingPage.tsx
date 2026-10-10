@@ -3,7 +3,6 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Search, AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { bookingService } from '../services/api';
 import { Booking } from '../types';
-import { inr } from '../lib/site';
 
 const STATUS: Record<Booking['bookingStatus'], { label: string; cls: string; note: string }> = {
   pending: { label: 'Under review', cls: 'bg-amber-100 text-amber-800 border-amber-300', note: 'Our team is checking availability and will call you within 24 hours.' },
@@ -118,7 +117,6 @@ const TrackBookingPage: React.FC = () => {
                 <div className="flex justify-between gap-2"><span className="text-forest/60 font-semibold">Safari</span><span className="font-bold text-right">{booking.safariName}</span></div>
                 <div className="flex justify-between gap-2"><span className="text-forest/60 font-semibold">Date</span><span className="font-bold text-right">{new Date(booking.safariDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
                 <div className="flex justify-between gap-2"><span className="text-forest/60 font-semibold">Travelers</span><span className="font-bold text-right">{booking.guests?.adults ?? 1} adult(s){booking.guests?.children ? `, ${booking.guests.children} child(ren)` : ''}</span></div>
-                <div className="flex justify-between gap-2 border-t border-forest/15 pt-2.5"><span className="text-forest/60 font-semibold">Indicative Total</span><span className="font-serif font-bold text-gold">{inr(booking.totalAmount)}</span></div>
                 {booking.suggestion?.message && <p className="text-forest/70 border-t border-forest/15 pt-2.5">Our suggestion: {booking.suggestion.message}</p>}
               </div>
             </div>

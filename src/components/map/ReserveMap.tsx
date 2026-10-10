@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { Destination } from '../../types';
 import type { FeatureCollection } from 'geojson';
 import { Compass, ArrowRight, Star } from 'lucide-react';
-import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, packageFromOf, inr, BOOKINGS_EMAIL, reserveKind, RESERVE_KIND_COLOR } from '../../lib/site';
+import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, BOOKINGS_EMAIL, reserveKind, RESERVE_KIND_COLOR, durationText } from '../../lib/site';
 
 interface ReserveMapProps {
   destinations: Destination[];
@@ -163,7 +163,7 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
         `<div class="text-sand text-xs leading-relaxed">
           <strong class="font-serif text-sm">${dest.name}</strong><br/>
           ${dest.tagline}<br/>
-          <span style="opacity:.7">Packages from ${inr(packageFromOf(dest))} pp</span>
+          <span style="opacity:.7">Custom journeys — share your dates for a quote</span>
         </div>`,
         { className: 'custom-map-popup' }
       );
@@ -334,13 +334,13 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
                 </div>
               )}
 
-              {/* Whole packages only — permits/vehicle/guide are bundled in. */}
+              {/* Standard trip length — permits/vehicle/guide are bundled in. */}
               <div className="pt-3 border-t border-sand/10">
-                <span className="text-[10px] text-sand/60 block">Packages From</span>
+                <span className="text-[10px] text-sand/60 block">Standard Trip</span>
                 <span className="font-serif text-base text-gold font-bold">
-                  {inr(packageFromOf(activeDest))}
+                  {durationText(activeDest.packageDuration)}
                 </span>
-                <span className="text-[10px] text-sand/50 block">Per person, all-inclusive</span>
+                <span className="text-[10px] text-sand/50 block">Permits, vehicle & guide included</span>
                 <Link
                   to={`/destinations/${activeDest.slug}`}
                   className="text-[11px] text-sand/70 hover:text-gold underline underline-offset-2 mt-1 inline-block"
@@ -368,7 +368,7 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
               </div>
 
               <a
-                href={`mailto:${BOOKINGS_EMAIL}?subject=${encodeURIComponent(`Package Enquiry — ${activeDest.name}`)}&body=${encodeURIComponent(`Reserve: ${activeDest.name} (${activeDest.state})\n\nI'd like to discuss:\n`)}`}
+                href={`mailto:${BOOKINGS_EMAIL}?subject=${encodeURIComponent(`Journey Enquiry — ${activeDest.name}`)}&body=${encodeURIComponent(`Reserve: ${activeDest.name} (${activeDest.state})\n\nI'd like to discuss:\n`)}`}
                 className="pt-3 border-t border-sand/10 text-center text-[11px] text-sand/70 hover:text-gold transition"
               >
                 Prefer email? Enquire about this reserve →
