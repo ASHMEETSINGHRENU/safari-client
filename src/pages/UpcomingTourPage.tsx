@@ -217,37 +217,35 @@ export const UpcomingTourPage: React.FC = () => {
                         className={inputClass}
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      value={form.phone}
-                      onChange={e => setForm({ ...form, phone: e.target.value })}
-                      placeholder="+91 98765 43210"
-                      className={inputClass}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
-                      Preferred Departure Date
-                    </label>
-                    <select
-                      value={form.preferredDates}
-                      onChange={e => setForm({ ...form, preferredDates: e.target.value })}
-                      className={inputClass}
-                    >
-                      <option value="">Flexible / Not sure yet</option>
-                      {tour.dates.map(d => (
-                        <option key={d.label} value={d.label}>
-                          {d.label}{d.note ? ' ★' : ''}
-                        </option>
-                      ))}
-                    </select>
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={form.phone}
+                        onChange={e => setForm({ ...form, phone: e.target.value })}
+                        placeholder="+91 98765 43210"
+                        className={inputClass}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
+                        Preferred Departure Date
+                      </label>
+                      <select
+                        value={form.preferredDates}
+                        onChange={e => setForm({ ...form, preferredDates: e.target.value })}
+                        className={inputClass}
+                      >
+                        <option value="">Flexible / Not sure yet</option>
+                        {tour.dates.map(d => (
+                          <option key={d.label} value={d.label}>
+                            {d.label}{d.note ? ' ★' : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   <div>
