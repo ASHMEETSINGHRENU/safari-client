@@ -12,13 +12,18 @@ import {
   X,
   Calendar,
   Sparkles,
-  TreePine
+  TreePine,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
 import { stateBadgeClass, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE, packageFromOf, inr } from '../lib/site';
 import PackageTiers from '../components/packages/PackageTiers';
 import { useToast } from '../components/common/Toast';
+
+// ponytail: 8 per page = two rows of 4 on desktop.
+const PAGE_SIZE = 8;
 
 export const DestinationsPage: React.FC = () => {
   const { info } = useToast();
@@ -35,6 +40,9 @@ export const DestinationsPage: React.FC = () => {
 
   // Comparison tray state
   const [compareList, setCompareList] = useState<string[]>([]);
+
+  // Pagination — page lives in the URL so it survives refresh/back.
+  const pageParam = Number(searchParams.get('page') || 1);
 
   useEffect(() => {
     const fetchDestinations = async () => {
@@ -57,6 +65,15 @@ export const DestinationsPage: React.FC = () => {
       setSelectedState(stateParam);
     }
   }, [stateParam]);
+
+  // Any filter change resets to the first page.
+  useEffect(() => {
+    if (searchParams.get('page')) {
+      searchParams.delete('page');
+      setSearchParams(searchParams, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedState, searchQuery]);
 
   const handleStateChange = (state: string) => {
     setSelectedState(state);
@@ -88,6 +105,17 @@ export const DestinationsPage: React.FC = () => {
       dest.wildlifeHighlights.some(w => w.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesState && matchesSearch;
   });
+
+  const pageCount = Math.max(1, Math.ceil(filteredDestinations.length / PAGE_SIZE));
+  const currentPage = Math.min(Math.max(Number.isFinite(pageParam) ? pageParam : 1, 1), pageCount);
+  const pagedDestinations = filteredDestinations.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const goToPage = (n: number) => {
+    const next = Math.min(Math.max(n, 1), pageCount);
+    searchParams.set('page', String(next));
+    setSearchParams(searchParams);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // ponytail: states derived from data, core states first. New states need zero code change.
   const states = [...new Set(destinations.map(d => d.state))]
@@ -257,11 +285,12 @@ export const DestinationsPage: React.FC = () => {
             </button>
           </div>
         ) : (
+          <>
           <div className={viewMode === 'grid' 
             ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" 
             : "space-y-6"
           }>
-            {filteredDestinations.map(dest => {
+            {pagedDestinations.map(dest => {
               const isComparing = compareList.includes(dest.slug);
 
               if (viewMode === 'detailed') {
@@ -480,6 +509,42 @@ export const DestinationsPage: React.FC = () => {
               );
             })}
           </div>
+
+          {pageCount > 1 && (
+            <nav className="flex items-center justify-center gap-1.5 mt-10" aria-label="Reserve pages">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-xl border border-forest/20 text-forest disabled:opacity-40 disabled:cursor-not-allowed hover:bg-forest hover:text-sand transition"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: pageCount }, (_, i) => i + 1).map(n => (
+                <button
+                  key={n}
+                  onClick={() => goToPage(n)}
+                  aria-current={n === currentPage ? 'page' : undefined}
+                  className={`w-9 h-9 rounded-xl text-xs font-bold transition ${
+                    n === currentPage
+                      ? 'bg-forest text-sand shadow-sm'
+                      : 'border border-forest/20 text-forest hover:bg-forest/5'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === pageCount}
+                className="p-2 rounded-xl border border-forest/20 text-forest disabled:opacity-40 disabled:cursor-not-allowed hover:bg-forest hover:text-sand transition"
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </nav>
+          )}
+          </>
         )}
       </section>
 
