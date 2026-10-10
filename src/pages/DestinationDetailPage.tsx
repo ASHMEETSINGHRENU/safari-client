@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
-  MapPin, 
   Compass, 
   HelpCircle, 
   ArrowRight, 
@@ -10,21 +9,17 @@ import {
   ChevronDown,
   Star,
   TreePine,
-  Clock,
-  Users,
   Mail
 } from 'lucide-react';
-import { destinationService, safariService } from '../services/api';
-import { Destination, Safari } from '../types';
+import { destinationService } from '../services/api';
+import { Destination } from '../types';
 import { stateBadgeClass, stateCode, isPrimeZone, inr, packageFromOf, packagesOf, enquiryMailto } from '../lib/site';
 import PackageTiers from '../components/packages/PackageTiers';
-import { Carousel } from '../components/Carousel';
 
 export const DestinationDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
 
   const [destination, setDestination] = useState<Destination | null>(null);
-  const [safaris, setSafaris] = useState<Safari[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // MOM: How To Reach and Rules removed. How It Works + package enquiry via email covers this.
@@ -37,12 +32,8 @@ export const DestinationDetailPage: React.FC = () => {
       if (!slug) return;
       try {
         setLoading(true);
-        const [destData, safariData] = await Promise.all([
-          destinationService.getBySlug(slug),
-          safariService.getAll({ destinationSlug: slug })
-        ]);
+        const destData = await destinationService.getBySlug(slug);
         setDestination(destData);
-        setSafaris(safariData);
       } catch (err: any) {
         setError(err.message || 'Reserve details could not be loaded.');
       } finally {
@@ -317,85 +308,6 @@ export const DestinationDetailPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Safari Packages */}
-              <div className="space-y-4 pt-2">
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-forest">Safari Packages</h3>
-                  <p className="text-forest/60 text-xs mt-0.5">
-                    All-inclusive: official permit fees, registered open safari vehicle, forest driver, and authorized naturalist.
-                  </p>
-                </div>
-
-                {safaris.length === 0 ? (
-                  <div className="p-6 text-center bg-white rounded-2xl border border-forest/10">
-                    <p className="text-forest/70 text-xs mb-3">Safaris for this destination are currently managed via custom permit booking.</p>
-                    <Link
-                      to={`/booking?destination=${destination.slug}`}
-                      className="px-6 py-2.5 bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider inline-block"
-                    >
-                      Book Custom Permit
-                    </Link>
-                  </div>
-                ) : (
-                  <Carousel
-                    label="Safari packages"
-                    trackClassName="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3 sm:block sm:space-y-3 sm:gap-0 sm:overflow-visible sm:snap-none"
-                  >
-                    {safaris.map(s => (
-                      <div
-                        key={s._id}
-                        className="shrink-0 w-[85%] snap-start sm:w-full bg-white p-4 rounded-2xl border border-forest/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition"
-                      >
-                        <div className="space-y-2 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="px-2.5 py-0.5 rounded bg-sand text-forest text-[10px] font-bold uppercase tracking-wider">
-                              {s.safariType}
-                            </span>
-                            <span className="px-2.5 py-0.5 rounded bg-forest/10 text-forest text-[10px] font-bold uppercase tracking-wider">
-                              {s.slot} Slot
-                            </span>
-                            <span className="px-2.5 py-0.5 rounded bg-earth/15 text-earth text-[10px] font-bold uppercase tracking-wider">
-                              {s.protectedAreaType}
-                            </span>
-                          </div>
-                          <h4 className="font-serif text-lg font-bold text-forest">{s.name}</h4>
-                          <p className="text-forest/70 text-xs line-clamp-2 leading-relaxed">{s.description}</p>
-
-                          <div className="flex flex-wrap gap-3 text-[11px] text-forest/60">
-                            <span className="flex items-center space-x-1">
-                              <Clock className="w-3.5 h-3.5 text-gold" />
-                              <span>{s.duration}</span>
-                            </span>
-                            <span className="flex items-center space-x-1">
-                              <Users className="w-3.5 h-3.5 text-gold" />
-                              <span>Max {s.capacity} Guests</span>
-                            </span>
-                            <span className="flex items-center space-x-1">
-                              <MapPin className="w-3.5 h-3.5 text-gold" />
-                              <span>Zones: {s.zones.join(', ')}</span>
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="md:text-right shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-forest/10 flex items-center md:flex-col md:items-end justify-between gap-2">
-                          <div className="text-center md:text-right">
-                            <span className="text-[10px] uppercase tracking-wider text-forest/50 block">Package From</span>
-                            <span className="font-serif text-xl font-bold text-forest">{inr(s.basePrice)}</span>
-                            <span className="text-[10px] text-forest/50 block mt-0.5">per person</span>
-                          </div>
-                          <Link
-                            to={`/booking?destination=${destination.slug}&safari=${s.slug}`}
-                            className="px-4 py-2 bg-forest text-sand rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest/90 transition shadow inline-block"
-                          >
-                            Reserve Seat
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-                  </Carousel>
-                )}
               </div>
 
               {/* Whole Packages */}

@@ -4,10 +4,10 @@ import {
   Calendar, AlertCircle, CheckCircle2, ArrowLeft, ArrowRight,
   Sparkles, ShieldCheck, Users
 } from 'lucide-react';
-import { Destination, Safari, Booking } from '../../types';
-import { destinationService, safariService, bookingService } from '../../services/api';
+import { Destination, Booking } from '../../types';
+import { destinationService, bookingService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { inr, tierPrice, packageFromOf, NATURALIST_FEE } from '../../lib/site';
+import { inr, tierPrice, packageFromOf, packagesOf, NATURALIST_FEE } from '../../lib/site';
 import { SafariCalendar } from '../SafariCalendar';
 
 // ponytail: sessionStorage draft so a reload or route bounce doesn't wipe wizard selections.
@@ -20,7 +20,7 @@ const readDraft = (): any => {
   }
 };
 
-export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initialSafariSlug }) => {
+export const BookingWizard: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -33,11 +33,9 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
 
   // Data sources
   const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [safaris, setSafaris] = useState<Safari[]>([]);
 
   // Booking Form State
   const [selectedDestination, setSelectedDestination] = useState<Destination | null>(draft?.selectedDestination ?? null);
-  const [selectedSafari, setSelectedSafari] = useState<Safari | null>(draft?.selectedSafari ?? null);
   const [safariDate, setSafariDate] = useState<string>(() => {
     if (draft?.safariDate) return draft.safariDate;
     const d = new Date();
@@ -45,7 +43,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
     return d.toISOString().split('T')[0];
   });
   const [selectedZone, setSelectedZone] = useState<string>(draft?.selectedZone ?? '');
-  const [selectedVehicle, setSelectedVehicle] = useState<string>(draft?.selectedVehicle ?? 'Open 4x4 Safari Jeep');
+  const selectedVehicle = 'Open 4x4 Safari Jeep';
   const [adults, setAdults] = useState<number>(draft?.adults ?? 2);
   const [children, setChildren] = useState<number>(draft?.children ?? 0);
   const [naturalistRequested, setNaturalistRequested] = useState<boolean>(draft?.naturalistRequested ?? true);
@@ -84,15 +82,15 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
       return;
     }
     sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
-      step, selectedDestination, selectedSafari, safariDate, selectedZone,
-      selectedVehicle, adults, children, naturalistRequested,
+      step, selectedDestination, safariDate, selectedZone,
+      adults, children, naturalistRequested,
       selectedPackageLabel, confirmed
     }));
-  }, [confirmedBooking, step, selectedDestination, selectedSafari, safariDate,
-      selectedZone, selectedVehicle, adults, children,
+  }, [confirmedBooking, step, selectedDestination, safariDate,
+      selectedZone, adults, children,
       naturalistRequested, selectedPackageLabel, confirmed]);
 
-  // Load initial destinations and safaris
+  // Load initial destinations
   useEffect(() => {
     destinationService.getAll().then(data => {
       setDestinations(data);
@@ -105,18 +103,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
         }
       }
     });
-
-    safariService.getAll().then(data => {
-      setSafaris(data);
-      if (initialSafariSlug) {
-        const foundSafari = data.find(s => s.slug === initialSafariSlug);
-        if (foundSafari) {
-          setSelectedSafari(foundSafari);
-          setSelectedVehicle(foundSafari.vehicle || 'Open 4x4 Safari Jeep');
-        }
-      }
-    });
-  }, [searchParams, initialSafariSlug]);
+  }, [searchParams]);
 
   // When destination changes, update available zones
   useEffect(() => {
@@ -125,14 +112,9 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
     }
   }, [selectedDestination]);
 
-  // Filter safaris for chosen destination
-  const availableSafaris = selectedDestination 
-    ? safaris.filter(s => s.destinationSlug === selectedDestination.slug)
-    : safaris;
-
   // Package pricing. Permits, vehicle, guide and forest dues are bundled inside the
   // package tiers \u2014 never itemised. The server recomputes this total authoritatively.
-  const packages = selectedDestination?.packages ?? [];
+  const packages = selectedDestination ? packagesOf(selectedDestination) : [];
   const selectedPackage =
     packages.find(t => t.label === selectedPackageLabel) ?? packages[0];
   const perPerson = selectedPackage?.min ?? (selectedDestination?.startingPrice ?? 0);
@@ -180,15 +162,6 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
       setError('Please select a tiger reserve to proceed.');
       return;
     }
-    if (step === 1 && !selectedSafari) {
-      // Default to first available
-      if (availableSafaris.length > 0) {
-        setSelectedSafari(availableSafaris[0]);
-      } else {
-        setError('No safari packages available for this destination.');
-        return;
-      }
-    }
     if (step === 2 && !safariDate) {
       setError('Please select a valid safari date.');
       return;
@@ -221,8 +194,7 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
       const payload = {
         destination: selectedDestination?._id,
         destinationName: selectedDestination?.name || 'Central India Reserve',
-        safari: selectedSafari?._id,
-        safariName: selectedSafari?.name || 'Exclusive Wilderness Safari',
+        safariName: 'Exclusive Wilderness Safari',
         safariDate,
         zone: selectedZone || 'Core Sector',
         vehicleType: selectedVehicle,
@@ -320,7 +292,6 @@ export const BookingWizard: React.FC<{ initialSafariSlug?: string }> = ({ initia
                       key={d.slug}
 onClick={() => {
                       setSelectedDestination(d);
-                      setSelectedSafari(null);
                       setSelectedPackageLabel('');
                       if (d.zones.length > 0) setSelectedZone(d.zones[0].name);
                     }}
@@ -345,7 +316,7 @@ onClick={() => {
             ) : (
               <button
                 type="button"
-                onClick={() => { setSelectedDestination(null); setSelectedSafari(null); setSelectedPackageLabel(''); }}
+                onClick={() => { setSelectedDestination(null); setSelectedPackageLabel(''); }}
                 className="w-full flex items-center justify-between gap-3 p-3 rounded-lg border-2 border-forest bg-forest text-sand shadow-md cursor-pointer hover:bg-forest-light transition-all text-left"
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -363,61 +334,13 @@ onClick={() => {
               </button>
             )}
 
-            {/* Safari stage: pick a safari once the reserve is locked */}
-            {selectedDestination && !selectedSafari && (
-              <div className="space-y-3 animate-fadeIn">
-                <h4 className="font-serif text-lg font-bold text-forest">2. Choose Your Safari</h4>
-                {availableSafaris.map(s => {
-                  return (
-                    <div
-                      key={s.slug}
-                      onClick={() => {
-                        setSelectedSafari(s);
-                        setSelectedVehicle(s.vehicle || 'Open 4x4 Safari Jeep');
-                      }}
-                      className="p-4 rounded-xl border border-forest/20 bg-sand hover:border-gold cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-forest/10 text-forest">
-                            {s.safariType}
-                          </span>
-                        </div>
-                        <h4 className="font-serif text-base font-bold mt-1">{s.name}</h4>
-                        <p className="text-xs mt-1 max-w-lg text-forest/70">{s.description}</p>
-                      </div>
-                      <div className="sm:text-right sm:self-center">
-                        <span className="text-[11px] opacity-70 block mt-0.5">Priced by package below</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Safari summary chip once chosen */}
-            {selectedDestination && selectedSafari && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => { setSelectedSafari(null); setSelectedPackageLabel(''); }}
-                  className="w-full flex items-center justify-between gap-3 p-3 rounded-lg border-2 border-forest bg-forest text-sand shadow-md cursor-pointer hover:bg-forest-light transition-all text-left"
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gold text-forest flex-shrink-0">
-                      {selectedSafari.safariType}
-                    </span>
-                    <span className="font-serif text-sm font-bold block truncate">{selectedSafari.name}</span>
-                  </div>
-                  <span className="text-[10px] uppercase font-bold text-gold border border-gold/40 px-2.5 py-1 rounded-lg flex-shrink-0">Change</span>
-                </button>
-
-                {/* Package stage: pick the all-inclusive tier */}
+            {/* Package stage: pick the all-inclusive tier */}
+            {selectedDestination && (
                 <div className="pt-4 border-t border-forest/15 space-y-3 animate-fadeIn">
-                  <h4 className="font-serif font-bold text-forest text-sm">3. Choose Your All-Inclusive Package</h4>
-                  {selectedDestination?.packages?.length ? (
+                  <h4 className="font-serif text-lg font-bold text-forest">2. Choose Your All-Inclusive Package</h4>
+                  {packages.length ? (
                     <div className="space-y-2">
-                      {selectedDestination.packages.map(t => {
+                      {packages.map(t => {
                         const isTier = selectedPackageLabel === t.label;
                         return (
                           <div
@@ -448,7 +371,6 @@ onClick={() => {
                     </p>
                   )}
                 </div>
-              </>
             )}
           </div>
         )}
@@ -518,7 +440,8 @@ onClick={() => {
               </div>
             )}
 
-            {/* Guests + naturalist — the only remaining inputs on this step */}
+            {/* Guests + naturalist — revealed once a date is locked in */}
+            {confirmed.date && (
                 <div className="bg-sand p-6 rounded-xl border border-forest/20 space-y-6 max-w-lg">
                   <h4 className="font-bold text-forest text-sm">Guests &amp; Naturalist</h4>
                   <div className="flex items-center justify-between">
@@ -570,6 +493,7 @@ onClick={() => {
                     />
                   </div>
                 </div>
+            )}
             </div>
 
             {/* Running booking summary — what's locked in so far */}
@@ -596,17 +520,6 @@ onClick={() => {
                 </div>
               </div>
 
-              {selectedSafari && (
-                <>
-                  <div className="h-px bg-gold/20" />
-                  <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-gold/80 block">Safari</span>
-                    <span className="text-sm font-semibold block">{selectedSafari.name}</span>
-                    <span className="text-xs text-sand/70">{selectedSafari.safariType} · {selectedSafari.duration}</span>
-                  </div>
-                </>
-              )}
-
               <div className="h-px bg-gold/20" />
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-gold/80 block">All-Inclusive Package</span>
@@ -616,7 +529,7 @@ onClick={() => {
                     <span className="font-serif text-sm font-bold text-gold flex-shrink-0">{tierPrice(selectedPackage)}</span>
                   </div>
                 ) : (
-                  <span className="text-xs text-sand/60">Set in step 1 — pick reserve &amp; safari first.</span>
+                  <span className="text-xs text-sand/60">Set in step 1 — pick a reserve and package first.</span>
                 )}
               </div>
 
@@ -818,11 +731,6 @@ onClick={() => {
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4 text-xs">
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-gold/70 block">Safari</span>
-                    <span className="text-sm font-semibold block">{selectedSafari?.name}</span>
-                    <span className="text-xs text-sand/60 block">{selectedSafari?.safariType} • {selectedSafari?.duration}</span>
-                  </div>
-                  <div>
                     <span className="text-[10px] uppercase font-bold tracking-wider text-gold/70 block">Date</span>
                     <span className="text-sm font-semibold block">
                       {safariDate ? new Date(safariDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
@@ -935,10 +843,6 @@ onClick={() => {
               <div className="flex justify-between gap-2">
                 <span className="text-forest/60 font-semibold">Reserve</span>
                 <span className="font-bold text-right">{confirmedBooking.destinationName}</span>
-              </div>
-              <div className="flex justify-between gap-2">
-                <span className="text-forest/60 font-semibold">Safari</span>
-                <span className="font-bold text-right">{confirmedBooking.safariName}</span>
               </div>
               <div className="flex justify-between gap-2">
                 <span className="text-forest/60 font-semibold">Date</span>

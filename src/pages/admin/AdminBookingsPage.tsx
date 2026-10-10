@@ -16,6 +16,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { bookingService, destinationService } from '../../services/api';
 import { Booking, Destination } from '../../types';
 import { useToast } from '../../components/common/Toast';
+import { packagesOf } from '../../lib/site';
 
 export const AdminBookingsPage: React.FC = () => {
   const { info, error } = useToast();
@@ -370,7 +371,7 @@ export const AdminBookingsPage: React.FC = () => {
                     className="w-full px-3 py-2 border border-forest/20 rounded-lg bg-white text-forest"
                   >
                     <option value="">Any package</option>
-                    {(destinations.find(d => d.slug === sugDestSlug)?.packages ?? []).map(p => (
+                    {packagesOf(destinations.find(d => d.slug === sugDestSlug) ?? { packages: [] }).map(p => (
                       <option key={p.label} value={p.label}>{p.label}</option>
                     ))}
                   </select>

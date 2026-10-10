@@ -62,7 +62,7 @@ export type PackageTier = NonNullable<Destination['packages']>[number];
  * dues are bundled into each tier, so they are never shown as a separate line.
  */
 export const packagesOf = (d: Pick<Destination, 'packages'>): PackageTier[] =>
-  d.packages ?? [];
+  (d.packages ?? []).filter((t) => t.min > 0);
 
 /** Lowest advertised package price, used for sorting and "from" labels. */
 export const packageFromOf = (d: Pick<Destination, 'packages' | 'startingPrice'>): number | null =>
