@@ -57,7 +57,7 @@ export const FAQPage: React.FC = () => {
             Frequently Asked Questions
           </h1>
           <p className="text-forest/80 text-base sm:text-lg leading-relaxed font-sans max-w-2xl mx-auto">
-            Everything you need to know about official forest permits, vehicle quotas, photo gear guidelines, and weather in Central India's tiger corridors.
+            Everything you need to know about official forest permit's, vehicle quotas, photo gear guidelines, and weather in Central India's tiger corridors.
           </p>
         </div>
 
