@@ -439,13 +439,8 @@ export const HomePage: React.FC = () => {
                   </span>
                 </a>
 
-                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1">
-                    <h3 className="font-serif text-lg font-bold text-sand leading-snug">{tour.title}</h3>
-                    <p className="text-[11px] text-gold uppercase tracking-wider font-semibold">{tour.tagline}</p>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-1">
+                <div className="p-4">
+                  <div className="flex items-center gap-2">
                     <Link
                       to={`/upcoming-tours/${tour.slug}`}
                       className="flex-1 text-center py-2.5 px-3 bg-gold text-forest font-bold rounded text-xs hover:bg-gold-light transition-colors flex items-center justify-center gap-1.5"
