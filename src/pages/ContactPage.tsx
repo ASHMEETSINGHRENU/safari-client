@@ -105,7 +105,7 @@ export const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-forest block font-semibold">Email Correspondence:</strong>
-                    <span>enquiries@shutterandstripessafaries.com</span>
+                    <span>enquiries@shutterandstripessafaris.com</span>
                   </div>
                 </div>
 
