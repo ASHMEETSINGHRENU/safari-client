@@ -6,6 +6,7 @@ import {
   CheckCircle2, 
   AlertCircle, 
   Eye, 
+  EyeOff,
   X, 
   IndianRupee,
   Layers
@@ -17,7 +18,7 @@ import { Destination } from '../../types';
 import { useToast } from '../../components/common/Toast';
 
 export const AdminDestinationsPage: React.FC = () => {
-  const { error } = useToast();
+  const { success, error } = useToast();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -27,8 +28,7 @@ export const AdminDestinationsPage: React.FC = () => {
   const fetchDestinations = async () => {
     try {
       setLoading(true);
-      const data = await destinationService.getAll();
-      setDestinations(data);
+      setDestinations(await destinationService.getAllAdmin());
     } catch (err) {
       console.error(err);
     } finally {
@@ -46,6 +46,16 @@ export const AdminDestinationsPage: React.FC = () => {
       await fetchDestinations();
     } catch (err: any) {
       error('Failed to update availability.');
+    }
+  };
+
+  const handleTogglePublished = async (id: string, isPublished: boolean) => {
+    try {
+      await destinationService.update(id, { isPublished });
+      await fetchDestinations();
+      success(isPublished ? 'Reserve is now visible on the public site.' : 'Reserve hidden from the public site.');
+    } catch (err: any) {
+      error('Failed to update visibility.');
     }
   };
 
@@ -120,6 +130,7 @@ export const AdminDestinationsPage: React.FC = () => {
                     <th className="p-4 font-semibold">Zones</th>
                     <th className="p-4 font-semibold">Starting Rate</th>
                     <th className="p-4 font-semibold">Permit Availability</th>
+                    <th className="p-4 font-semibold">Public Site</th>
                     <th className="p-4 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
@@ -151,6 +162,21 @@ export const AdminDestinationsPage: React.FC = () => {
                           <option value="LIMITED">LIMITED</option>
                           <option value="SOLD OUT">SOLD OUT</option>
                         </select>
+                      </td>
+                      <td className="p-4">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePublished(d._id, !d.isPublished)}
+                          title={d.isPublished ? 'Visible on the public site — click to hide' : 'Hidden from the public site — click to show'}
+                          className={`px-3 py-1.5 rounded-lg font-semibold text-xs transition flex items-center space-x-1 ${
+                            d.isPublished
+                              ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                              : 'bg-forest/10 text-forest/50 hover:bg-forest/20'
+                          }`}
+                        >
+                          {d.isPublished ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                          <span>{d.isPublished ? 'Visible' : 'Hidden'}</span>
+                        </button>
                       </td>
                       <td className="p-4 text-right">
                         <button

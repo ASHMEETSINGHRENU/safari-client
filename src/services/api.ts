@@ -90,6 +90,10 @@ export const destinationService = {
     const res = await api.get<{ success: boolean; count: number; destinations: Destination[] }>('/destinations', { params });
     return res.data.destinations;
   },
+  getAllAdmin: async () => {
+    const res = await api.get<{ success: boolean; count: number; destinations: Destination[] }>('/destinations/admin/all');
+    return res.data.destinations;
+  },
   getBySlug: async (slug: string) => {
     const res = await api.get<{ success: boolean; destination: Destination }>(`/destinations/${slug}`);
     return res.data.destination;
