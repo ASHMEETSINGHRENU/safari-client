@@ -3,10 +3,12 @@ import { Search, UserCheck } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { adminService } from '../../services/api';
 import { User } from '../../types';
+import { useToast } from '../../components/common/Toast';
 
 type Traveler = User & { isActive?: boolean; _id?: string; createdAt?: string };
 
 export const AdminTravelersPage: React.FC = () => {
+  const { error } = useToast();
   const [users, setUsers] = useState<Traveler[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -32,7 +34,7 @@ export const AdminTravelersPage: React.FC = () => {
       await adminService.updateUserRole(id, undefined, isActive);
       await fetchUsers();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update traveler.');
+      error(err.response?.data?.message || 'Failed to update traveler.');
     } finally {
       setSavingId(null);
     }

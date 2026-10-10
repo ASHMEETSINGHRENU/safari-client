@@ -13,8 +13,10 @@ import { stateCode } from '../../lib/site';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { safariService, destinationService } from '../../services/api';
 import { Safari, Destination } from '../../types';
+import { useToast } from '../../components/common/Toast';
 
 export const AdminSafarisPage: React.FC = () => {
+  const { error } = useToast();
   const [safaris, setSafaris] = useState<Safari[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ export const AdminSafarisPage: React.FC = () => {
       await safariService.update(id, { availabilityStatus: availabilityStatus as any });
       await fetchSafaris();
     } catch (err: any) {
-      alert('Failed to update safari availability status.');
+      error('Failed to update safari availability status.');
     }
   };
 
@@ -58,7 +60,7 @@ export const AdminSafarisPage: React.FC = () => {
       await safariService.update(id, { protectedAreaType: protectedAreaType as any });
       await fetchSafaris();
     } catch (err: any) {
-      alert('Failed to update protected area type.');
+      error('Failed to update protected area type.');
     }
   };
 

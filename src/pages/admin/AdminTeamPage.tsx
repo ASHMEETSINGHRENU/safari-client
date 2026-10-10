@@ -4,6 +4,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { adminService } from '../../services/api';
 import { User } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../components/common/Toast';
 
 type TeamMember = User & { isActive?: boolean; _id?: string };
 
@@ -13,6 +14,7 @@ const emptyForm = { name: '', email: '', password: '', phone: '', country: 'Indi
 
 export const AdminTeamPage: React.FC = () => {
   const { user: me } = useAuth();
+  const { error } = useToast();
   const [users, setUsers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export const AdminTeamPage: React.FC = () => {
       await adminService.updateUserRole(id, role, isActive);
       await fetchUsers();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update team member.');
+      error(err.response?.data?.message || 'Failed to update team member.');
     } finally {
       setSavingId(null);
     }
@@ -55,7 +57,7 @@ export const AdminTeamPage: React.FC = () => {
       setShowAdd(false);
       await fetchUsers();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to add team member.');
+      error(err.response?.data?.message || 'Failed to add team member.');
     } finally {
       setAdding(false);
     }

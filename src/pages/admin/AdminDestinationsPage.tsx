@@ -14,8 +14,10 @@ import { stateBadgeClass, inr, packageFromOf } from '../../lib/site';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { destinationService } from '../../services/api';
 import { Destination } from '../../types';
+import { useToast } from '../../components/common/Toast';
 
 export const AdminDestinationsPage: React.FC = () => {
+  const { error } = useToast();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -43,7 +45,7 @@ export const AdminDestinationsPage: React.FC = () => {
       await destinationService.update(id, { availability: availability as any });
       await fetchDestinations();
     } catch (err: any) {
-      alert('Failed to update availability.');
+      error('Failed to update availability.');
     }
   };
 
@@ -63,7 +65,7 @@ export const AdminDestinationsPage: React.FC = () => {
       setEditingDest(null);
       await fetchDestinations();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Update failed.');
+      error(err.response?.data?.message || 'Update failed.');
     } finally {
       setSaving(false);
     }

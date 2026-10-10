@@ -9,8 +9,10 @@ import {
 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { cmsService } from '../../services/api';
+import { useToast } from '../../components/common/Toast';
 
 export const AdminOurStoryCMSPage: React.FC = () => {
+  const { error } = useToast();
   const [selectedKey, setSelectedKey] = useState<'our_story' | 'home_hero' | 'ethical_code'>('our_story');
   const [contentData, setContentData] = useState<any>({});
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,7 @@ export const AdminOurStoryCMSPage: React.FC = () => {
       setSavedMsg(true);
       setTimeout(() => setSavedMsg(false), 3000);
     } catch (err) {
-      alert('Failed to save CMS content.');
+      error('Failed to save CMS content.');
     } finally {
       setSaving(false);
     }

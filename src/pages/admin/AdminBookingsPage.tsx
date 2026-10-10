@@ -15,8 +15,10 @@ import {
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { bookingService, destinationService } from '../../services/api';
 import { Booking, Destination } from '../../types';
+import { useToast } from '../../components/common/Toast';
 
 export const AdminBookingsPage: React.FC = () => {
+  const { info, error } = useToast();
   const [searchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
 
@@ -67,7 +69,7 @@ export const AdminBookingsPage: React.FC = () => {
       await bookingService.updateStatus(id, { bookingStatus, paymentStatus });
       await fetchBookings();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update booking status.');
+      error(err.response?.data?.message || 'Failed to update booking status.');
     } finally {
       setUpdatingId(null);
     }
@@ -85,7 +87,7 @@ export const AdminBookingsPage: React.FC = () => {
     if (!selectedBooking) return;
     const dest = destinations.find(d => d.slug === sugDestSlug);
     if (!dest) {
-      alert('Pick an alternative reserve.');
+      info('Pick an alternative reserve.');
       return;
     }
     try {
@@ -103,7 +105,7 @@ export const AdminBookingsPage: React.FC = () => {
       setSuggesting(false);
       await fetchBookings();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to send the suggestion.');
+      error(err.response?.data?.message || 'Failed to send the suggestion.');
     } finally {
       setUpdatingId(null);
     }
@@ -121,7 +123,7 @@ export const AdminBookingsPage: React.FC = () => {
       setSuggesting(false);
       await fetchBookings();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to withdraw the suggestion.');
+      error(err.response?.data?.message || 'Failed to withdraw the suggestion.');
     } finally {
       setUpdatingId(null);
     }

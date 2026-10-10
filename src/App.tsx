@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { PublicLayout } from './components/layout/PublicLayout';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ToastProvider } from './components/common/Toast';
+import { ConfirmProvider } from './components/common/ConfirmDialog';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 
 // Pages
@@ -55,6 +57,8 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 export const App: React.FC = () => {
   return (
     <AuthProvider>
+      <ToastProvider>
+      <ConfirmProvider>
       <BrowserRouter>
         <ScrollToTop />
         <ErrorBoundary>
@@ -99,6 +103,8 @@ export const App: React.FC = () => {
         <ScrollToTopButton />
         </ErrorBoundary>
       </BrowserRouter>
+      </ConfirmProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 };

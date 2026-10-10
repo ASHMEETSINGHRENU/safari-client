@@ -12,8 +12,10 @@ import {
 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { cmsService } from '../../services/api';
+import { useToast } from '../../components/common/Toast';
 
 export const AdminInquiriesPage: React.FC = () => {
+  const { error } = useToast();
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState<any | null>(null);
@@ -39,7 +41,7 @@ export const AdminInquiriesPage: React.FC = () => {
       await cmsService.updateInquiryStatus(id, status);
       await fetchInquiries();
     } catch (err: any) {
-      alert('Failed to update status.');
+      error('Failed to update status.');
     }
   };
 

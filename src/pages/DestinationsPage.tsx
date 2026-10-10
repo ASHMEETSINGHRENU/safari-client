@@ -18,8 +18,10 @@ import { destinationService } from '../services/api';
 import { Destination } from '../types';
 import { stateBadgeClass, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE, packageFromOf, inr } from '../lib/site';
 import PackageTiers from '../components/packages/PackageTiers';
+import { useToast } from '../components/common/Toast';
 
 export const DestinationsPage: React.FC = () => {
+  const { info } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +74,7 @@ export const DestinationsPage: React.FC = () => {
       setCompareList(compareList.filter(s => s !== slug));
     } else {
       if (compareList.length >= 3) {
-        alert('You can compare up to 3 reserves at a time.');
+        info('You can compare up to 3 reserves at a time.');
         return;
       }
       setCompareList([...compareList, slug]);

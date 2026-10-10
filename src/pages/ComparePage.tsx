@@ -17,8 +17,10 @@ import {
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
+import { useToast } from '../components/common/Toast';
 
 export const ComparePage: React.FC = () => {
+  const { info } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [allDestinations, setAllDestinations] = useState<Destination[]>([]);
   const [selectedSlugs, setSelectedSlugs] = useState<string[]>([]);
@@ -67,7 +69,7 @@ export const ComparePage: React.FC = () => {
 
   const addSlug = (slugToAdd: string) => {
     if (selectedSlugs.length >= 3) {
-      alert('You can compare a maximum of 3 reserves at a time.');
+      info('You can compare a maximum of 3 reserves at a time.');
       return;
     }
     if (!selectedSlugs.includes(slugToAdd)) {

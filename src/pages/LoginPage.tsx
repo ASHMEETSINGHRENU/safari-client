@@ -11,9 +11,11 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/common/Toast';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { info } = useToast();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect') || '/account';
 
@@ -99,7 +101,7 @@ export const LoginPage: React.FC = () => {
                 <label className="block text-xs font-bold uppercase tracking-wider text-forest/70">
                   Password
                 </label>
-                <a href="#forgot" onClick={(e) => { e.preventDefault(); alert('Please contact enquiries@shutterandstripessafaries.com for manual security key reset.'); }} className="text-[11px] text-earth hover:underline">
+                <a href="#forgot" onClick={(e) => { e.preventDefault(); info('Please contact enquiries@shutterandstripessafaries.com for manual security key reset.'); }} className="text-[11px] text-earth hover:underline">
                   Forgot Key?
                 </a>
               </div>

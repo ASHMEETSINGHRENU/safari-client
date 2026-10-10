@@ -20,10 +20,14 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { bookingService, destinationService, authService } from '../services/api';
 import { Booking, Destination } from '../types';
+import { useToast } from '../components/common/Toast';
+import { useConfirm } from '../components/common/ConfirmDialog';
 
 export const CustomerAccountPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, refreshUser } = useAuth();
+  const { success, error } = useToast();
+  const confirm = useConfirm();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,16 +69,21 @@ export const CustomerAccountPage: React.FC = () => {
   }, [user]);
 
   const handleCancelBooking = async (id: string) => {
-    if (!window.confirm('Are you sure you wish to request cancellation of this safari permit? Forest department cancellation deductions apply.')) {
-      return;
-    }
+    const ok = await confirm({
+      title: 'Request Cancellation',
+      message: 'Are you sure you wish to request cancellation of this safari permit? Forest department cancellation deductions apply.',
+      confirmText: 'Request Cancellation',
+      cancelText: 'Keep Permit',
+      danger: true,
+    });
+    if (!ok) return;
     try {
       await bookingService.cancel(id);
       const updated = await bookingService.getMyBookings();
       setBookings(updated);
-      alert('Safari booking cancelled successfully.');
+      success('Safari booking cancelled successfully.');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Cancellation could not be processed.');
+      error(err.response?.data?.message || 'Cancellation could not be processed.');
     }
   };
 
