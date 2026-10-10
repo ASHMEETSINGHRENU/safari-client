@@ -130,9 +130,9 @@ export const Footer: React.FC = () => {
             )}
 
             <div className="space-y-2 text-xs text-sand/70 pt-1">
-              <a href="tel:+917122584930" className="flex items-center gap-2 hover:text-gold transition-colors">
+              <a href="tel:+919021918758" className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Phone className="w-3.5 h-3.5 text-gold" />
-                <span>+91 (0) 712 258 4930</span>
+                <span>+91 90219 18758</span>
               </a>
               <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Mail className="w-3.5 h-3.5 text-gold" />
@@ -140,7 +140,7 @@ export const Footer: React.FC = () => {
               </a>
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-gold flex-shrink-0 mt-0.5" />
-                <span>Civil Lines, Nagpur, MH (Central India)</span>
+                <span>392, At Moharli, Near Moharli Gate Core, Tadoba Road, Tadoba, Chandrapur, Maharashtra – 442404, India</span>
               </div>
             </div>
           </div>

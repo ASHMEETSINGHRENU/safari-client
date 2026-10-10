@@ -95,7 +95,7 @@ export const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-forest block font-semibold">Western Hub (MH):</strong>
-                    <span>Wardha Road, Nagpur, Maharashtra 440015 (Base for Tadoba, Pench MH, Melghat)</span>
+                    <span>392, At Moharli, Near Moharli Gate Core, Tadoba Road, Tadoba, Chandrapur, Maharashtra – 442404, India</span>
                   </div>
                 </div>
 
@@ -115,7 +115,7 @@ export const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-forest block font-semibold">Expedition Hotline:</strong>
-                    <span>+91 98200 48192 / +91 761 408 9200</span>
+                    <span>+91 90219 18758</span>
                   </div>
                 </div>
 
