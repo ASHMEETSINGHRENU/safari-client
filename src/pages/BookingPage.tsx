@@ -15,13 +15,39 @@ const fmtDate = (iso: string) =>
       })
     : '';
 
+const Counter = ({ label, value, onChange }: { label: string; value: number; onChange: (n: number) => void }) => (
+  <div className="flex items-center justify-between bg-sand border border-forest/20 rounded-xl px-4 py-2.5">
+    <span className="text-sm font-medium text-forest">{label}</span>
+    <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={() => onChange(Math.max(0, value - 1))}
+        disabled={value === 0}
+        className="w-7 h-7 rounded-full border border-forest/25 text-forest font-bold leading-none hover:bg-forest hover:text-sand transition disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-forest"
+      >
+        −
+      </button>
+      <span className="w-5 text-center text-sm font-bold text-forest">{value}</span>
+      <button
+        type="button"
+        onClick={() => onChange(value + 1)}
+        className="w-7 h-7 rounded-full border border-forest/25 text-forest font-bold leading-none hover:bg-forest hover:text-sand transition"
+      >
+        +
+      </button>
+    </div>
+  </div>
+);
+
 export const BookingPage: React.FC = () => {
   const [params] = useSearchParams();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [destination, setDestination] = useState(params.get('destination') || '');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [guests, setGuests] = useState('2');
+  const [adults, setAdults] = useState(0);
+  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
   const [calendarFor, setCalendarFor] = useState<'start' | 'end' | null>(null);
   const [contact, setContact] = useState({ name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -38,7 +64,8 @@ export const BookingPage: React.FC = () => {
       ? Math.max(0, Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000))
       : 0;
   const dateRange = [fmtDate(startDate), fmtDate(endDate)].filter(Boolean).join(' – ');
-  const guestsLabel = guests === '6' ? 'Private Safari Jeep (6 guests)' : `${guests} guest${guests === '1' ? '' : 's'}`;
+  const guestCount = adults + children + infants;
+  const guestsLabel = `${adults} Adult${adults === 1 ? '' : 's'} + ${children} ${children === 1 ? 'Child' : 'Children'} + ${infants} Infant${infants === 1 ? '' : 's'}`;
 
   const pickStart = (iso: string) => {
     setStartDate(iso);
@@ -78,7 +105,7 @@ export const BookingPage: React.FC = () => {
         phone: contact.phone.trim(),
         destination: destinationName,
         preferredDates: dateRange,
-        guests: Number(guests),
+        guests: guestCount,
         message: `Custom journey enquiry — Reserve: ${destinationName || 'Flexible'} · Dates: ${dateRange || 'Flexible'} · Guests: ${guestsLabel}.`,
       });
       setSent(true);
@@ -194,26 +221,16 @@ export const BookingPage: React.FC = () => {
                 )}
               </div>
 
-              <label className="block">
+              <div className="block">
                 <span className={fieldLabel}>
                   <Users className="w-3.5 h-3.5 text-gold" /> Travellers
                 </span>
-                <div className="relative">
-                  <select
-                    value={guests}
-                    onChange={(e) => setGuests(e.target.value)}
-                    className="w-full appearance-none bg-sand border border-forest/20 rounded-xl px-4 py-3.5 text-sm font-medium text-forest focus:outline-none focus:border-gold"
-                  >
-                    {['1', '2', '3', '4', '5'].map((n) => (
-                      <option key={n} value={n}>
-                        {n} guest{n === '1' ? '' : 's'}
-                      </option>
-                    ))}
-                    <option value="6">Private Safari Jeep (6 guests)</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-forest/50 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <div className="space-y-2.5">
+                  <Counter label="Adults" value={adults} onChange={setAdults} />
+                  <Counter label="Children" value={children} onChange={setChildren} />
+                  <Counter label="Infants" value={infants} onChange={setInfants} />
                 </div>
-              </label>
+              </div>
 
               <div className="space-y-3">
                 <span className={fieldLabel}>Your Details</span>
