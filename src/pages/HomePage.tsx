@@ -406,7 +406,7 @@ export const HomePage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
             <div>
               <span className="text-[11px] tracking-widest-safari uppercase text-earth font-bold block">
-                Sanctuary Spotlights
+                Featured Tiger Reserves
               </span>
               <h2 className="font-serif text-3xl font-bold text-forest mt-1">
                 Premier Tiger Reserves
