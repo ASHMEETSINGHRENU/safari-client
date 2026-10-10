@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { PublicLayout } from './components/layout/PublicLayout';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ScrollToTopButton } from './components/ScrollToTopButton';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -19,6 +20,7 @@ import JournalDetailPage from './pages/JournalDetailPage';
 import ResponsibleTourismPage from './pages/ResponsibleTourismPage';
 import FAQPage from './pages/FAQPage';
 import ContactPage from './pages/ContactPage';
+import UpcomingTourPage from './pages/UpcomingTourPage';
 import BookingPage from './pages/BookingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -72,6 +74,7 @@ export const App: React.FC = () => {
           <Route path="/responsible-tourism" element={<PublicRoute><ResponsibleTourismPage /></PublicRoute>} />
           <Route path="/faqs" element={<PublicRoute><FAQPage /></PublicRoute>} />
           <Route path="/contact" element={<PublicRoute><ContactPage /></PublicRoute>} />
+          <Route path="/upcoming-tours/:slug" element={<PublicRoute><UpcomingTourPage /></PublicRoute>} />
 
           {/* Booking and Account */}
           <Route path="/booking" element={<PublicRoute><BookingPage /></PublicRoute>} />
@@ -93,6 +96,7 @@ export const App: React.FC = () => {
           {/* Fallback */}
           <Route path="*" element={<PublicRoute><NotFoundPage /></PublicRoute>} />
         </Routes>
+        <ScrollToTopButton />
         </ErrorBoundary>
       </BrowserRouter>
     </AuthProvider>

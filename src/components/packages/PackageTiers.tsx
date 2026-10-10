@@ -1,4 +1,5 @@
 import { packagesOf, tierPrice, type PackageTier } from '../../lib/site';
+import { Carousel } from '../Carousel';
 
 interface Props {
   destination: { packages?: PackageTier[]; packageDuration?: string; safariPlan?: string };
@@ -36,11 +37,14 @@ export default function PackageTiers({ destination, variant = 'panel', className
 
   return (
     <div className={className}>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <Carousel
+        label="Whole package tiers"
+        trackClassName="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:snap-none"
+      >
         {packages.map((p) => (
           <div
             key={p.label}
-            className={`rounded-xl border p-4 flex flex-col ${
+            className={`shrink-0 w-[85%] snap-start sm:w-auto rounded-xl border p-4 flex flex-col ${
               p.label === 'Luxury'
                 ? 'border-gold/40 bg-sand/40'
                 : 'border-forest/15 bg-white/5'
@@ -64,7 +68,7 @@ export default function PackageTiers({ destination, variant = 'panel', className
             </ul>
           </div>
         ))}
-      </div>
+      </Carousel>
       {(destination.packageDuration || destination.safariPlan) && (
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-forest/60">
           {destination.packageDuration && <span><span className="text-forest/40 uppercase tracking-wider text-[10px]">Duration</span> {destination.packageDuration}</span>}

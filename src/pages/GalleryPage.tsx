@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { 
   Camera, 
   Filter, 
-  X, 
   MapPin, 
   Eye, 
   Sparkles, 
   Compass, 
   Check, 
-  Share2 
+  Share2
 } from 'lucide-react';
 import { cmsService } from '../services/api';
 import { GalleryItem } from '../types';
+import { PaginatedGrid } from '../components/PaginatedGrid';
+import { GalleryLightbox } from '../components/GalleryLightbox';
 
 export const GalleryPage: React.FC = () => {
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
@@ -64,8 +65,13 @@ export const GalleryPage: React.FC = () => {
             <p className="text-forest/70 text-sm">No photos found in this category.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filtered.map(item => (
+          <PaginatedGrid
+            label="Photo gallery"
+            rows={2}
+            baseCols={2}
+            lgCols={4}
+            gridClassName="grid grid-cols-2 lg:grid-cols-4 gap-6"
+            items={filtered.map(item => (
               <div 
                 key={item._id}
                 onClick={() => setActiveItem(item)}
@@ -103,65 +109,15 @@ export const GalleryPage: React.FC = () => {
                 </div>
               </div>
             ))}
-          </div>
+          />
         )}
 
-        {/* Lightbox Modal */}
-        {activeItem && (
-          <div 
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
-            onClick={() => setActiveItem(null)}
-          >
-            <div 
-              className="relative max-w-4xl w-full bg-forest text-sand rounded-3xl overflow-hidden shadow-2xl border border-sand/20"
-              onClick={e => e.stopPropagation()}
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setActiveItem(null)}
-                className="absolute top-4 right-4 p-2 bg-black/40 hover:bg-black/70 rounded-full text-sand z-10 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="max-h-[60vh] sm:max-h-[70vh] overflow-hidden bg-black flex items-center justify-center">
-                <img
-                  src={activeItem.imageUrl}
-                  alt={activeItem.title}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-
-              <div className="p-6 sm:p-8 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sand/15 pb-4">
-                  <div>
-                    <span className="text-gold text-xs font-bold uppercase tracking-widest block mb-1">
-                      {activeItem.animal} • {activeItem.destinationName} ({activeItem.state || 'India'})
-                    </span>
-                    <h2 className="font-serif text-2xl sm:text-3xl font-bold">
-                      {activeItem.title}
-                    </h2>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
-                  <div>
-                    <span className="text-sand/60 block uppercase">Photographer</span>
-                    <span className="font-semibold text-sand">{activeItem.photographer || 'Shutter And Stripes Team'}</span>
-                  </div>
-                  <div>
-                    <span className="text-sand/60 block uppercase">Field Gear</span>
-                    <span className="font-semibold text-sand">{activeItem.cameraGear || 'Canon EOS R5 / RF 100-500mm'}</span>
-                  </div>
-                  <div>
-                    <span className="text-sand/60 block uppercase">Lighting</span>
-                    <span className="font-semibold text-sand">100% Natural Ambient Light</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <GalleryLightbox
+          items={filtered}
+          activeItem={activeItem}
+          onClose={() => setActiveItem(null)}
+          onChange={setActiveItem}
+        />
 
       </div>
     </div>

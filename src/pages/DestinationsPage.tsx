@@ -7,14 +7,12 @@ import {
   Filter, 
   Layers, 
   ArrowRight, 
-  ShieldCheck, 
   SlidersHorizontal,
   Scale,
   X,
   Calendar,
   Sparkles,
-  TreePine,
-  MessageSquare
+  TreePine
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
@@ -145,14 +143,14 @@ export const DestinationsPage: React.FC = () => {
       </section>
 
       {/* Filter and Control Bar */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-8 sticky top-20 z-20">
-        <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-md border border-forest/10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-8 lg:sticky lg:top-20 z-20">
+        <div className="bg-white/90 backdrop-blur-md p-3 sm:p-4 rounded-2xl shadow-md border border-forest/10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 lg:gap-4">
           
           {/* State Tabs — generated from data, core states first */}
-          <div className="flex items-center space-x-2 bg-sand/60 p-1.5 rounded-xl border border-forest/10 overflow-x-auto">
+          <div className="flex items-center space-x-2 bg-sand/60 p-1.5 rounded-xl border border-forest/10 overflow-x-auto scrollbar-none">
             <button
               onClick={() => handleStateChange('All')}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap ${
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap ${
                 selectedState === 'All'
                   ? 'bg-forest text-sand shadow-sm'
                   : 'text-forest/70 hover:text-forest hover:bg-forest/5'
@@ -164,7 +162,7 @@ export const DestinationsPage: React.FC = () => {
               <button
                 key={state}
                 onClick={() => handleStateChange(state)}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition whitespace-nowrap flex items-center gap-1.5 ${
                   selectedState === state
                     ? 'bg-forest text-sand shadow-sm'
                     : 'text-forest/70 hover:text-forest hover:bg-forest/5'
@@ -175,58 +173,61 @@ export const DestinationsPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-forest/50 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search by reserve name or wildlife..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-sand/40 border border-forest/15 rounded-xl text-sm text-forest placeholder:text-forest/40 focus:outline-none focus:ring-2 focus:ring-forest/30"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-forest/40 hover:text-forest"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          {/* Search + controls — single row on mobile, right-aligned on desktop */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 lg:flex-1 lg:justify-end">
+            {/* Search Input */}
+            <div className="relative flex-1 lg:max-w-md">
+              <Search className="w-4 h-4 text-forest/50 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search reserves..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 bg-sand/40 border border-forest/15 rounded-xl text-sm text-forest placeholder:text-forest/40 focus:outline-none focus:ring-2 focus:ring-forest/30"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-forest/40 hover:text-forest"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
 
-          {/* Availability and View Mode */}
-          <div className="flex items-center space-x-3">
-            <select
-              value={availabilityFilter}
-              onChange={(e) => setAvailabilityFilter(e.target.value)}
-              className="px-3 py-2 bg-sand/40 border border-forest/15 rounded-xl text-xs font-medium text-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
-            >
-              <option value="All">All Availability</option>
-              <option value="AVAILABLE">Available</option>
-              <option value="FEW PERMITS">Few Permits</option>
-              <option value="LIMITED">Limited</option>
-            </select>
+            {/* Availability and View Mode */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <select
+                value={availabilityFilter}
+                onChange={(e) => setAvailabilityFilter(e.target.value)}
+                className="px-2 sm:px-3 py-2 bg-sand/40 border border-forest/15 rounded-xl text-[11px] sm:text-xs font-medium text-forest focus:outline-none focus:ring-2 focus:ring-forest/30 shrink-0"
+              >
+                <option value="All">All Availability</option>
+                <option value="AVAILABLE">Available</option>
+                <option value="FEW PERMITS">Few Permits</option>
+                <option value="LIMITED">Limited</option>
+              </select>
 
-            <div className="flex items-center space-x-1 bg-sand/60 p-1 rounded-xl border border-forest/10">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition ${
-                  viewMode === 'grid' ? 'bg-forest text-sand' : 'text-forest/60 hover:text-forest'
-                }`}
-                title="Grid View"
-              >
-                <Layers className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('detailed')}
-                className={`p-2 rounded-lg transition ${
-                  viewMode === 'detailed' ? 'bg-forest text-sand' : 'text-forest/60 hover:text-forest'
-                }`}
-                title="List View"
-              >
-                <SlidersHorizontal className="w-4 h-4" />
-              </button>
+              <div className="flex items-center space-x-1 bg-sand/60 p-1 rounded-xl border border-forest/10 shrink-0">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 sm:p-2 rounded-lg transition ${
+                    viewMode === 'grid' ? 'bg-forest text-sand' : 'text-forest/60 hover:text-forest'
+                  }`}
+                  title="Grid View"
+                >
+                  <Layers className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('detailed')}
+                  className={`p-1.5 sm:p-2 rounded-lg transition ${
+                    viewMode === 'detailed' ? 'bg-forest text-sand' : 'text-forest/60 hover:text-forest'
+                  }`}
+                  title="List View"
+                >
+                  <SlidersHorizontal className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -538,35 +539,6 @@ export const DestinationsPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Conservation Commitment Banner */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mt-24">
-        <div className="bg-forest text-sand rounded-3xl p-8 sm:p-12 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 max-w-2xl">
-            <ShieldCheck className="w-10 h-10 text-gold mb-4" />
-            <h3 className="font-serif text-3xl font-bold mb-3">
-              Official Forest Department Alignment
-            </h3>
-            <p className="text-sand/80 text-sm leading-relaxed mb-6 font-sans">
-              All safari permits issued through Shutter And Stripes comply with the National Tiger Conservation Authority (NTCA) carrying capacities and respective State Forest Department norms. We advocate ethical photography, zero baiting, and complete silence in the park.
-            </p>
-            <div className="flex flex-wrap items-center gap-4">
-              <Link
-                to="/contact?subject=General%20Enquiry%20%E2%80%94%20Other%20Reserves%20%26%20Locations"
-                className="inline-flex items-center gap-2 px-5 py-3 bg-gold text-forest rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gold-light transition shadow-lg"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Can't find your reserve? Send a general enquiry</span>
-              </Link>
-              <Link to="/responsible-tourism" className="text-gold hover:underline flex items-center space-x-1 text-xs font-semibold">
-                <span>Read our Responsible Tourism Charter</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

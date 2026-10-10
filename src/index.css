@@ -39,6 +39,34 @@ h1, h2, h3, h4, .font-serif {
   background: #2E3A23;
 }
 
+/* Hide the scrollbar on horizontal mobile card sliders */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Continuous mobile card carousel: loops one full set (-50%) each cycle.
+   Cards carry mr-6 (not container gap) so the two halves are equal width and
+   the loop is seamless. Disabled at sm (cards become a grid) and for
+   reduced-motion users. */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-x 40s linear infinite;
+  will-change: transform;
+}
+@media (min-width: 640px) {
+  .marquee-track { animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
 /* Editorial Glass & Borders */
 .border-forest-subtle {
   border-color: rgba(46, 58, 35, 0.15);

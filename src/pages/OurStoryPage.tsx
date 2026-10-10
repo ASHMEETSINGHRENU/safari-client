@@ -7,7 +7,7 @@ import {
   Users, 
   ArrowRight
 } from 'lucide-react';
-import { FOUNDER_NAME, COFOUNDER_NAME, YEARS_OF_EXPERIENCE } from '../lib/site';
+import { FOUNDER_NAME, COFOUNDER_NAME, YEARS_OF_EXPERIENCE, TOURS_COMPLETED } from '../lib/site';
 
 export const OurStoryPage: React.FC = () => {
   return (
@@ -24,7 +24,7 @@ export const OurStoryPage: React.FC = () => {
             Inspired by Nature.<br /> Guided by Locals.
           </h1>
           <p className="text-forest/80 text-lg sm:text-xl leading-relaxed font-sans max-w-2xl mx-auto">
-            Shutter and Stripes is a wildlife travel company rooted in Moharli, at the edge of Tadoba. Led by {FOUNDER_NAME}, we are naturalists, trackers and photographers
+            <strong>The story of Shutter and Stripes is not a business plan born in a boardroom - it is a legacy born on the dusty trails of Moharli, a tiny village right at the gates of the Tadoba - Andhari Tiger Reserve.</strong> <br />Led by {FOUNDER_NAME}, we are naturalists, trackers and photographers
             dedicated to the resident wildlife of Central India&mdash;every tiger, leopard, sloth bear, dhole, and stork
             that lives here year-round, not just the species on a checklist.
           </p>
@@ -61,16 +61,16 @@ export const OurStoryPage: React.FC = () => {
               {FOUNDER_NAME}, Founder and Principal Naturalist
             </h2>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              I still remember the first time I saw a royal Bengal tiger in the heart of Tadoba. I was surrounded by towering trees and dozens of breathless travelers, all waiting quietly for a single glimpse. When the tiger finally stepped out of the shadows, I was mesmerized&mdash;not just by the sheer majesty of the apex predator, but by the raw curiosity and electric excitement rippling through the people around me.
+              My connection to the wild began in the teak forests of Tadoba, walking alongside my father beneath towering canopy trees. Those early moments sparked a lifelong calling. At a young age, I stepped into the forest as a naturalist, beginning an 18-year journey to understand the untamed wilderness in its purest form.
             </p>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              That afternoon, a simple question took root in my mind: Why are we so deeply drawn to this one animal? The answer changed the trajectory of my life. The tiger is far more than an apex predator or a beautiful photograph. It is our national animal, the ultimate symbol of a healthy forest, and the keystone holding an entire ecosystem together.
+              Over nearly two decades, my perspective shifted from merely seeking tiger sightings to decoding the secret language of the jungle. I came to see the forest as a living classroom, where every creature&mdash;from the sharp alarm call of a chital deer to the quiet movement of an apex predator&mdash;plays a vital role in nature&rsquo;s balance.
             </p>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              Showing people a tiger is only the beginning. My true responsibility over the past 15+ years has been to help travelers understand why the tiger needs to be protected, and how its survival is deeply intertwined with every bird, tree, and local village community. This is the very soul of Shutter and Stripes. When you see, understand, and connect with nature, you naturally fight to protect it.
+              Through experience of exploring different forests, a crucial truth emerged: you cannot protect the wild without empowering the people who live beside it. Local trackers, guides, and drivers are not service providers&mdash;they are the true guardians and storytellers of these forests, having coexisted with apex predators for generations.
             </p>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
-              Tadoba is my home. Protecting its legacy is who I am. I invite you to step into our classroom, track with our elite local talent, and leave a lasting footprint on conservation.
+              To put this philosophy into action, we founded Shutter and Stripes&mdash;&ldquo;Shutter&rdquo; for the stories we capture, and &ldquo;Stripes&rdquo; for the iconic predators that define the wild. By pairing travellers with local expert naturalists on every expedition, we pioneer responsible tourism that directly supports forest communities and preserves untouched wilderness for generations to come.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
@@ -78,12 +78,12 @@ export const OurStoryPage: React.FC = () => {
                 <span className="text-[10px] uppercase tracking-wider text-forest/60">Years in the Field</span>
               </div>
               <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
-                <span className="block font-serif text-2xl font-bold text-forest">2</span>
-                <span className="text-[10px] uppercase tracking-wider text-forest/60">Core States</span>
+                <span className="block font-serif text-2xl font-bold text-forest">{TOURS_COMPLETED}+</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Tours Led</span>
               </div>
               <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
-                <span className="block font-serif text-2xl font-bold text-forest">1</span>
-                <span className="text-[10px] uppercase tracking-wider text-forest/60">Direct Enquiry Line</span>
+                <span className="block font-serif text-2xl font-bold text-forest">1%</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Community Pledge</span>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ export const OurStoryPage: React.FC = () => {
               <span>A Note from the Co-Founder</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl text-forest font-bold leading-tight">
-              {COFOUNDER_NAME}, Co-Founder
+              {COFOUNDER_NAME}, Co-Founder and Wildlife Explorer
             </h2>
             <p className="text-forest/80 text-base leading-relaxed font-sans">
               Growing up in Mumbai's concrete jungle, I was always drawn to the wild. Over 13 years exploring wildlife across India and the world &mdash; forests, grasslands, wetlands and mountains &mdash; I came to understand the delicate balance of ecosystems and the people who live closest to them.

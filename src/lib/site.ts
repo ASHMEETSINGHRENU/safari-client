@@ -3,6 +3,8 @@ import { Destination, Zone } from '../types';
 export const MAP_LABEL = 'The Safari Landscape';
 export const MAP_ROUTE = '/map';
 export const YEARS_OF_EXPERIENCE = 15;
+// ponytail: placeholder — set to the real number of tours Sachin has personally led.
+export const TOURS_COMPLETED = 500;
 export const CONTACT_EMAIL = 'concierge@shutterandstripes.com';
 export const FOUNDER_NAME = 'Sachin Neware';
 export const COFOUNDER_NAME = 'Urmila Suvarna';

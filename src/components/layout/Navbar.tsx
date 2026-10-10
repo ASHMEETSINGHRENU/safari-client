@@ -21,9 +21,9 @@ interface NavLinkItem {
 const PRIMARY_LINKS: NavLinkItem[] = [
   { name: 'Reserves', path: '/destinations' },
   { name: 'Our Story', path: '/our-story' },
+  { name: 'Safari Map', path: '/map' },
   { name: 'Journal', path: '/journal' },
   { name: 'Gallery', path: '/gallery' },
-  { name: 'Map', path: '/map' },
 ];
 
 export const Navbar: React.FC = () => {
