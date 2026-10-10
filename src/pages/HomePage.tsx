@@ -258,7 +258,7 @@ export const HomePage: React.FC = () => {
           className="bg-forest text-sand p-4 sm:p-6 rounded-2xl shadow-2xl border border-gold/30 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 items-end"
         >
           <div className="col-span-2 lg:col-span-6 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b border-sand/15 pb-3 -mt-1">
-            <h2 className="font-serif text-lg sm:text-xl font-bold text-sand">Customize My Journey</h2>
+            <h2 className="font-serif text-lg sm:text-xl font-bold text-sand">Customize Your Safari</h2>
             <span className="text-[10px] uppercase tracking-widest-safari text-gold font-bold">Get a Quote!</span>
           </div>
 
