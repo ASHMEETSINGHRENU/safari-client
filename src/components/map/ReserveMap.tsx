@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { Destination } from '../../types';
 import type { FeatureCollection } from 'geojson';
 import { Compass, ArrowRight, Star } from 'lucide-react';
-import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, packageFromOf, inr, CONTACT_EMAIL, reserveKind, RESERVE_KIND_COLOR } from '../../lib/site';
+import { MAP_LABEL, stateCode, isCoreState, isPrimeZone, packageFromOf, inr, BOOKINGS_EMAIL, reserveKind, RESERVE_KIND_COLOR } from '../../lib/site';
 
 interface ReserveMapProps {
   destinations: Destination[];
@@ -372,7 +372,7 @@ export const ReserveMap: React.FC<ReserveMapProps> = ({
               </div>
 
               <a
-                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Package Enquiry — ${activeDest.name}`)}&body=${encodeURIComponent(`Reserve: ${activeDest.name} (${activeDest.state})\n\nI'd like to discuss:\n`)}`}
+                href={`mailto:${BOOKINGS_EMAIL}?subject=${encodeURIComponent(`Package Enquiry — ${activeDest.name}`)}&body=${encodeURIComponent(`Reserve: ${activeDest.name} (${activeDest.state})\n\nI'd like to discuss:\n`)}`}
                 className="pt-3 border-t border-sand/10 text-center text-[11px] text-sand/70 hover:text-gold transition"
               >
                 Prefer email? Enquire about this reserve →

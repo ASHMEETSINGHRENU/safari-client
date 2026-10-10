@@ -5,6 +5,7 @@ export const MAP_ROUTE = '/map';
 export const YEARS_OF_EXPERIENCE = 15;
 export const TOURS_COMPLETED = 1000;
 export const CONTACT_EMAIL = 'enquiries@shutterandstripessafaries.com';
+export const BOOKINGS_EMAIL = 'bookings@shutterandstripessafaries.com';
 export const FOUNDER_NAME = 'Sachin Neware';
 export const COFOUNDER_NAME = 'Urmila Suvarna';
 
@@ -77,4 +78,4 @@ export const tierPrice = (t: PackageTier): string => {
 };
 
 export const enquiryMailto = (subject: string, body?: string): string =>
-  `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`;
+  `mailto:${BOOKINGS_EMAIL}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`;
