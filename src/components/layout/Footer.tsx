@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, ArrowRight, ShieldCheck, ChevronDown } from 'lucide-react';
 import { cmsService } from '../../services/api';
+import { CONTACT_EMAIL } from '../../lib/site';
 
 // Collapsed to an accordion on mobile so the footer stays short; always open from lg up.
 const FooterColumn: React.FC<{ title: string; className?: string; children: React.ReactNode }> = ({ title, className, children }) => {
@@ -133,9 +134,9 @@ export const Footer: React.FC = () => {
                 <Phone className="w-3.5 h-3.5 text-gold" />
                 <span>+91 (0) 712 258 4930</span>
               </a>
-              <a href="mailto:concierge@shutterandstripes.com" className="flex items-center gap-2 hover:text-gold transition-colors">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Mail className="w-3.5 h-3.5 text-gold" />
-                <span className="break-all">concierge@shutterandstripes.com</span>
+                <span className="break-all">{CONTACT_EMAIL}</span>
               </a>
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-gold flex-shrink-0 mt-0.5" />

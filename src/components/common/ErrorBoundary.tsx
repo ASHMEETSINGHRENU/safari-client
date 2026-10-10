@@ -28,7 +28,7 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
           <h1 className="font-serif text-2xl font-bold text-forest">Something went wrong</h1>
           <p className="text-xs text-forest/70">
             A part of the page failed to load. Reloading usually fixes it — if it keeps happening,
-            reach us at concierge@shutterandstripes.com.
+            reach us at enquiries@shutterandstripessafaries.com.
           </p>
           <button
             onClick={() => window.location.assign('/')}

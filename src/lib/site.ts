@@ -4,7 +4,7 @@ export const MAP_LABEL = 'The Safari Landscape';
 export const MAP_ROUTE = '/map';
 export const YEARS_OF_EXPERIENCE = 15;
 export const TOURS_COMPLETED = 1000;
-export const CONTACT_EMAIL = 'concierge@shutterandstripes.com';
+export const CONTACT_EMAIL = 'enquiries@shutterandstripessafaries.com';
 export const FOUNDER_NAME = 'Sachin Neware';
 export const COFOUNDER_NAME = 'Urmila Suvarna';
 
