@@ -503,8 +503,10 @@ export const HomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="overflow-hidden sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
-            <Marquee>
+          <Carousel
+            label="What sets us apart"
+            trackClassName="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 sm:overflow-visible sm:snap-none"
+          >
             {[
               { icon: <Award className="w-5 h-5" />, title: `${YEARS_OF_EXPERIENCE}+ Years of Field Expertise`, desc: 'Son of the Soil. Our founder began tracking in these forests as a boy — 15+ years of raw field experience, not textbook knowledge.' },
               { icon: <BookOpen className="w-5 h-5" />, title: 'The Jungle is a Classroom', desc: 'Naturalist-led safaris where every drive teaches ecology, behavior and conservation. We slow down so the forest can speak.' },
@@ -513,7 +515,7 @@ export const HomePage: React.FC = () => {
               { icon: <Eye className="w-5 h-5" />, title: 'Consent-Driven Photography', desc: 'Wildlife first, shutter second. We photograph on the animal’s terms — no baiting, no harassment, no cornering.' },
               { icon: <Sparkles className="w-5 h-5" />, title: 'Custom-Designed Experiences', desc: 'Every journey is co-designed around your pace, interests and comfort — from first-time families to serious photographers.' },
             ].map(usp => (
-              <div key={usp.title} className="shrink-0 mr-6 w-[85vw] sm:mr-0 sm:w-auto bg-sand rounded-2xl border border-forest/15 p-6 shadow-sm hover:shadow-xl transition-all space-y-3">
+              <div key={usp.title} className="shrink-0 w-[85%] snap-start sm:w-auto bg-sand rounded-2xl border border-forest/15 p-6 shadow-sm hover:shadow-xl transition-all space-y-3">
                 <div className="w-11 h-11 rounded-xl bg-forest text-gold flex items-center justify-center shrink-0">
                   {usp.icon}
                 </div>
@@ -521,8 +523,7 @@ export const HomePage: React.FC = () => {
                 <p className="text-xs text-forest/80 leading-relaxed">{usp.desc}</p>
               </div>
             ))}
-            </Marquee>
-          </div>
+          </Carousel>
         </div>
       </section>
 
@@ -541,8 +542,10 @@ export const HomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="overflow-hidden sm:overflow-visible sm:grid sm:grid-cols-2 lg:grid-cols-5 sm:gap-6">
-            <Marquee>
+          <Carousel
+            label="How it works"
+            trackClassName="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3 sm:grid sm:grid-cols-2 lg:grid-cols-5 sm:gap-6 sm:overflow-visible sm:snap-none"
+          >
             {[
               { num: '01', title: 'DISCOVER', desc: 'Explore reserves across MP and Maharashtra, examining seasonal tiger activity and zone terrain.' },
               { num: '02', title: 'CHOOSE', desc: 'Compare morning vs. afternoon slots, private photography setups, and experienced local naturalists.' },
@@ -550,7 +553,7 @@ export const HomePage: React.FC = () => {
               { num: '04', title: 'BOOK', desc: 'Submit traveler government ID proof for official Forest Department permit allocation.' },
               { num: '05', title: 'EXPERIENCE', desc: 'Arrive for your dawn briefing at the reserve as the first rays break through the sal trees.' }
             ].map((step, idx) => (
-              <div key={step.num} className="shrink-0 mr-6 w-[85vw] sm:mr-0 sm:w-auto bg-forest-deep p-6 rounded-xl border border-sand/15 relative space-y-3">
+              <div key={step.num} className="shrink-0 w-[85%] snap-start sm:w-auto bg-forest-deep p-6 rounded-xl border border-sand/15 relative space-y-3">
                 <span className="font-serif text-3xl font-bold text-gold/40 block">
                   {step.num}
                 </span>
@@ -558,8 +561,7 @@ export const HomePage: React.FC = () => {
                 <p className="text-xs text-sand/75 leading-relaxed">{step.desc}</p>
               </div>
             ))}
-            </Marquee>
-          </div>
+          </Carousel>
         </div>
       </section>
 
