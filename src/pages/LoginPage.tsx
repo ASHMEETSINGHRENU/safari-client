@@ -1,24 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { 
-  Compass, 
-  Mail, 
-  Lock, 
-  ArrowRight, 
-  AlertCircle, 
-  ShieldCheck, 
-  KeyRound,
-  UserCheck
-} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Mail, Lock, ArrowRight, AlertCircle, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/common/Toast';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { info } = useToast();
-  const [searchParams] = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/account';
-
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,14 +19,7 @@ export const LoginPage: React.FC = () => {
       setLoading(true);
       setError(null);
       await login({ email, password });
-      
-      // Check if user is admin to route to admin or redirect
-      const savedUser = JSON.parse(localStorage.getItem('sns_user') || '{}');
-      if (savedUser.role && savedUser.role !== 'customer') {
-        navigate('/admin');
-      } else {
-        navigate(redirect);
-      }
+      navigate('/admin');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Invalid email or password.');
     } finally {
@@ -61,13 +42,13 @@ export const LoginPage: React.FC = () => {
           <div className="text-center space-y-2">
             <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-forest/10 border border-forest/20 text-forest text-[11px] font-semibold uppercase tracking-widest mb-1">
               <Compass className="w-3 h-3 text-gold" />
-              <span>Traveler Portal</span>
+              <span>Admin Access</span>
             </div>
             <h1 className="font-serif text-3xl font-bold text-forest">
-              Welcome Back
+              Admin Sign In
             </h1>
             <p className="text-forest/60 text-xs">
-              Access your official forest permits, bookings, and saved reserves.
+              Authorised Shutter And Stripes staff only.
             </p>
           </div>
 
@@ -134,34 +115,15 @@ export const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Demo Login Shortcuts */}
-          <div className="pt-4 border-t border-forest/10 space-y-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-forest/50 block text-center">
-              Quick Test Autofill
-            </span>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => fillCredentials('traveler@shutterandstripes.com', 'Traveler@2026')}
-                className="p-2 rounded-xl bg-sand border border-forest/10 text-forest text-[11px] font-semibold hover:bg-forest hover:text-sand transition"
-              >
-                Customer Login
-              </button>
-              <button
-                type="button"
-                onClick={() => fillCredentials('admin@shutterandstripes.com', 'Safari@2026')}
-                className="p-2 rounded-xl bg-forest/10 border border-forest/20 text-forest text-[11px] font-semibold hover:bg-forest hover:text-sand transition"
-              >
-                Admin Login
-              </button>
-            </div>
-          </div>
-
-          <div className="text-center pt-2 text-xs text-forest/70">
-            <span>Don't have an account? </span>
-            <Link to={`/register?redirect=${redirect}`} className="text-earth font-bold hover:underline">
-              Create Account
-            </Link>
+          {/* Demo Login Shortcut (admin only) */}
+          <div className="pt-4 border-t border-forest/10">
+            <button
+              type="button"
+              onClick={() => fillCredentials('admin@shutterandstripes.com', 'Safari@2026')}
+              className="w-full p-2.5 rounded-xl bg-forest/10 border border-forest/20 text-forest text-[11px] font-semibold hover:bg-forest hover:text-sand transition"
+            >
+              Fill Admin Demo Credentials
+            </button>
           </div>
 
         </div>

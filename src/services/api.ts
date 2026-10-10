@@ -34,7 +34,7 @@ api.interceptors.response.use(
   (error) => {
     const status = error?.response?.status;
     const url = error?.config?.url || '';
-    const isAuthAttempt = url.includes('/auth/login') || url.includes('/auth/register');
+    const isAuthAttempt = url.includes('/auth/login');
     const hadToken = !!localStorage.getItem('sns_token');
     if (status === 401 && hadToken && !isAuthAttempt) {
       localStorage.removeItem('sns_token');
@@ -48,7 +48,7 @@ api.interceptors.response.use(
   }
 );
 
-// Auth Services
+// Auth Services (admin only)
 export const authService = {
   login: async (credentials: { email: string; password: string }) => {
     const res = await api.post('/auth/login', credentials);
@@ -58,25 +58,9 @@ export const authService = {
     }
     return res.data;
   },
-  register: async (userData: { name: string; email: string; password: string; phone?: string }) => {
-    const res = await api.post('/auth/register', userData);
-    if (res.data.token) {
-      localStorage.setItem('sns_token', res.data.token);
-      localStorage.setItem('sns_user', JSON.stringify(res.data.user));
-    }
-    return res.data;
-  },
   getMe: async () => {
     const res = await api.get('/auth/me');
     return res.data.user;
-  },
-  updateProfile: async (data: { name?: string; phone?: string; country?: string }) => {
-    const res = await api.put('/auth/profile', data);
-    return res.data.user;
-  },
-  toggleSaveDestination: async (destinationId: string) => {
-    const res = await api.post(`/auth/saved-destinations/${destinationId}`);
-    return res.data.savedDestinations;
   },
   logout: () => {
     localStorage.removeItem('sns_token');

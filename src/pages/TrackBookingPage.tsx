@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Search, AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { bookingService } from '../services/api';
 import { Booking } from '../types';
@@ -122,9 +122,6 @@ const TrackBookingPage: React.FC = () => {
             </div>
           )}
 
-          <p className="text-center text-xs text-forest/60">
-            Prefer your dashboard? <Link to="/login" className="text-earth font-bold hover:underline">Sign in</Link>
-          </p>
         </div>
       </div>
     </div>

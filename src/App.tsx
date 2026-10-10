@@ -25,8 +25,6 @@ import ContactPage from './pages/ContactPage';
 import UpcomingTourPage from './pages/UpcomingTourPage';
 import BookingPage from './pages/BookingPage';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import CustomerAccountPage from './pages/CustomerAccountPage';
 import TrackBookingPage from './pages/TrackBookingPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -80,11 +78,9 @@ export const App: React.FC = () => {
           <Route path="/contact" element={<PublicRoute><ContactPage /></PublicRoute>} />
           <Route path="/upcoming-tours/:slug" element={<PublicRoute><UpcomingTourPage /></PublicRoute>} />
 
-          {/* Booking and Account */}
+          {/* Booking and Tracking (admin auth lives at /login) */}
           <Route path="/booking" element={<PublicRoute><BookingPage /></PublicRoute>} />
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-          <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
-          <Route path="/account" element={<PublicRoute><CustomerAccountPage /></PublicRoute>} />
           <Route path="/track" element={<PublicRoute><TrackBookingPage /></PublicRoute>} />
 
           {/* DEDICATED ADMIN PANEL ROUTES (ZERO PUBLIC NAVBAR, ZERO PUBLIC FOOTER) */}
