@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
-import { stateBadgeClass, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE, packageFromOf, inr } from '../lib/site';
+import { stateBadgeClass, isCoreState, CORE_STATES, YEARS_OF_EXPERIENCE, packageFromOf, durationText, inr } from '../lib/site';
 import PackageTiers from '../components/packages/PackageTiers';
 import { useToast } from '../components/common/Toast';
 
@@ -312,6 +312,9 @@ export const DestinationsPage: React.FC = () => {
                         }`}>
                           {dest.state}
                         </span>
+                        <span className="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-sand bg-black/55 backdrop-blur-md border border-white/20 shadow">
+                          {durationText(dest.packageDuration)}
+                        </span>
                       </div>
                     </div>
 
@@ -419,6 +422,9 @@ export const DestinationsPage: React.FC = () => {
                         stateBadgeClass(dest.state)
                       }`}>
                         {dest.state}
+                      </span>
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-sand bg-black/55 backdrop-blur-md border border-white/20 shadow-md">
+                        {durationText(dest.packageDuration)}
                       </span>
                     </div>
 

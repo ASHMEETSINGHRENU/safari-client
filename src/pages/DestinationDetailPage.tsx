@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { destinationService } from '../services/api';
 import { Destination } from '../types';
-import { stateBadgeClass, stateCode, isPrimeZone, inr, packageFromOf, packagesOf, enquiryMailto } from '../lib/site';
+import { stateBadgeClass, stateCode, isPrimeZone, inr, packageFromOf, packagesOf, durationText, enquiryMailto } from '../lib/site';
 import PackageTiers from '../components/packages/PackageTiers';
 
 export const DestinationDetailPage: React.FC = () => {
@@ -151,6 +151,9 @@ export const DestinationDetailPage: React.FC = () => {
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white shadow-md ${stateBadgeClass(destination.state)}`}>
                   {destination.state}
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-white shadow-md bg-black/55 backdrop-blur-md border border-white/25">
+                  {durationText(destination.packageDuration)}
                 </span>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-forest sm:text-white font-bold mb-2 sm:mb-3 tracking-tight sm:drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
@@ -376,6 +379,11 @@ export const DestinationDetailPage: React.FC = () => {
                   <span className="text-forest/70 font-medium block text-[11px] uppercase tracking-wider">Packages From</span>
                   <span className="font-serif font-bold text-forest text-xl">{inr(packageFromOf(destination))}</span>
                   <span className="text-forest/50 text-[10px] block">Per person, all-inclusive</span>
+                </div>
+
+                <div className="bg-sand p-3.5 rounded-xl border border-forest/10 flex items-center justify-between">
+                  <span className="text-forest/70 font-medium">Standard Trip:</span>
+                  <span className="font-bold text-forest">{durationText(destination.packageDuration)}</span>
                 </div>
 
                 <div className="bg-sand p-3.5 rounded-xl border border-forest/10 flex items-center justify-between">

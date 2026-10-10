@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { stateCode, stateBadgeClass, inr, packageFromOf } from '../lib/site';
+import { stateCode, stateBadgeClass, inr, packageFromOf, durationText } from '../lib/site';
 import { 
   Scale, 
   Plus, 
@@ -225,6 +225,17 @@ export const ComparePage: React.FC = () => {
                           </span>
                         ))}
                       </div>
+                    </td>
+                  ))}
+                </tr>
+
+                {/* Standard Duration */}
+                <tr>
+                  <td className="p-5 font-bold text-forest bg-sand/10">Standard Duration</td>
+                  {comparedDestinations.map(d => (
+                    <td key={d._id} className="p-5">
+                      <div className="font-semibold text-forest">{durationText(d.packageDuration)}</div>
+                      <div className="text-[10px] text-forest/50">Standard itinerary length per reserve</div>
                     </td>
                   ))}
                 </tr>

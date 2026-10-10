@@ -9,7 +9,7 @@ import { Destination, GalleryItem } from '../types';
 import { destinationService, cmsService } from '../services/api';
 import { SplashScreen, SPLASH_SEEN_KEY } from '../components/SplashScreen';
 import { SafariCalendar } from '../components/SafariCalendar';
-import { stateCode, YEARS_OF_EXPERIENCE, inr, packageFromOf } from '../lib/site';
+import { stateCode, YEARS_OF_EXPERIENCE, durationText, inr, packageFromOf } from '../lib/site';
 import { UPCOMING_TOURS } from '../lib/upcomingTours';
 import InstagramIcon from '../components/InstagramIcon';
 import { Carousel } from '../components/Carousel';
@@ -236,7 +236,7 @@ export const HomePage: React.FC = () => {
                 to="/booking" 
                 className="px-6 py-3.5 bg-gold text-forest font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gold-light transition-all shadow-xl flex items-center gap-2"
               >
-                <span>Customize My Journey</span>
+                <span>Explore Packages</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link 
@@ -257,6 +257,11 @@ export const HomePage: React.FC = () => {
           onSubmit={handleSearchSubmit}
           className="bg-forest text-sand p-4 sm:p-6 rounded-2xl shadow-2xl border border-gold/30 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 items-end"
         >
+          <div className="col-span-2 lg:col-span-6 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b border-sand/15 pb-3 -mt-1">
+            <h2 className="font-serif text-lg sm:text-xl font-bold text-sand">Customize My Journey</h2>
+            <span className="text-[10px] uppercase tracking-widest-safari text-gold font-bold">Get a Quote!</span>
+          </div>
+
           {/* State */}
           <div>
             <label className="block text-[10px] uppercase font-bold tracking-widest-safari text-gold mb-1.5">
@@ -436,6 +441,9 @@ export const HomePage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
                     <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-sand text-[10px] font-bold px-2.5 py-1 rounded-md border border-white/20 shadow">
                       {d.state}
+                    </div>
+                    <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-sand text-[10px] font-bold px-2.5 py-1 rounded-md border border-white/20 shadow">
+                      {durationText(d.packageDuration)}
                     </div>
                   </div>
                   <div className="p-5 space-y-2">
