@@ -79,7 +79,7 @@ export const OurStoryPage: React.FC = () => {
               </div>
               <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
                 <span className="block font-serif text-2xl font-bold text-forest">{TOURS_COMPLETED}+</span>
-                <span className="text-[10px] uppercase tracking-wider text-forest/60">Tours Led</span>
+                <span className="text-[10px] uppercase tracking-wider text-forest/60">Safaris Led</span>
               </div>
               <div className="px-5 py-3 bg-white rounded-2xl border border-forest/15 text-center">
                 <span className="block font-serif text-2xl font-bold text-forest">1%</span>
