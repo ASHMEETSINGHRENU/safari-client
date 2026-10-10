@@ -4,10 +4,13 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 const isoOf = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-export const SafariCalendar: React.FC<{ value: string; onSelect: (iso: string) => void }> = ({ value, onSelect }) => {
+export const SafariCalendar: React.FC<{ value: string; onSelect: (iso: string) => void; nights?: number }> = ({ value, onSelect, nights = 0 }) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const picked = value ? new Date(value + 'T00:00:00') : null;
+  // The trip runs from the picked start day through `nights` nights later (inclusive).
+  const rangeEnd = picked ? new Date(picked) : null;
+  if (rangeEnd) rangeEnd.setDate(rangeEnd.getDate() + nights);
   const [view, setView] = useState(() => ({ y: (picked ?? today).getFullYear(), m: (picked ?? today).getMonth() }));
 
   const firstWeekday = new Date(view.y, view.m, 1).getDay();
@@ -57,6 +60,8 @@ export const SafariCalendar: React.FC<{ value: string; onSelect: (iso: string) =
           if (!day) return <span key={i} />;
           const disabled = day < today;
           const isSelected = picked && isSameDay(day, picked);
+          const isRangeEnd = picked && rangeEnd && nights > 0 && isSameDay(day, rangeEnd);
+          const inRange = picked && rangeEnd && nights > 0 && day > picked && day < rangeEnd;
           const isToday = isSameDay(day, today);
           return (
             <button
@@ -65,13 +70,15 @@ export const SafariCalendar: React.FC<{ value: string; onSelect: (iso: string) =
               disabled={disabled}
               onClick={() => onSelect(isoOf(day))}
               className={`h-9 rounded-lg text-sm font-medium transition-all ${
-                isSelected
+                isSelected || isRangeEnd
                   ? 'bg-forest text-sand font-bold shadow-md'
-                  : isToday
-                    ? 'border border-gold text-forest'
-                    : disabled
-                      ? 'text-forest/25 cursor-not-allowed'
-                      : 'text-forest hover:bg-gold/20'
+                  : inRange
+                    ? 'bg-gold/25 text-forest font-semibold'
+                    : isToday
+                      ? 'border border-gold text-forest'
+                      : disabled
+                        ? 'text-forest/25 cursor-not-allowed'
+                        : 'text-forest hover:bg-gold/20'
               }`}
             >
               {day.getDate()}

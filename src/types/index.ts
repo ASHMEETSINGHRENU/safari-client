@@ -100,6 +100,7 @@ export interface Booking {
   safari?: string | Safari;
   safariName: string;
   safariDate: string;
+  endDate?: string;
   slot: string;
   zone: string;
   vehicleType: string;
@@ -108,7 +109,6 @@ export interface Booking {
     children: number;
   };
   guestDetails?: { fullName: string; idType: string; idNumber: string }[];
-  naturalistRequested: boolean;
   specialRequests?: string;
   totalAmount: number;
   packageLabel?: 'Budget' | 'Mid-Range' | 'Luxury';

@@ -312,12 +312,11 @@ export const AdminBookingsPage: React.FC = () => {
                   <span className="text-[10px] uppercase font-bold text-forest/50 block">Expedition Details</span>
                   <div className="font-bold text-forest text-sm">{selectedBooking.destinationName}</div>
                   <div>Safari: {selectedBooking.safariName}</div>
-                  <div>Date: {new Date(selectedBooking.safariDate).toDateString()}</div>
+                  <div>Dates: {new Date(selectedBooking.safariDate).toDateString()}{selectedBooking.endDate ? ` – ${new Date(selectedBooking.endDate).toDateString()}` : ''}</div>
                   <div>Slot: {selectedBooking.slot}</div>
                   <div>Zone: {selectedBooking.zone}</div>
                   <div>Vehicle: {selectedBooking.vehicleType}</div>
                   <div>Guests: {selectedBooking.guests.adults} Adults, {selectedBooking.guests.children} Children</div>
-                  <div>Naturalist Requested: {selectedBooking.naturalistRequested ? 'Yes' : 'No'}</div>
                 </div>
               </div>
 

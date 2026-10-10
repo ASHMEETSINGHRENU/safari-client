@@ -7,7 +7,7 @@ import {
 import { Destination, Booking } from '../../types';
 import { destinationService, bookingService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { inr, tierPrice, packageFromOf, packagesOf, NATURALIST_FEE } from '../../lib/site';
+import { inr, tierPrice, packageFromOf, packagesOf, tripDuration, tripEndDate } from '../../lib/site';
 import { SafariCalendar } from '../SafariCalendar';
 
 // ponytail: sessionStorage draft so a reload or route bounce doesn't wipe wizard selections.
@@ -46,7 +46,6 @@ export const BookingWizard: React.FC = () => {
   const selectedVehicle = 'Open 4x4 Safari Jeep';
   const [adults, setAdults] = useState<number>(draft?.adults ?? 2);
   const [children, setChildren] = useState<number>(draft?.children ?? 0);
-  const [naturalistRequested, setNaturalistRequested] = useState<boolean>(draft?.naturalistRequested ?? true);
   const [selectedPackageLabel, setSelectedPackageLabel] = useState<string>(draft?.selectedPackageLabel ?? '');
   // Step 2 shows the date picker first; it collapses into a chip once confirmed.
   const [confirmed, setConfirmed] = useState(() => ({
@@ -83,12 +82,12 @@ export const BookingWizard: React.FC = () => {
     }
     sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
       step, selectedDestination, safariDate, selectedZone,
-      adults, children, naturalistRequested,
+      adults, children,
       selectedPackageLabel, confirmed
     }));
   }, [confirmedBooking, step, selectedDestination, safariDate,
       selectedZone, adults, children,
-      naturalistRequested, selectedPackageLabel, confirmed]);
+      selectedPackageLabel, confirmed]);
 
   // Load initial destinations
   useEffect(() => {
@@ -120,8 +119,16 @@ export const BookingWizard: React.FC = () => {
   const perPerson = selectedPackage?.min ?? (selectedDestination?.startingPrice ?? 0);
   const totalAmount =
     perPerson * Math.max(adults, 1) +
-    Math.round(perPerson * 0.5) * children +
-    (naturalistRequested ? NATURALIST_FEE : 0);
+    Math.round(perPerson * 0.5) * children;
+
+  // Trip span comes from the reserve's standard duration; the server recomputes the
+  // end date authoritatively when the booking is created.
+  const trip = tripDuration(selectedDestination?.packageDuration);
+  const tripEnd = safariDate ? tripEndDate(safariDate, selectedDestination?.packageDuration) : '';
+  const fmtDay = (iso: string) =>
+    new Date(iso + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  const fmtShort = (iso: string) =>
+    new Date(iso + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 
   const validateField = (key: string, value: string) => {
     if (key === 'fullName') return value.trim().length >= 3 ? '' : "Enter the traveler's full name (as per ID).";
@@ -200,7 +207,6 @@ export const BookingWizard: React.FC = () => {
         vehicleType: selectedVehicle,
         guests: { adults, children },
         guestDetails,
-        naturalistRequested,
         customerInfo,
         packageLabel: selectedPackage?.label,
         // Indicative only — the server recomputes totalAmount from seeded package data.
@@ -388,14 +394,30 @@ onClick={() => {
               )}
             </div>
 
-            {/* Date: pick from calendar then collapse */}
+            {/* Start date: pick it and the calendar shades the full duration span */}
             {!confirmed.date ? (
               <div className="space-y-3">
-                <label className="block text-xs font-bold text-forest">DATE OF SAFARI</label>
-                <SafariCalendar
-                  value={safariDate}
-                  onSelect={(iso) => { setSafariDate(iso); setConfirmed(c => ({ ...c, date: true })); }}
-                />
+                <div className="flex items-center justify-between gap-3">
+                  <label className="block text-xs font-bold text-forest">TRIP START DATE</label>
+                  <span className="text-[11px] font-semibold text-earth text-right">
+                    {selectedDestination?.packageDuration ?? `${trip.days} Days / ${trip.nights} Nights`}
+                  </span>
+                </div>
+                <SafariCalendar value={safariDate} nights={trip.nights} onSelect={setSafariDate} />
+                {safariDate && tripEnd && (
+                  <p className="text-[11px] text-forest/70">
+                    {trip.days} Days / {trip.nights} Nights · {fmtShort(safariDate)} – {fmtShort(tripEnd)}{' '}
+                    {new Date(safariDate + 'T00:00:00').getFullYear()}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setConfirmed(c => ({ ...c, date: true }))}
+                  className="w-full px-4 py-2.5 bg-forest text-sand text-xs font-semibold rounded hover:bg-forest-light transition-colors flex items-center justify-center gap-1.5 shadow-md"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-gold" />
+                  <span>Confirm Trip Dates</span>
+                </button>
               </div>
             ) : (
               <button
@@ -409,11 +431,12 @@ onClick={() => {
                   </span>
                   <div className="min-w-0">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-gold flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Safari Date
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Trip Dates
                     </span>
                     <span className="font-serif text-sm font-bold block truncate">
-                      {new Date(safariDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                      {tripEnd ? `${fmtShort(safariDate)} – ${fmtShort(tripEnd)} ${new Date(safariDate + 'T00:00:00').getFullYear()}` : fmtDay(safariDate)}
                     </span>
+                    <span className="text-[11px] text-sand/70 block">{trip.days} Days / {trip.nights} Nights</span>
                   </div>
                 </div>
                 <span className="text-[10px] uppercase font-bold text-gold border border-gold/40 px-2.5 py-1 rounded-lg flex-shrink-0">Change</span>
@@ -440,10 +463,10 @@ onClick={() => {
               </div>
             )}
 
-            {/* Guests + naturalist — revealed once a date is locked in */}
+            {/* Guests — revealed once a date is locked in */}
             {confirmed.date && (
                 <div className="bg-sand p-6 rounded-xl border border-forest/20 space-y-6 max-w-lg">
-                  <h4 className="font-bold text-forest text-sm">Guests &amp; Naturalist</h4>
+                  <h4 className="font-bold text-forest text-sm">Guests</h4>
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="font-bold text-sm block">Adults (Age 12+)</span>
@@ -478,19 +501,6 @@ onClick={() => {
                         className="w-8 h-8 rounded bg-forest text-sand font-bold"
                       >+</button>
                     </div>
-                  </div>
-
-                  <div className="flex items-center justify-between border-t border-forest/15 pt-4">
-                    <div>
-                      <span className="font-bold text-sm block">Senior Forest Naturalist</span>
-                      <span className="text-xs text-forest/70">Certified local tribal guide and pugmark tracker (+₹1,000)</span>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={naturalistRequested}
-                      onChange={(e) => setNaturalistRequested(e.target.checked)}
-                      className="w-5 h-5 accent-forest rounded"
-                    />
                   </div>
                 </div>
             )}
@@ -535,7 +545,7 @@ onClick={() => {
 
               {confirmed.date && (
                 <div className="text-xs text-sand/80 space-y-1.5 border-t border-gold/20 pt-3">
-                  <span className="flex justify-between gap-2"><span className="text-sand/60">Date</span><span className="text-right">{new Date(safariDate + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></span>
+                  <span className="flex justify-between gap-2"><span className="text-sand/60">Dates</span><span className="text-right">{tripEnd ? `${fmtShort(safariDate)} – ${fmtShort(tripEnd)} · ${trip.nights}N` : fmtShort(safariDate)}</span></span>
                   <span className="flex justify-between gap-2"><span className="text-sand/60">Zone</span><span className="text-right">{selectedZone || selectedDestination?.zones[0]?.name || 'Core Sector'}</span></span>
                   <span className="flex justify-between gap-2"><span className="text-sand/60">Vehicle</span><span className="text-right">{selectedVehicle}</span></span>
                 </div>
@@ -731,9 +741,9 @@ onClick={() => {
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4 text-xs">
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-gold/70 block">Date</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-gold/70 block">Dates</span>
                     <span className="text-sm font-semibold block">
-                      {safariDate ? new Date(safariDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                      {safariDate ? (tripEnd ? `${fmtDay(safariDate)} – ${fmtDay(tripEnd)}` : fmtDay(safariDate)) : '—'}
                     </span>
                   </div>
                   <div>
@@ -791,10 +801,6 @@ onClick={() => {
                           {children > 0 ? `, ${children} child${children === 1 ? '' : 'ren'}` : ''}
                         </span>
                       </div>
-                      <div className="flex justify-between py-1">
-                        <span className="text-xs text-sand/80">Senior Forest Naturalist</span>
-                        <span className="text-xs font-semibold">{naturalistRequested ? 'Included (+₹1,000)' : '—'}</span>
-                      </div>
                     </>
                   ) : (
                     <div className="flex justify-between py-1">
@@ -845,9 +851,10 @@ onClick={() => {
                 <span className="font-bold text-right">{confirmedBooking.destinationName}</span>
               </div>
               <div className="flex justify-between gap-2">
-                <span className="text-forest/60 font-semibold">Date</span>
+                <span className="text-forest/60 font-semibold">Dates</span>
                 <span className="font-bold text-right">
-                  {new Date(confirmedBooking.safariDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                  {fmtDay(confirmedBooking.safariDate)}
+                  {confirmedBooking.endDate ? ` – ${fmtDay(confirmedBooking.endDate)}` : ''}
                 </span>
               </div>
               <div className="flex justify-between gap-2">

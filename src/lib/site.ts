@@ -9,9 +9,6 @@ export const BOOKINGS_EMAIL = 'bookings@shutterandstripessafaris.com';
 export const FOUNDER_NAME = 'Sachin Neware';
 export const COFOUNDER_NAME = 'Urmila Suvarna';
 
-// Flat upgrade over the guide bundled with every package. Must match server NATURALIST_FEE.
-export const NATURALIST_FEE = 1000;
-
 // States we actively operate in, in priority order. Everything else renders as Pan-India expansion.
 export const CORE_STATES = ['Madhya Pradesh', 'Maharashtra'];
 
@@ -79,3 +76,17 @@ export const tierPrice = (t: PackageTier): string => {
 
 export const enquiryMailto = (subject: string, body?: string): string =>
   `mailto:${BOOKINGS_EMAIL}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`;
+
+/** A reserve's standard trip length, e.g. "3 Days / 2 Nights" -> { days: 3, nights: 2 }. */
+const DURATION_RE = /(\d+)\s*Days?\s*\/\s*(\d+)\s*Nights?/i;
+export const tripDuration = (packageDuration?: string): { days: number; nights: number } => {
+  const m = DURATION_RE.exec(packageDuration ?? '');
+  return m ? { days: Number(m[1]), nights: Number(m[2]) } : { days: 3, nights: 2 };
+};
+
+/** Inclusive last day of the trip (YYYY-MM-DD) for a reserve's standard duration. */
+export const tripEndDate = (startIso: string, packageDuration?: string): string => {
+  const d = new Date(`${startIso}T00:00:00`);
+  d.setDate(d.getDate() + tripDuration(packageDuration).days - 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
