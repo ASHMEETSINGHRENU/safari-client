@@ -47,6 +47,21 @@ const ScrollToTop: React.FC = () => {
   return null;
 };
 
+// Redirect admin subdomain root to /admin
+const AdminHostRedirect: React.FC = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const host = window.location.hostname;
+    if (host.startsWith('admin.')) {
+      if (pathname === '/' || pathname === '') {
+        window.location.replace('/admin');
+      }
+    }
+  }, [pathname]);
+  return null;
+};
+
 // Helper component to wrap public pages with PublicLayout (Navbar + Footer)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <PublicLayout>{children}</PublicLayout>;
@@ -59,6 +74,7 @@ export const App: React.FC = () => {
       <ConfirmProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <AdminHostRedirect />
         <ErrorBoundary>
         <Routes>
           {/* Consumer Facing Pages (With Public Navbar and Footer) */}
@@ -81,6 +97,7 @@ export const App: React.FC = () => {
           {/* Booking and Tracking (admin auth lives at /login) */}
           <Route path="/booking" element={<PublicRoute><BookingPage /></PublicRoute>} />
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+          <Route path="/admin/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/track" element={<PublicRoute><TrackBookingPage /></PublicRoute>} />
 
           {/* DEDICATED ADMIN PANEL ROUTES (ZERO PUBLIC NAVBAR, ZERO PUBLIC FOOTER) */}

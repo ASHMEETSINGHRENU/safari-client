@@ -19,7 +19,9 @@ export const LoginPage: React.FC = () => {
       setLoading(true);
       setError(null);
       await login({ email, password });
-      navigate('/admin');
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      navigate(redirect && redirect.startsWith('/') ? redirect : '/admin');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Invalid email or password.');
     } finally {
@@ -116,15 +118,17 @@ export const LoginPage: React.FC = () => {
           </form>
 
           {/* Demo Login Shortcut (admin only) */}
-          <div className="pt-4 border-t border-forest/10">
-            <button
-              type="button"
-              onClick={() => fillCredentials('admin@shutterandstripes.com', 'Safari@2026')}
-              className="w-full p-2.5 rounded-xl bg-forest/10 border border-forest/20 text-forest text-[11px] font-semibold hover:bg-forest hover:text-sand transition"
-            >
-              Fill Admin Demo Credentials
-            </button>
-          </div>
+          {import.meta.env.DEV && (
+            <div className="pt-4 border-t border-forest/10">
+              <button
+                type="button"
+                onClick={() => fillCredentials('admin@shutterandstripes.com', 'Safari@2026')}
+                className="w-full p-2.5 rounded-xl bg-forest/10 border border-forest/20 text-forest text-[11px] font-semibold hover:bg-forest hover:text-sand transition"
+              >
+                Fill Admin Demo Credentials
+              </button>
+            </div>
+          )}
 
         </div>
 
