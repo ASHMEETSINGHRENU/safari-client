@@ -197,22 +197,6 @@ export const JournalDetailPage: React.FC = () => {
           })}
         </div>
 
-        {/* Author Bio Box */}
-        <div className="mt-16 p-8 bg-white rounded-3xl border border-forest/10 shadow-sm flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-          <div className="w-16 h-16 rounded-full bg-forest text-gold flex items-center justify-center font-serif text-2xl font-bold shrink-0">
-            {article.author.charAt(0)}
-          </div>
-          <div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-gold block mb-1">
-              Field Chronicler
-            </span>
-            <h3 className="font-serif text-xl font-bold text-forest mb-1">{article.author}</h3>
-            <p className="text-forest/70 text-xs sm:text-sm leading-relaxed">
-              Senior expedition tracker and conservation contributor at Shutter And Stripes. Focused on Central Indian carnivore dynamics, camera trapping, and forest department community initiatives.
-            </p>
-          </div>
-        </div>
-
         {/* CTA to Safari Booking */}
         <div className="mt-12 bg-forest text-sand p-8 rounded-3xl text-center space-y-4">
           <h3 className="font-serif text-2xl font-bold">Inspired by This Dispatch?</h3>
