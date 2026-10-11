@@ -1,15 +1,15 @@
 import axios from 'axios';
 import { Destination, Safari, Booking, User, GalleryItem, JournalArticle, FAQItem, ReviewItem, SiteSettings } from '../types';
 
-// One source of truth per environment: .env.development leaves this empty so dev hits
-// the Vite proxy in vite.config.ts, and .env.production pins the live API host. There is
-// deliberately no hardcoded fallback — a stale baked-in URL is how the frontend ends up
-// silently talking to a decommissioned backend.
-const envBase = (import.meta.env.VITE_API_BASE_URL || '').trim();
-if (import.meta.env.PROD && !envBase) {
-  throw new Error('VITE_API_BASE_URL must be set for a production build (see client/.env.production).');
-}
-const API_BASE = envBase.replace(/\/$/, '') + '/api/v1';
+// Requests go same-origin by default: the browser calls /api/v1 on whatever host serves
+// the app. Locally the Vite dev proxy (vite.config.ts) forwards that to localhost:5000;
+// in production the Vercel rewrite (vercel.json) proxies it to the live API host. Being
+// same-origin means no CORS preflight and no cross-origin failures.
+//
+// VITE_API_BASE_URL is an optional escape hatch to call a specific API host directly
+// (e.g. a staging backend). Leave it unset for the normal same-origin path.
+const envBase = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
+const API_BASE = envBase ? `${envBase}/api/v1` : '/api/v1';
 
 export const api = axios.create({
   baseURL: API_BASE,
