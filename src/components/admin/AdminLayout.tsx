@@ -162,8 +162,9 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         {/* Sidebar Footer Shortcuts */}
         <div className="p-4 border-t border-sand/10 space-y-2">
           <Link
-            to="/"
+            to={import.meta.env.PROD ? 'https://www.shutterandstripessafaris.com/' : '/'}
             target="_blank"
+            rel="noopener noreferrer"
             className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs text-sand/80 hover:bg-white/10 hover:text-sand transition"
           >
             <div className="flex items-center space-x-2">
