@@ -4,12 +4,10 @@ import {
   ShieldCheck, 
   TreePine, 
   Heart, 
-  Users, 
   AlertTriangle, 
   CheckCircle2, 
   Camera, 
-  ArrowRight,
-  Sparkles
+  ArrowRight
 } from 'lucide-react';
 
 export const ResponsibleTourismPage: React.FC = () => {
@@ -21,7 +19,7 @@ export const ResponsibleTourismPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center mb-16">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-semibold uppercase tracking-widest mb-4">
             <ShieldCheck className="w-3.5 h-3.5 text-gold" />
-            <span>Conservation First Policy</span>
+            <span>Conservation First Pledge</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-6xl text-forest font-bold tracking-tight mb-6">
             The Shutter And Stripes Responsible Tourism Charter
@@ -31,7 +29,7 @@ export const ResponsibleTourismPage: React.FC = () => {
           </p>
         </div>
 
-        {/* 3 Core Pillars */}
+        {/* Core Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
           
           <div className="bg-white p-8 sm:p-10 rounded-3xl border border-forest/15 shadow-sm space-y-4">
@@ -62,36 +60,10 @@ export const ResponsibleTourismPage: React.FC = () => {
 
           <div className="bg-white p-8 sm:p-10 rounded-3xl border border-forest/15 shadow-sm space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-forest/10 text-forest flex items-center justify-center">
-              <Users className="w-6 h-6 text-gold" />
-            </div>
-            <h2 className="font-serif text-2xl font-bold text-forest">
-              2. Fair Tribal Compensation
-            </h2>
-            <p className="text-forest/70 text-sm leading-relaxed">
-              Forest guides and drivers are often the lowest-compensated tier in conventional safari operations. We guarantee direct wages 25% above official department base rates.
-            </p>
-            <ul className="space-y-2 text-xs text-forest/80 pt-2">
-              <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
-                <span>Direct wire payouts without middlemen commissions.</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
-                <span>Annual gear provisioning: binoculars, field uniforms, field guides.</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-forest shrink-0" />
-                <span>English and scientific terminology training workshops.</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="bg-white p-8 sm:p-10 rounded-3xl border border-forest/15 shadow-sm space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-forest/10 text-forest flex items-center justify-center">
               <TreePine className="w-6 h-6 text-gold" />
             </div>
             <h2 className="font-serif text-2xl font-bold text-forest">
-              3. Zero Single-Use Plastics
+              2. Zero Single-Use Plastics
             </h2>
             <p className="text-forest/70 text-sm leading-relaxed">
               Discarded plastic bottles and wrappers are lethal hazards to herbivores like chital and sambar. All Shutter And Stripes safaris operate with copper and steel flasks.

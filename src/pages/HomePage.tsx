@@ -33,6 +33,8 @@ export const HomePage: React.FC = () => {
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [activeGallery, setActiveGallery] = useState<GalleryItem | null>(null);
   const [loading, setLoading] = useState(true);
+  // Client stories are CMS-managed (key `client_stories`); section hides itself while empty.
+  const [clientStories, setClientStories] = useState<{ eyebrow?: string; heading?: string; stories: { name: string; location?: string; quote: string; imageUrl?: string }[] }>({ stories: [] });
 
   const [splashDone, setSplashDone] = useState(
     () => sessionStorage.getItem(SPLASH_SEEN_KEY) === '1'
@@ -96,6 +98,12 @@ export const HomePage: React.FC = () => {
       console.error(err);
       setLoading(false);
     });
+  }, []);
+
+  useEffect(() => {
+    cmsService.getContent('client_stories')
+      .then((data) => setClientStories({ stories: [], ...(data || {}) }))
+      .catch(() => {});
   }, []);
 
   // Package finder state
@@ -222,6 +230,11 @@ export const HomePage: React.FC = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10 sm:py-24 text-sand w-full">
           <div className="max-w-2xl space-y-6">
+            <div className="inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-gold/40 shadow-lg">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gold">What We Do</span>
+              <span aria-hidden className="w-px h-3.5 bg-sand/40" />
+              <span className="text-[11px] font-semibold text-sand">End-to-End Safari Tour Partner</span>
+            </div>
             <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               GUIDED BY LOCALS. <br />
               <span className="italic font-normal text-gold drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">INSPIRED BY NATURE.</span>
@@ -521,6 +534,38 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* 07b. CLIENT STORIES (CMS-driven, hidden until stories exist) */}
+      {clientStories.stories.length > 0 && (
+        <section className="py-20 bg-sand-warm border-y border-forest/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
+              <span className="text-[11px] tracking-widest-safari uppercase text-earth font-bold block">
+                {clientStories.eyebrow || 'Client Stories'}
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest">
+                {clientStories.heading || 'In Their Own Words'}
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {clientStories.stories.map((story, i) => (
+                <figure key={i} className="bg-sand rounded-2xl border border-forest/15 overflow-hidden shadow-sm flex flex-col">
+                  {story.imageUrl && (
+                    <img src={story.imageUrl} alt={story.name} className="w-full h-52 object-cover" />
+                  )}
+                  <figcaption className="p-6 space-y-3">
+                    <blockquote className="text-sm text-forest/80 leading-relaxed italic font-serif">"{story.quote}"</blockquote>
+                    <div>
+                      <span className="block font-serif font-bold text-forest text-sm">{story.name}</span>
+                      {story.location && <span className="text-[11px] uppercase tracking-wider text-forest/50">{story.location}</span>}
+                    </div>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <GalleryLightbox
         items={gallery}
         activeItem={activeGallery}
@@ -545,7 +590,7 @@ export const HomePage: React.FC = () => {
             The Forests of Central India Await.
           </h2>
           <p className="text-xs sm:text-sm text-sand/90 max-w-xl mx-auto leading-relaxed drop-shadow">
-            Reserve official Forest Department permits across Bandhavgarh, Kanha, Tadoba, Pench, and beyond with specialist naturalists.
+            Tell us your dates and we'll shape the permits, the naturalists and the dawn drives around the way you want to meet the wild.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link 

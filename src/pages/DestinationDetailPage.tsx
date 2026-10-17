@@ -10,8 +10,8 @@ import {
   Star,
   TreePine
 } from 'lucide-react';
-import { destinationService } from '../services/api';
-import { Destination } from '../types';
+import { destinationService, cmsService } from '../services/api';
+import { Destination, JournalArticle } from '../types';
 import { stateBadgeClass, stateCode, isPrimeZone } from '../lib/site';
 
 export const DestinationDetailPage: React.FC = () => {
@@ -24,6 +24,7 @@ export const DestinationDetailPage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [primeOnly, setPrimeOnly] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [journal, setJournal] = useState<JournalArticle | null>(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -41,6 +42,15 @@ export const DestinationDetailPage: React.FC = () => {
     fetchDetails();
     window.scrollTo(0, 0);
   }, [slug]);
+
+  // Related journal article: prefer one tagged with this reserve, else the latest dispatch.
+  useEffect(() => {
+    if (!destination) return;
+    const tag = destination.name.toLowerCase();
+    cmsService.getJournals()
+      .then(list => setJournal(list.find(a => (a.destinationTag || '').toLowerCase().includes(tag)) || list[0] || null))
+      .catch(() => {});
+  }, [destination]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -268,11 +278,6 @@ export const DestinationDetailPage: React.FC = () => {
                           </span>
                         )}
                         <h4 className="font-serif text-lg font-bold text-forest">{zone.name}</h4>
-                        {zone.vehicleQuotaPerDay && (
-                          <span className="ml-auto text-[11px] text-forest/60 font-medium whitespace-nowrap">
-                            {zone.vehicleQuotaPerDay} jeeps/day
-                          </span>
-                        )}
                       </div>
                       {zone.highlight && (
                         <p className="text-gold font-medium text-xs mb-1">{zone.highlight}</p>
@@ -302,6 +307,30 @@ export const DestinationDetailPage: React.FC = () => {
                 ))}
               </ul>
             </div>
+
+              {/* From the Journal */}
+              {journal && (
+                <div className="space-y-3 pt-2">
+                  <h3 className="font-serif text-lg font-bold text-forest">From the Journal</h3>
+                  <Link
+                    to={`/journal/${journal.slug}`}
+                    className="group flex bg-white rounded-2xl border border-forest/10 overflow-hidden shadow-sm hover:shadow-xl transition-all"
+                  >
+                    <img
+                      src={journal.coverImage}
+                      alt={journal.title}
+                      className="w-28 sm:w-40 object-cover shrink-0"
+                    />
+                    <div className="p-4 space-y-1.5 min-w-0">
+                      <span className="text-[10px] uppercase tracking-wider font-bold text-earth">{journal.category}</span>
+                      <h4 className="font-serif font-bold text-forest leading-snug group-hover:text-gold transition line-clamp-2">
+                        {journal.title}
+                      </h4>
+                      <p className="text-forest/70 text-xs leading-relaxed line-clamp-2">{journal.excerpt}</p>
+                    </div>
+                  </Link>
+                </div>
+              )}
 
               {/* FAQs */}
               <div className="space-y-3 pt-2">

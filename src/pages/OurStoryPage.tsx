@@ -9,6 +9,9 @@ import {
 } from 'lucide-react';
 import { FOUNDER_NAME, COFOUNDER_NAME, YEARS_OF_EXPERIENCE, TOURS_COMPLETED } from '../lib/site';
 
+// ponytail: co-founder section hidden per client request; flip to true to restore
+const SHOW_COFOUNDER = false;
+
 export const OurStoryPage: React.FC = () => {
   return (
     <div className="bg-sand min-h-screen pt-28 pb-20">
@@ -98,7 +101,8 @@ export const OurStoryPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2b. THE CO-FOUNDER */}
+      {/* 2b. THE CO-FOUNDER — hidden for now */}
+      {SHOW_COFOUNDER && (
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="rounded-3xl overflow-hidden shadow-xl border border-forest/15 aspect-square w-full">
@@ -152,6 +156,7 @@ export const OurStoryPage: React.FC = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* 3. THE PHILOSOPHY OF THE STRIPED MONARCH */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-24">

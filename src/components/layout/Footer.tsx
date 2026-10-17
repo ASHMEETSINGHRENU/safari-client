@@ -94,7 +94,7 @@ export const Footer: React.FC = () => {
           {/* Newsletter + Contact */}
           <div className="lg:col-span-4 space-y-5">
             <h4 className="font-serif text-xs font-semibold text-gold uppercase tracking-[0.15em]">
-              Wildlife Gazette
+              Wildlife Newsletter
             </h4>
             <p className="text-xs text-sand/70 leading-relaxed">
               Seasonal tracking notes and conservation updates delivered monthly.
@@ -102,7 +102,7 @@ export const Footer: React.FC = () => {
             {subscribed ? (
               <div className="bg-sand/10 border border-gold/40 text-gold text-xs p-3 rounded flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-gold flex-shrink-0" />
-                <span>Thank you. You are subscribed to the Gazette.</span>
+                <span>Thank you. You are subscribed to the newsletter.</span>
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="space-y-2">

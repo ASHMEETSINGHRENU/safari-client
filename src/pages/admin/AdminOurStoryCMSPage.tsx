@@ -13,7 +13,7 @@ import { useToast } from '../../components/common/Toast';
 
 export const AdminOurStoryCMSPage: React.FC = () => {
   const { error } = useToast();
-  const [selectedKey, setSelectedKey] = useState<'our_story' | 'home_hero' | 'ethical_code'>('our_story');
+  const [selectedKey, setSelectedKey] = useState<'our_story' | 'home_hero' | 'ethical_code' | 'client_stories'>('our_story');
   const [contentData, setContentData] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -48,6 +48,12 @@ export const AdminOurStoryCMSPage: React.FC = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const stories: any[] = contentData.stories || [];
+
+  const updateStory = (index: number, patch: Record<string, string>) => {
+    setContentData({ ...contentData, stories: stories.map((s, i) => (i === index ? { ...s, ...patch } : s)) });
   };
 
   return (
@@ -89,6 +95,14 @@ export const AdminOurStoryCMSPage: React.FC = () => {
               }`}
             >
               Ethical Code
+            </button>
+            <button
+              onClick={() => setSelectedKey('client_stories')}
+              className={`px-3 py-1.5 rounded-lg font-semibold uppercase tracking-wider transition ${
+                selectedKey === 'client_stories' ? 'bg-forest text-sand' : 'text-forest/70 hover:text-forest'
+              }`}
+            >
+              Client Stories
             </button>
           </div>
         </div>
@@ -211,6 +225,92 @@ export const AdminOurStoryCMSPage: React.FC = () => {
                       onChange={e => setContentData({ ...contentData, enginePolicy: e.target.value })}
                       className="w-full px-4 py-2.5 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
                     />
+                  </div>
+                </>
+              )}
+
+              {selectedKey === 'client_stories' && (
+                <>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
+                      Section Label
+                    </label>
+                    <input
+                      type="text"
+                      value={contentData.eyebrow || 'Client Stories'}
+                      onChange={e => setContentData({ ...contentData, eyebrow: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-forest/70 mb-1.5">
+                      Section Heading
+                    </label>
+                    <input
+                      type="text"
+                      value={contentData.heading || 'In Their Own Words'}
+                      onChange={e => setContentData({ ...contentData, heading: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-sand/30 border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-forest/70">
+                        Stories
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setContentData({ ...contentData, stories: [...stories, { name: '', location: '', quote: '', imageUrl: '' }] })}
+                        className="px-3 py-1.5 bg-forest text-sand rounded-lg font-bold uppercase tracking-wider text-[11px] hover:bg-forest/90 transition"
+                      >
+                        Add Story
+                      </button>
+                    </div>
+
+                    {stories.map((story, i) => (
+                      <div key={i} className="p-4 bg-sand/30 border border-forest/15 rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-forest/60">Story {i + 1}</span>
+                          <button
+                            type="button"
+                            onClick={() => setContentData({ ...contentData, stories: stories.filter((_, j) => j !== i) })}
+                            className="text-[11px] font-semibold uppercase tracking-wider text-red-600 hover:text-red-700"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Client name"
+                          value={story.name || ''}
+                          onChange={e => updateStory(i, { name: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-white border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Location (optional)"
+                          value={story.location || ''}
+                          onChange={e => updateStory(i, { location: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-white border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Image URL (optional)"
+                          value={story.imageUrl || ''}
+                          onChange={e => updateStory(i, { imageUrl: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-white border border-forest/15 rounded-xl text-xs text-forest focus:outline-none"
+                        />
+                        <textarea
+                          rows={3}
+                          placeholder="Their story / quote"
+                          value={story.quote || ''}
+                          onChange={e => updateStory(i, { quote: e.target.value })}
+                          className="w-full px-4 py-2.5 bg-white border border-forest/15 rounded-xl text-xs text-forest focus:outline-none resize-none leading-relaxed"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </>
               )}
